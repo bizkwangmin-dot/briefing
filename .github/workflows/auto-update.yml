@@ -1,38 +1,53 @@
+# ─────────────────────────────────────────────────────────────
+# 오늘의 브리핑 자동 업데이트
+# 매일 오전 7:30 KST (UTC 22:30 전날) + 오후 5:30 KST (UTC 08:30)
+# GitHub Actions가 무료로 클라우드에서 실행 → 절전모드 무관
+# ─────────────────────────────────────────────────────────────
 name: 브리핑 자동 업데이트
 
 on:
   schedule:
+    # KST 오전 7:30 = UTC 전날 22:30
     - cron: '30 22 * * *'
+    # KST 오후 5:30 = UTC 당일 08:30
     - cron: '30 8 * * *'
+  # 수동 실행 버튼 (테스트용)
   workflow_dispatch:
 
 jobs:
   update:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write   # index.html 커밋 권한
 
     steps:
-      - name: 레포 체크아웃
+      # 1. 레포 체크아웃
+      - name: 📥 레포 체크아웃
         uses: actions/checkout@v4
 
-      - name: Python 설치
+      # 2. Python 설치
+      - name: 🐍 Python 설치
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: 패키지 설치
-        run: pip install requests beautifulsoup4 pytz lxml
+      # 3. 패키지 설치 (google-generativeai 추가)
+      - name: 📦 패키지 설치
+        run: pip install requests beautifulsoup4 pytz lxml google-generativeai  
 
-      - name: 브리핑 업데이트 실행
+      # 4. 업데이트 스크립트 실행 (GEMINI_API_KEY 연결)
+      - name: 🔄 브리핑 업데이트 실행
         run: python update_briefing.py
         env:
           TZ: Asia/Seoul
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # 이 부분을 추가합니다!
 
-      - name: 커밋 & 푸시
+      # 5. 변경사항 커밋 & 푸시
+      - name: 📤 변경사항 커밋 & 푸시
         run: |
-          git config --global user.name "github-actions[bot]"
+          git config --global user.name  "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
+          # 변경사항 없으면 커밋 안 함
           git diff --staged --quiet || git commit -m "auto: $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M') KST 자동 업데이트"
           git push
