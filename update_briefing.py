@@ -44,15 +44,15 @@ HEADERS = {
 
 RSS_SOURCES = {
     "경제 · 금융": [
-        ("조선일보", "c", "https://www.chosun.com/arc/outboundfeeds/rss/"),
         ("매일경제", "e", "https://www.mk.co.kr/rss/30000001/"),
         ("한국경제", "e", "https://www.hankyung.com/feed/economy"),
         ("연합뉴스", "w", "https://www.yonhapnews.co.kr/rss/economy.xml"),
+        ("경향신문", "p", "https://www.khan.co.kr/rss/rssdata/kh_economy.xml"),
     ],
     "기 업": [
-        ("조선일보", "c", "https://www.chosun.com/arc/outboundfeeds/rss/"),
-        ("한국경제", "e", "https://www.hankyung.com/feed/economy"),
         ("매일경제", "e", "https://www.mk.co.kr/rss/30200030/"),
+        ("한국경제", "e", "https://www.hankyung.com/feed/economy"),
+        ("연합뉴스", "w", "https://www.yonhapnews.co.kr/rss/economy.xml"),
     ],
     "정책 · 사회": [
         ("경향신문", "p", "https://www.khan.co.kr/rss/rssdata/kh_politics.xml"),
@@ -61,7 +61,7 @@ RSS_SOURCES = {
     ],
     "국 제": [
         ("연합뉴스", "w", "https://www.yonhapnews.co.kr/rss/international.xml"),
-        ("조선일보", "c", "https://www.chosun.com/arc/outboundfeeds/rss/"),
+        ("한겨레",   "p", "https://www.hani.co.kr/rss/international/"),
     ],
 }
 
@@ -98,7 +98,6 @@ def get_summary(title):
         return [l for l in lines if l][:5]
     except Exception as e:
         print(f"    ⚠️  요약 실패: {e}")
-        time.sleep(3)
         return None
 
 def fetch_rss(source, src_class, url, max_items=5):
@@ -151,10 +150,10 @@ for section, sources in RSS_SOURCES.items():
                 print(f"  🤖 [{source}] {item['title'][:30]}...")
                 item["bullets"] = get_summary(item["title"])
                 news_list.append(item)
-                time.sleep(1)  # API 속도 제한 방지
-        if len(news_list) >= 5:
+                time.sleep(4)  # Gemini 무료 한도: 분당 15회 제한
+        if len(news_list) >= 3:
             break
-    section_news[section] = news_list[:5]
+    section_news[section] = news_list[:3]
     total += len(news_list[:5])
     print(f"  ✅ {section}: {len(news_list[:5])}건 완료")
 
