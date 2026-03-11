@@ -259,7 +259,297 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
 .link-list a:hover{color:#ddd}
 .link-list a .lbadge{font-size:8.5px;padding:1px 5px;border-radius:2px;flex-shrink:0}
 .footer-note{text-align:center;font-size:10px;color:#444;margin-top:20px;padding-top:16px;border-top:1px solid #2a2a2a}
+
+/* ══════════════════════════════════
+   INVEST PANEL
+══════════════════════════════════ */
+.invest-grid{display:grid;gap:14px;grid-template-columns:1fr;}
+@media(min-width:800px){.invest-grid{grid-template-columns:1fr 320px;}}
+.inv-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--navy); border-radius:5px;padding:15px;margin-bottom:14px;}
+.inv-card.red{border-top-color:var(--red);}
+.inv-card.gold{border-top-color:var(--gold);}
+.inv-title{font-family:'Noto Serif KR',serif;font-size:16px;font-weight:600;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.inv-ai-summary{font-size:12.5px;color:var(--ink2);line-height:1.6;background:var(--bg);padding:12px;border-radius:4px;border-left:3px solid var(--navy);margin-bottom:12px;}
+.inv-chart-place{background:#eaebed;border:1px dashed #ccc;height:120px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;margin-bottom:12px;}
+.inv-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.inv-stat{text-align:center;padding:10px 4px;background:var(--bg);border-radius:4px;border:1px solid var(--border);}
+.inv-stat .lbl{font-size:10px;color:var(--ink3);margin-bottom:2px;}
+.inv-stat .val{font-size:15px;font-weight:700;color:var(--ink);}
+.inv-stat .val.up{color:var(--red);}
+.inv-stat .val.dn{color:var(--navy);}
+.inv-signal{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f8f9fa;border:1px solid var(--border);border-radius:4px;font-weight:700;}
+.inv-signal .lbl{font-size:12px;color:var(--ink2);}
+.inv-signal .badge{padding:4px 12px;border-radius:20px;font-size:11px;color:#fff;}
+.inv-signal .badge.buy{background:var(--red);}
+.inv-signal .badge.sell{background:var(--navy);}
+.inv-signal .badge.hold{background:var(--ink3);}
+
+/* Global Link Styles */
+a.ch-link { color: inherit; text-decoration: none; display: block; }
+a.ch-link:hover { text-decoration: underline; color: var(--navy); }
+
+/* ── HEADER CENTER (weather + update time) ── */
+.hdr-center {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+@media(min-width:700px) { .hdr-center { display: flex; } }
+
+.hdr-update {
+  font-size: 10px;
+  color: #555;
+}
+.theme-toggle-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 20px;
+  color: #bbb;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 12px;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all .2s;
+  font-family: 'Noto Sans KR', sans-serif;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.theme-toggle-btn:hover { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.35); }
+body.simple-mode .theme-toggle-btn {
+  background: rgba(0,0,0,0.06);
+  border-color: rgba(0,0,0,0.15);
+  color: #555;
+}
+body.simple-mode .theme-toggle-btn:hover { background: rgba(0,0,0,0.1); color: #222; }
+
+/* ── TIME AGO ── */
+.ctime { margin-left: auto; font-size: 9.5px; color: var(--ink3); white-space: nowrap; }
+
+/* ── HISTORY BUTTON on each card ── */
+.card-history-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 7px;
+  gap: 8px;
+}
+.hist-btn {
+  font-size: 10px;
+  color: var(--gold);
+  background: var(--tagbg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 9px;
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  transition: background .13s, color .13s;
+}
+.hist-btn:hover { background: #fef5e0; color: var(--gold); }
+
+/* ── HISTORY MODAL ── */
+.hist-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(3px);
+  align-items: center;
+  justify-content: center;
+}
+.hist-overlay.open { display: flex; }
+.hist-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-width: 560px;
+  width: 92%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 20px;
+  position: relative;
+}
+.hist-modal-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.hist-modal-sub {
+  font-size: 11px;
+  color: var(--ink3);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.hist-close {
+  position: absolute;
+  top: 14px; right: 16px;
+  background: none; border: none;
+  font-size: 18px; color: var(--ink3);
+  cursor: pointer; line-height: 1;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.hist-item {
+  border-left: 2px solid var(--border);
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color .13s;
+}
+.hist-item:hover { border-left-color: var(--red); }
+.hist-item-date { font-size: 10px; color: var(--ink3); margin-bottom: 3px; }
+.hist-item-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.hist-item-bullet { font-size: 11.5px; color: var(--ink2); line-height: 1.5; }
+
+/* ══════════════════════════════════
+   SIMPLE MODE (iOS-inspired)
+   헤드라인만, 불릿 숨김, 밝고 미니멀
+══════════════════════════════════ */
+body.simple-mode {
+  --bg: #f2f2f7;
+  --surface: #ffffff;
+  --ink: #1c1c1e;
+  --ink2: #48484a;
+  --ink3: #8e8e93;
+  --border: #e5e5ea;
+  --tagbg: #f2f2f7;
+  --red: #ff3b30;
+  --navy: #007aff;
+  --gold: #ff9500;
+  --green: #34c759;
+  --dark: #3a3a3c;
+  font-size: 13px;
+}
+body.simple-mode .hdr {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+body.simple-mode .logo { color: #1c1c1e; }
+body.simple-mode .logo b { color: #ff3b30; }
+body.simple-mode .hdr-date { color: #8e8e93; }
+body.simple-mode .hdr-update { color: #8e8e93; }
+body.simple-mode #prog { background: #007aff; }
+body.simple-mode .tabs {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+body.simple-mode .tab { color: #8e8e93; font-size: 12px; }
+body.simple-mode .tab.on { color: #007aff; border-bottom-color: #007aff; }
+body.simple-mode .tab:hover { color: #48484a; }
+
+/* 카드: 플랫하고 둥글게 */
+body.simple-mode .card {
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  border-left: none !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 12px 14px;
+  margin-bottom: 6px;
+}
+body.simple-mode .card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transform: none;
+}
+
+/* 불릿 포인트 5줄 숨김 */
+body.simple-mode .cpts { display: none; }
+body.simple-mode .ctags { display: none; }
+body.simple-mode .card-history-row { display: none; }
+
+/* 헤드라인 크게, 심플하게 */
+body.simple-mode .ch {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+body.simple-mode .ccat { font-size: 10px; color: #007aff; }
+body.simple-mode .cstar { color: #ff9500; }
+body.simple-mode .src { border-radius: 6px; }
+
+/* 섹션 레이블 */
+body.simple-mode .sec-tag { border-radius: 6px; font-size: 9px; }
+body.simple-mode .sec-line { background: #e5e5ea; }
+
+/* 사이드바 */
+body.simple-mode .sbox {
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+body.simple-mode .hitem:hover { background: #f2f2f7; border-radius: 8px; }
+
+/* 인포그래픽 */
+body.simple-mode .icard {
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border-top: 3px solid #007aff;
+}
+body.simple-mode .icard.r { border-top-color: #ff3b30; }
+body.simple-mode .icard.g { border-top-color: #ff9500; }
+body.simple-mode .icard.gr { border-top-color: #34c759; }
+body.simple-mode .btrack { background: #f2f2f7; }
+body.simple-mode .sb { background: #f2f2f7; border-color: #e5e5ea; border-radius: 10px; }
+
+/* 칼럼 */
+body.simple-mode .col-card {
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  border-left: none !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+body.simple-mode .col-quote { background: #f2f2f7; border-left-color: #007aff; border-radius: 0 8px 8px 0; }
+
+/* 아카이브 */
+body.simple-mode .arch-row {
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* 투자 */
+body.simple-mode .inv-card {
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+body.simple-mode .inv-stat { background: #f2f2f7; border-color: #e5e5ea; border-radius: 10px; }
+body.simple-mode .inv-ai-summary { background: #f2f2f7; border-left-color: #007aff; border-radius: 0 8px 8px 0; }
+
+/* 히스토리 모달 */
+body.simple-mode .hist-modal {
+  background: #ffffff;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+body.simple-mode .hist-item { border-left-color: #e5e5ea; }
+body.simple-mode .hist-item:hover { border-left-color: #007aff; }
+
+/* 푸터 */
+body.simple-mode .footer { background: #1c1c1e; }
+
+/* 스크롤바 숨김 느낌 */
+body.simple-mode ::-webkit-scrollbar { width: 4px; height: 4px; }
+body.simple-mode ::-webkit-scrollbar-track { background: transparent; }
+body.simple-mode ::-webkit-scrollbar-thumb { background: #c7c7cc; border-radius: 4px; }
 </style>
+
 </head>
 <body>
 
@@ -270,17 +560,20 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
   <div class="hdr-in">
     <div class="hdr-top">
       <div class="logo">오늘의<b>브리핑</b></div>
+      <div class="hdr-center">
+        <span class="hdr-update" id="hdr-update">업데이트: --</span>
+      </div>
       <div class="hdr-right">
         <div class="hdr-date" id="hdate"></div>
-        <div class="hdr-timer">⏱ 약 15분</div>
+        <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="간소화 모드로 전환" id="themeToggleBtn">☰ 간소화</button>
       </div>
     </div>
     <nav class="tabs">
       <button class="tab on"  onclick="go('news',this)">📰 오늘의 뉴스</button>
       <button class="tab"     onclick="go('info',this)">📊 인포그래픽</button>
       <button class="tab"     onclick="go('column',this)">✍️ 칼럼</button>
-      <button class="tab"     onclick="go('soccer',this)">⚽ 축구</button>
       <button class="tab"     onclick="go('archive',this)">🗂 지난 뉴스</button>
+      <button class="tab"     onclick="go('invest',this)">📈 투자 분석</button>
     </nav>
   </div>
 </header>
@@ -303,9 +596,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
       <div class="ct">
         <span class="src c">조선·중앙</span><span class="src e">매일경제</span>
         <span class="ccat">기업·증시</span><span class="cstar">★ 핵심</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T06:30:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">삼성 16조·SK 5조 자사주 소각 '결단' — 국내 사상 최대</div>
+      <div class="ch"><a href="https://search.chosun.com/svc/search.v1?query=%EC%82%BC%EC%84%B1%20SK%20%EC%9E%90%EC%82%AC%EC%A3%BC%20%EC%86%8C%EA%B0%81" class="ch-link" target="_blank">삼성 16조·SK 5조 자사주 소각 '결단' — 국내 사상 최대</a></div>
       <ul class="cpts">
         <li>삼성전자 16조·SK(주) 5조원 규모 자사주 소각 결정 — 6개월 내 실행</li>
         <li>3월 상반기 중 8700만주 소각 착수, 이후 잔여분 분할 소각 예정</li>
@@ -314,15 +607,18 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>대기업 주주환원 경쟁 본격화의 신호탄으로 시장 평가</li>
       </ul>
       <div class="ctags"><span class="ctag">삼성전자</span><span class="ctag">SK</span><span class="ctag">자사주소각</span><span class="ctag">주주환원</span></div>
+      <div class="card-history-row">
+        <button class="hist-btn" onclick="openHistory('samsung_buyback',event)">🔍 과거 유사 뉴스</button>
+      </div>
     </div>
 
     <div class="card navy">
       <div class="ct">
         <span class="src w">연합뉴스</span><span class="src p">한겨레</span>
         <span class="ccat">글로벌 공급망</span><span class="cstar">★ 핵심</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T05:00:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">호르무즈 통과 선박 90% 급감 — 해운 대란·유가 급등락</div>
+      <div class="ch"><a href="https://www.yna.co.kr/search/index?query=%ED%98%B8%EB%A5%B4%EB%AC%B4%EC%A6%88%20%EC%84%A0%EB%B0%95%20%ED%95%B4%EC%9A%B4%20%EC%9C%A0%EA%B0%80" class="ch-link" target="_blank">호르무즈 통과 선박 90% 급감 — 해운 대란·유가 급등락</a></div>
       <ul class="cpts">
         <li>하루 140척 통과하던 호르무즈 해협, 한 자릿수로 급감 (90% 감소)</li>
         <li>국내 HMM 선박 5척 발 묶임 — 대체 항로(아프리카 우회) 검토 중</li>
@@ -331,15 +627,18 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>호르무즈 봉쇄 장기화 시 운임·물가 연쇄 상승 불가피 전망</li>
       </ul>
       <div class="ctags"><span class="ctag">호르무즈</span><span class="ctag">HMM</span><span class="ctag">해운</span><span class="ctag">유가</span></div>
+      <div class="card-history-row">
+        <button class="hist-btn" onclick="openHistory('hormuz',event)">🔍 과거 유사 뉴스</button>
+      </div>
     </div>
 
     <div class="card red">
       <div class="ct">
         <span class="src e">한국경제</span><span class="src e">매일경제</span>
         <span class="ccat">거시경제</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T06:00:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">韓 국민소득 일본·대만에 역전 — 1인당 GNI 3만6,855달러</div>
+      <div class="ch"><a href="https://search.hankyung.com/apps.frm/doing?query=%ED%95%9C%EA%B5%AD%20GNI%20%EA%B5%AD%EB%AF%BC%EC%86%8C%EB%93%9D%20%EC%9D%BC%EB%B3%B8%20%EC%97%AD%EC%A0%84" class="ch-link" target="_blank">韓 국민소득 일본·대만에 역전 — 1인당 GNI 3만6,855달러</a></div>
       <ul class="cpts">
         <li>2024년 1인당 GNI 3만6,855달러 — 증가율 0.3%, 3년째 3만6천달러대 정체</li>
         <li>대만 4만3,585달러·일본 3만8,100달러에 역전당해 아시아 내 순위 하락</li>
@@ -348,15 +647,16 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>1인당 국민소득 4만달러 목표, 환율 안정이 선결 과제</li>
       </ul>
       <div class="ctags"><span class="ctag">GNI</span><span class="ctag">환율</span><span class="ctag">한은</span><span class="ctag">국민소득</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('gni',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <div class="card navy">
       <div class="ct">
         <span class="src e">매일경제</span><span class="src c">동아일보</span>
         <span class="ccat">주식·투자</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T07:00:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">'32조 빚투' 반대매매 5배 급증 — 청산 공포 확산</div>
+      <div class="ch"><a href="https://www.mk.co.kr/search/?q=%EC%8B%A0%EC%9A%A9%EC%9C%B5%EC%9E%90%20%EB%B0%98%EB%8C%80%EB%A7%A4%EB%A7%A4" class="ch-link" target="_blank">'32조 빚투' 반대매매 5배 급증 — 청산 공포 확산</a></div>
       <ul class="cpts">
         <li>신용융자 잔고 32조원 최고 수준 유지 — 급락 후 반대매매 평균의 5배</li>
         <li>외국인 26조 매도, 개미 33조 순매수 방어 — 코스피 3만원대 공방</li>
@@ -365,6 +665,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>향후 운명은 유가와 이란 전쟁 전개 방향에 달려</li>
       </ul>
       <div class="ctags"><span class="ctag">신용융자</span><span class="ctag">반대매매</span><span class="ctag">코스피</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('credit_margin',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <!-- 기업 -->
@@ -374,9 +675,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
       <div class="ct">
         <span class="src c">조선일보</span><span class="src e">한국경제</span>
         <span class="ccat">반도체·AI</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T06:15:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">삼성전자, 비메모리 채용 재개 — AI 반도체 인재 확보전 본격화</div>
+      <div class="ch"><a href="https://search.chosun.com/svc/search.v1?query=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%20%EB%B9%84%EB%A9%94%EB%AA%A8%EB%A6%AC%20%EC%B1%84%EC%9A%A9%20AI%EB%B0%98%EB%8F%84%EC%B2%B4" class="ch-link" target="_blank">삼성전자, 비메모리 채용 재개 — AI 반도체 인재 확보전 본격화</a></div>
       <ul class="cpts">
         <li>시스템LSI·파운드리 부문 채용 재개 — 종합 반도체 경쟁력 강화 목적</li>
         <li>TSMC와 AI 반도체 수주 경쟁 격화 속 선제적 인재 확보 전략</li>
@@ -385,15 +686,16 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>삼성중공업, 원유운반선 3척 4001억원 수주 — 연간 목표 15% 달성</li>
       </ul>
       <div class="ctags"><span class="ctag">삼성전자</span><span class="ctag">AI반도체</span><span class="ctag">채용</span><span class="ctag">삼성중공업</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('samsung_chip',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <div class="card gold">
       <div class="ct">
         <span class="src e">매일경제</span><span class="src w">연합뉴스</span>
         <span class="ccat">자동차·제조</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T05:30:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">현대모비스, 벤츠에 섀시모듈 공급 — 헝가리 공장 본격 가동</div>
+      <div class="ch"><a href="https://www.mk.co.kr/search/?q=%ED%98%84%EB%8C%80%EB%AA%A8%EB%B9%84%EC%8A%A4%20%EB%B2%A4%EC%B8%A0%20%ED%97%9D%EA%B0%80%EB%A6%AC" class="ch-link" target="_blank">현대모비스, 벤츠에 섀시모듈 공급 — 헝가리 공장 본격 가동</a></div>
       <ul class="cpts">
         <li>유럽 지역 첫 글로벌 고객사 전용 생산거점 구축 — 전기차·하이브리드 양산 시작</li>
         <li>헝가리·동유럽이 자동차 생산 허브로 급부상, 공급 효율성 극대화</li>
@@ -402,6 +704,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>유럽 현지 생산 확대로 미국·EU 관세 리스크 분산 전략도 겸비</li>
       </ul>
       <div class="ctags"><span class="ctag">현대모비스</span><span class="ctag">벤츠</span><span class="ctag">전기차</span><span class="ctag">헝가리</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('mobis',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <!-- 정책·사회 -->
@@ -411,9 +714,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
       <div class="ct">
         <span class="src c">조선일보</span><span class="src p">경향신문</span>
         <span class="ccat">주택·부동산</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T06:45:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">상계·중계동도 월세 300만원 — 서민 주거 사다리 끊기나</div>
+      <div class="ch"><a href="https://www.khan.co.kr/search/search.html?query=%EB%85%B8%EC%9B%90%20%EC%9B%94%EC%84%B8%20%EB%B6%80%EB%8F%99%EC%82%B0" class="ch-link" target="_blank">상계·중계동도 월세 300만원 — 서민 주거 사다리 끊기나</a></div>
       <ul class="cpts">
         <li>노원구까지 월세 300만원대 확산 — 월 1000만원 이상 초고액 월세 시장도 공고</li>
         <li>강남 아파트 증여 2배 급증 — 양도세 중과 이후 더 늘어날 전망</li>
@@ -422,15 +725,16 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>GTX-C 연간 수십억 운영비 지방 부담 문제 — 우발채무 우려 제기</li>
       </ul>
       <div class="ctags"><span class="ctag">월세</span><span class="ctag">강남증여</span><span class="ctag">전세사기</span><span class="ctag">청년주택</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('rent',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <div class="card green">
       <div class="ct">
         <span class="src e">매일경제</span><span class="src p">한겨레</span>
         <span class="ccat">노동·정책</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T07:15:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">노봉법 시행 첫날 "원청사장 나와라" — 전국 파업·충돌</div>
+      <div class="ch"><a href="https://search.hani.co.kr/search?q=%EB%85%B8%EB%B4%89%EB%B2%95%20%ED%8C%8C%EC%97%85%20%EC%9B%90%EC%B2%AD" class="ch-link" target="_blank">노봉법 시행 첫날 "원청사장 나와라" — 전국 파업·충돌</a></div>
       <ul class="cpts">
         <li>노동조합법 2·3조 개정안 시행 첫날, 철강·택배·교섭 노동자 전국 시위</li>
         <li>현대차·HD현대 등 원청 기업 대상 직접교섭 요구 — 노사 대충돌 본격화</li>
@@ -439,6 +743,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>8월부터 집회 온라인 신고 가능 — 법원 "방문만 고집은 위법" 판결</li>
       </ul>
       <div class="ctags"><span class="ctag">노봉법</span><span class="ctag">원청교섭</span><span class="ctag">주4.5일제</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('labor_law',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <!-- 국제 + 해외 픽 -->
@@ -449,9 +754,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="src int">Reuters</span><span class="src int">NYT</span>
         <span class="src c">조선·중앙</span>
         <span class="ccat">중동·지정학</span><span class="cstar">★ 핵심</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T04:30:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">트럼프 "이란 전쟁 곧 끝난다" — 10일 만에 종전 시사, 강경론도 병행</div>
+      <div class="ch"><a href="https://www.reuters.com/site-search/?query=Iran%20war%20ceasefire%20Trump%202026" class="ch-link" target="_blank">트럼프 "이란 전쟁 곧 끝난다" — 10일 만에 종전 시사, 강경론도 병행</a></div>
       <ul class="cpts">
         <li>트럼프 "아주 곧 끝날 것" 종전 시사 — 이란 혁명수비대 "종전 결정권은 우리" 즉각 반박</li>
         <li>호르무즈 봉쇄 시 "국가로서 재건 불가능하게 만들겠다" 초강경 경고 동시 발신</li>
@@ -460,6 +765,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>우크라이나, FP-9 미사일 6월 실전 배치 예고 — 러 방공망 돌파 목표</li>
       </ul>
       <div class="ctags"><span class="ctag">이란전쟁</span><span class="ctag">트럼프</span><span class="ctag">호르무즈</span><span class="ctag">AI무기</span><span class="ctag">우크라</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('iran_war',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <!-- 해외 주요 신문 픽 -->
@@ -470,9 +776,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="src int">WSJ</span>
         <span class="lean">보수·친기업</span>
         <span class="ccat">미국 | 경제·금융</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-10T23:00:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">[WSJ] 트럼프 비축유 방출 압박 — 에너지 시장 개입 역대급 수위</div>
+      <div class="ch"><a href="https://www.wsj.com/search?query=strategic%20petroleum%20reserve%20Trump" class="ch-link" target="_blank">[WSJ] 트럼프 비축유 방출 압박 — 에너지 시장 개입 역대급 수위</a></div>
       <ul class="cpts">
         <li>트럼프 행정부, 전략비축유(SPR) 4억 배럴 방출 검토 — 중간선거 부담 반영</li>
         <li>WSJ "비축유 방출은 단기 유가 안정 효과, 공급 근본 해결엔 한계" 분석</li>
@@ -481,6 +787,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>에너지 가격 급등 시 미국 소비·물가에 직격탄 우려</li>
       </ul>
       <div class="ctags"><span class="ctag">WSJ</span><span class="ctag">비축유</span><span class="ctag">유가</span><span class="ctag">트럼프</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('wsj_oil',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <div class="card" style="border-left-color:#1a3a8c">
@@ -488,9 +795,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="src int">NYT</span>
         <span class="lean">중도좌파</span>
         <span class="ccat">미국 | 안보·AI</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T01:00:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">[NYT] AI가 전쟁을 바꾼다 — 이란 전쟁에서 드러난 자율무기의 실체</div>
+      <div class="ch"><a href="https://www.nytimes.com/search?query=AI%20autonomous%20weapons%20Iran%20war" class="ch-link" target="_blank">[NYT] AI가 전쟁을 바꾼다 — 이란 전쟁에서 드러난 자율무기의 실체</a></div>
       <ul class="cpts">
         <li>NYT, 이란-이스라엘 전쟁에서 AI 자율무기 실전 투입 첫 대규모 사례 보도</li>
         <li>미국 팔란티어·앤트로픽 AI 시스템이 표적 선정·작전 지원에 투입된 정황</li>
@@ -499,6 +806,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>한국도 무관하지 않아 — 국방부, AI 기반 감시·정찰 체계 도입 검토 중</li>
       </ul>
       <div class="ctags"><span class="ctag">NYT</span><span class="ctag">AI무기</span><span class="ctag">자율무기</span><span class="ctag">미중</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('nyt_ai',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <div class="card" style="border-left-color:#8c6a1a">
@@ -506,9 +814,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="src int">Nikkei</span>
         <span class="lean">경제 전문지</span>
         <span class="ccat">일본 | 한일경제</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-11T02:00:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">[니혼게이자이] 한국 1인당 소득 일본에 역전 — "엔저 효과 반전"</div>
+      <div class="ch"><a href="https://www.nikkei.com/search?keyword=%E9%9F%93%E5%9B%BD%E6%89%80%E5%BE%97%20%E6%97%A5%E6%9C%AC%20%E9%80%86%E8%BB%A2" class="ch-link" target="_blank">[니혼게이자이] 한국 1인당 소득 일본에 역전 — "엔저 효과 반전"</a></div>
       <ul class="cpts">
         <li>닛케이, 한국 GNI가 일본에 역전된 것을 "엔저 효과 소멸의 반전"으로 분석</li>
         <li>일본 경제 회복과 엔화 약세 완화가 맞물리며 달러 환산 소득 격차 재확대</li>
@@ -517,6 +825,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>닛케이 주가 +3% 반등 — 유가 안정에 따른 아시아 증시 동반 상승</li>
       </ul>
       <div class="ctags"><span class="ctag">Nikkei</span><span class="ctag">한일경제</span><span class="ctag">엔저</span><span class="ctag">GNI</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('nikkei_gni',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <div class="card" style="border-left-color:#c05a10">
@@ -524,9 +833,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="src int">FT</span>
         <span class="lean">경제 전문지</span>
         <span class="ccat">유럽 | 에너지·금융</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-10T22:00:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">[파이낸셜타임스] 호르무즈 위기, 유럽 에너지 안보의 약한 고리</div>
+      <div class="ch"><a href="https://www.ft.com/search?q=Hormuz%20crisis%20Europe%20energy" class="ch-link" target="_blank">[파이낸셜타임스] 호르무즈 위기, 유럽 에너지 안보의 약한 고리</a></div>
       <ul class="cpts">
         <li>FT "유럽은 중동 원유·LNG 의존도가 높아 호르무즈 위기에 가장 취약한 지역"</li>
         <li>프랑스 함정 증파는 에너지 루트 보호를 위한 경제적 계산이 깔려 있다 분석</li>
@@ -535,6 +844,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>ECB 금리 결정에도 에너지 인플레이션 변수가 다시 부상할 전망</li>
       </ul>
       <div class="ctags"><span class="ctag">FT</span><span class="ctag">유럽에너지</span><span class="ctag">호르무즈</span><span class="ctag">ECB</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('ft_hormuz',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
     <div class="card" style="border-left-color:#5a1a5a">
@@ -542,9 +852,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="src int">Guardian</span>
         <span class="lean">진보</span>
         <span class="ccat">영국 | 사회·기후</span>
-        <span class="ctime">⏱ 1분</span>
+        <span class="ctime" data-pubtime="2026-03-10T23:30:00+09:00">🕒 --</span>
       </div>
-      <div class="ch">[가디언] 전쟁이 기후 목표를 집어삼키다 — 군비 증강의 탄소 발자국</div>
+      <div class="ch"><a href="https://www.theguardian.com/search?q=war%20climate%20carbon%20military" class="ch-link" target="_blank">[가디언] 전쟁이 기후 목표를 집어삼키다 — 군비 증강의 탄소 발자국</a></div>
       <ul class="cpts">
         <li>가디언, 이란·우크라이나 전쟁으로 세계 군비 지출 급증 → 탄소 배출 폭증 분석</li>
         <li>미국·유럽 군사 작전에서 연간 수억 톤 CO₂ 배출 — 파리협약 목표와 충돌</li>
@@ -553,6 +863,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <li>한국 에너지 전환 정책에도 국제 환경의 역풍이 불어올 수 있다는 시각</li>
       </ul>
       <div class="ctags"><span class="ctag">Guardian</span><span class="ctag">기후</span><span class="ctag">군비</span><span class="ctag">에너지전환</span></div>
+      <div class="card-history-row"><button class="hist-btn" onclick="openHistory('guardian_climate',event)">🔍 과거 유사 뉴스</button></div>
     </div>
 
   </div><!-- /left -->
@@ -689,7 +1000,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="col-writer">김대중 논설위원</span>
         <span class="col-date">2026.03.11</span>
       </div>
-      <div class="col-title">이란 전쟁이 한국에 던지는 질문 — 우리는 준비가 됐는가</div>
+      <div class="col-title"><a href="https://news.naver.com" class="ch-link" target="_blank">이란 전쟁이 한국에 던지는 질문 — 우리는 준비가 됐는가</a></div>
       <div class="col-summary">
         중동 전쟁이 터질 때마다 한국은 에너지 위기의 최전선에 선다. 원유 93%를 수입하는 구조에서 호르무즈 봉쇄는 단순한 지정학적 뉴스가 아니라 국가 생존의 문제다. 이번에는 단순한 긴장 고조가 아닌 실제 전면전이 발발했고, 우리의 대응 매뉴얼은 여전히 30년 전 수준이라는 지적이 나온다.
       </div>
@@ -705,7 +1016,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="col-writer">오형규 논설위원</span>
         <span class="col-date">2026.03.11</span>
       </div>
-      <div class="col-title">자사주 소각, 진짜 주주환원인가 면피용인가</div>
+      <div class="col-title"><a href="https://news.naver.com" class="ch-link" target="_blank">자사주 소각, 진짜 주주환원인가 면피용인가</a></div>
       <div class="col-summary">
         삼성·SK의 자사주 소각 발표는 표면상 대형 호재다. 그러나 자사주 매입 후 소각이 실질 가치 창출로 이어지려면 이익 증가가 전제돼야 한다. 주가가 저평가돼 있을 때의 소각은 진짜 주주환원이지만, 주가가 고평가됐거나 실적 악화 시기의 소각은 오히려 자원 낭비라는 비판도 있다. 코리아 디스카운트 해소를 위해선 지배구조 개선이 함께 가야 한다는 주장이 힘을 얻는다.
       </div>
@@ -721,7 +1032,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="col-writer">박용범 경제부장</span>
         <span class="col-date">2026.03.11</span>
       </div>
-      <div class="col-title">노봉법의 역설 — 약자 보호법이 왜 갈등을 키우나</div>
+      <div class="col-title"><a href="https://news.naver.com" class="ch-link" target="_blank">노봉법의 역설 — 약자 보호법이 왜 갈등을 키우나</a></div>
       <div class="col-summary">
         노동조합법 2·3조 개정안은 플랫폼·하청 노동자의 교섭권을 보장하려는 취지에서 출발했다. 그러나 시행 첫날부터 전국 동시다발 파업이 벌어지는 현실은 법의 취지와 현장 적용 사이의 간극이 얼마나 크지를 보여준다. 원청 책임 범위를 어디까지로 볼 것인가, 교섭 주체는 누구인가 — 이 핵심 질문에 법은 여전히 모호한 답을 남기고 있다.
       </div>
@@ -737,7 +1048,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="col-writer">이순혁 선임기자</span>
         <span class="col-date">2026.03.11</span>
       </div>
-      <div class="col-title">월세 300만원 시대, 집은 누구의 것인가</div>
+      <div class="col-title"><a href="https://news.naver.com" class="ch-link" target="_blank">월세 300만원 시대, 집은 누구의 것인가</a></div>
       <div class="col-summary">
         노원구까지 월세 300만원이 속출한다는 소식은 단순한 부동산 시황 뉴스가 아니다. 집이 거주 공간에서 투자 자산으로 완전히 전환된 사회의 자화상이다. 청년과 서민이 가장 긴 시간을 보내는 공간에서 쫓겨나는 현상이 구조화되고 있다. 공급 확대와 금융 규제만으로는 해결되지 않는, 주거 철학의 전환이 필요한 시점이다.
       </div>
@@ -753,7 +1064,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
         <span class="col-writer">박래용 논설위원</span>
         <span class="col-date">2026.03.11</span>
       </div>
-      <div class="col-title">AI 전쟁 시대, 한국은 무엇을 준비해야 하나</div>
+      <div class="col-title"><a href="https://news.naver.com" class="ch-link" target="_blank">AI 전쟁 시대, 한국은 무엇을 준비해야 하나</a></div>
       <div class="col-summary">
         미국과 중국이 AI 자율무기를 실전에 투입하는 시대가 왔다. 이란 전쟁은 AI 기술이 전쟁의 속도와 규모를 근본적으로 바꿀 수 있다는 것을 전 세계에 보여준 첫 대규모 사례다. 한국은 세계 6위 국방비 지출국이지만, AI 국방 기술 투자는 상위 10위권에도 들지 못한다. 기술 패권 경쟁에서 안보를 사는 시대, 한국의 선택이 요구된다.
       </div>
@@ -790,20 +1101,85 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
 </div><!-- /panel-column -->
 
 
+
 <!-- ══════════════════════════════════════
-     TAB 4: 축구
+     TAB: 투자 분석 (NEW)
 ══════════════════════════════════════ -->
-<div class="panel" id="panel-soccer">
-  <div class="soccer-box">
-    <div style="font-size:44px">⚽</div>
-    <h3>축구 뉴스 준비 중</h3>
-    <p style="font-size:12px;color:var(--ink3);margin-top:5px">K리그·EPL·챔피언스리그 주요 경기 결과와 이적 소식을 곧 업데이트할게요.</p>
-    <div class="wc-grid">
-      <div class="wc-card"><strong>📋 2026 북중미 월드컵 D-92일</strong>· 기간: 2026년 6월 11일 ~ 7월 19일<br>· 개최: 미국(11)·캐나다(2)·멕시코(3) — 16개 경기장<br>· 방식: 48개국, 12개 조 → 32강 토너먼트</div>
-      <div class="wc-card"><strong>🇰🇷 한국 대표팀</strong>· 8강 달성 시 상금 2,050만 달러 (약 295억원)<br>· 홍명보 감독 체제 가동 중<br>· 카타르 대비 총 상금 65% 증가</div>
+<div class="panel" id="panel-invest">
+<div class="invest-grid">
+  <div class="left">
+    <div class="sec"><span class="sec-tag" style="background:var(--navy)">AI 시장 예측 및 투자 전략</span><div class="sec-line"></div></div>
+    
+    <div class="inv-card red">
+      <div class="inv-title">📈 국내 증시 (KOSPI) 분석</div>
+      <div class="inv-ai-summary">
+        <strong>🤖 AI 예측:</strong> 최근 대규모 자사주 소각 발표(과거 사례: 2018년 유사 규모 발표 시 KOSPI 단기 4% 상승)로 인해 주주환원 기대감이 높습니다. 환율 압박이 다소 있으나, 지지선 확립 시 단기 반등이 유력합니다.
+      </div>
+      <div class="inv-stats">
+        <div class="inv-stat"><div class="lbl">현재 지수</div><div class="val up">2,750.45</div></div>
+        <div class="inv-stat"><div class="lbl">RSI (14)</div><div class="val">58.2</div></div>
+        <div class="inv-stat"><div class="lbl">MACD</div><div class="val up">Bullish Cross</div></div>
+      </div>
+      <div class="inv-signal" style="justify-content:flex-start;">
+        <span class="lbl"><span style="color:var(--ink3)">예상 밴드:</span> 2,720 ~ 2,810 포인트</span>
+        
+      </div>
+    </div>
+
+    <div class="inv-card gold">
+      <div class="inv-title">💵 원/달러 환율 흐름</div>
+      <div class="inv-ai-summary">
+        <strong>🤖 AI 예측:</strong> 중동 지정학적 리스크 확대로 안전자산 선호 심리가 강합니다. 과거 유사한 중동 위기 시 환율 변동성은 2주간 3~5% 상방 압력을 받았습니다. 1,380원 이상의 높은 환율 변동성이 한동안 유지될 전망입니다.
+      </div>
+      <div class="inv-stats">
+        <div class="inv-stat"><div class="lbl">현재 환율</div><div class="val up">1,385.20</div></div>
+        <div class="inv-stat"><div class="lbl">RSI (14)</div><div class="val">71.5 (과매수)</div></div>
+        <div class="inv-stat"><div class="lbl">Bollinger Bands</div><div class="val up">상단 돌파</div></div>
+      </div>
+      <div class="inv-signal" style="justify-content:flex-start;">
+        <span class="lbl"><span style="color:var(--ink3)">예상 밴드:</span> 1,370 ~ 1,400 원</span>
+        
+      </div>
+    </div>
+    
+    <div class="inv-card">
+      <div class="inv-title">🥇 국제 금값 및 대체자산</div>
+      <div class="inv-ai-summary">
+        <strong>🤖 AI 예측:</strong> 지정학적 불안으로 금 수요가 견조하지만, 추세선이 상승 둔화(박스권 진입) 신호를 보이고 있습니다. 단기적으론 전고점 저항($2,400) 돌파가 어려울 것으로 판단됩니다.
+      </div>
+      <div class="inv-stats">
+        <div class="inv-stat"><div class="lbl">온스당 가격</div><div class="val up">$2,380.10</div></div>
+        <div class="inv-stat"><div class="lbl">추세선 (50일)</div><div class="val">상승장 둔화</div></div>
+        <div class="inv-stat"><div class="lbl">단기 저항선</div><div class="val">$2,400</div></div>
+      </div>
+      <div class="inv-signal" style="justify-content:flex-start;">
+        <span class="lbl"><span style="color:var(--ink3)">예상 밴드:</span> $2,350 ~ $2,395</span>
+        
+      </div>
+    </div>
+
+  </div>
+  <div class="right">
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>주목할 섹터 💡</div>
+      <div class="hlist">
+        <div class="hitem"><span class="hi-src src e">반도체</span><div><div class="hi-txt">엔비디아 HBM 수주 관련주</div><div class="hi-sub">단기 모멘텀 유지 (외인 매수세 지속)</div></div></div>
+        <div class="hitem"><span class="hi-src src p">해운·물류</span><div><div class="hi-txt">호르무즈 사태 반사이익</div><div class="hi-sub">변동성 매우 높음 — 단기 트레이딩만 유효</div></div></div>
+        <div class="hitem"><span class="hi-src src c">가치·배당주</span><div><div class="hi-txt">자사주 소각 여력 풍부한 지주사</div><div class="hi-sub">장기 우상향 추세 확립 가능성</div></div></div>
+      </div>
+    </div>
+    
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>과거 위기 사례 분석</div>
+      <div class="hlist" style="padding:12px; font-size:12px; color:var(--ink2); line-height:1.6;">
+        👉 <strong>2020년 1월 이란 솔레이마니 사태</strong> 당시 KOSPI는 단기급락 3% 후, 2주일 내 <strong>전고점을 회복</strong>했습니다. 현재 신용융자 잔고가 높다는 점(32조)이 다르나, 펀더멘털 손상이 아니라면 <strong>단기 매수 기회</strong>로 볼 수 있습니다.
+      </div>
     </div>
   </div>
 </div>
+</div><!-- /panel-invest -->
+
+
 
 
 <!-- ══════════════════════════════════════
@@ -818,10 +1194,10 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
       <div class="acnt">12건 ▾</div>
     </div>
     <div class="arch-detail open" id="d11">
-      <div class="pcard r"><div class="ph">삼성 16조·SK 5조 자사주 소각 — 국내 사상 최대</div><div class="pp">6개월 내 소각, 주주환원 경쟁 본격화</div></div>
-      <div class="pcard r"><div class="ph">트럼프 "이란 전쟁 곧 끝난다" — 종전 시사</div><div class="pp">이란 혁명수비대 즉각 반박 · 강경론 병행</div></div>
-      <div class="pcard"><div class="ph">호르무즈 선박 통행 90% 급감, HMM 5척 발묶임</div><div class="pp">국제유가 급등락 · 비축유 방출 검토</div></div>
-      <div class="pcard"><div class="ph">韓 1인당 GNI 3만6,855달러 — 일본·대만에 역전</div><div class="pp">고환율 주원인 · 4만달러 내년 가능(한은)</div></div>
+      <div class="card red" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">삼성 16조·SK 5조 자사주 소각 — 국내 사상 최대</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">6개월 내 소각, 주주환원 경쟁 본격화 <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
+      <div class="card red" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">트럼프 "이란 전쟁 곧 끝난다" — 종전 시사</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">이란 혁명수비대 즉각 반박 · 강경론 병행 <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
+      <div class="card" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">호르무즈 선박 통행 90% 급감, HMM 5척 발묶임</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">국제유가 급등락 · 비축유 방출 검토 <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
+      <div class="card" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">韓 1인당 GNI 3만6,855달러 — 일본·대만에 역전</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">고환율 주원인 · 4만달러 내년 가능(한은) <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
     </div>
   </div>
   <div>
@@ -831,9 +1207,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
       <div class="acnt">10건 ▾</div>
     </div>
     <div class="arch-detail" id="d10">
-      <div class="pcard r"><div class="ph">이란·이스라엘 전면전 발발 — 유가 WTI 103달러</div><div class="pp">이스라엘 공습 → 이란 보복, 호르무즈 봉쇄 경고</div></div>
-      <div class="pcard r"><div class="ph">코스피 4% 급락 — 외국인 4조 매도, 환율 1,450원</div><div class="pp">중동 전쟁 충격, 2,400선 붕괴</div></div>
-      <div class="pcard"><div class="ph">트럼프 "이란 20배로 응징" 초강경 경고</div><div class="pp">추가 군사 타격 예고 · 이란 "모든 자원 동원"</div></div>
+      <div class="card red" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">이란·이스라엘 전면전 발발 — 유가 WTI 103달러</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">이스라엘 공습 → 이란 보복, 호르무즈 봉쇄 경고 <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
+      <div class="card red" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">코스피 4% 급락 — 외국인 4조 매도, 환율 1,450원</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">중동 전쟁 충격, 2,400선 붕괴 <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
+      <div class="card" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">트럼프 "이란 20배로 응징" 초강경 경고</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">추가 군사 타격 예고 · 이란 "모든 자원 동원" <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
     </div>
   </div>
   <div>
@@ -843,8 +1219,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
       <div class="acnt">9건 ▾</div>
     </div>
     <div class="arch-detail" id="d07">
-      <div class="pcard r"><div class="ph">트럼프, 상호관세 90일 추가 유예 — 한국 포함</div><div class="pp">철강·자동차 품목 협상 지속</div></div>
-      <div class="pcard"><div class="ph">삼성 HBM3E, 엔비디아 납품 최종 확정</div><div class="pp">블랙웰 GPU용 12단 공급 · SK 독점 균열</div></div>
+      <div class="card red" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">트럼프, 상호관세 90일 추가 유예 — 한국 포함</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">철강·자동차 품목 협상 지속 <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
+      <div class="card" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">삼성 HBM3E, 엔비디아 납품 최종 확정</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">블랙웰 GPU용 12단 공급 · SK 독점 균열 <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
     </div>
   </div>
   <div>
@@ -854,8 +1230,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
       <div class="acnt">8건 ▾</div>
     </div>
     <div class="arch-detail" id="d05">
-      <div class="pcard"><div class="ph">한은 기준금리 2.75% 동결 — "불확실성 크다"</div><div class="pp">중동 사태·환율 고려 · 5월 인하 기대 유지</div></div>
-      <div class="pcard"><div class="ph">GTX-B 인천대입구~서울역 구간 개통</div><div class="pp">인천~서울 20분대 연결</div></div>
+      <div class="card" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">한은 기준금리 2.75% 동결 — "불확실성 크다"</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">중동 사태·환율 고려 · 5월 인하 기대 유지 <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
+      <div class="card" style="margin-top:6px; box-shadow:none; padding:10px 12px; border-radius:4px;"><div class="ch"><a href="https://news.naver.com" class="ch-link" target="_blank" style="font-size:13.5px;">GTX-B 인천대입구~서울역 구간 개통</a></div><div class="col-summary" style="font-size:11.5px; margin-bottom:0; color:#555;">인천~서울 20분대 연결 <span style="float:right;color:#aaa">🕒 12시간 전</span></div></div>
     </div>
   </div>
 </div>
@@ -920,11 +1296,27 @@ body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif
   </div>
 </footer>
 
-<script>
-const d=new Date(),wd=['일','월','화','수','목','금','토'];
-document.getElementById('hdate').textContent=
-  `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()} (${wd[d.getDay()]})`;
+<!-- ══ HISTORY MODAL ══ -->
+<div class="hist-overlay" id="histOverlay" onclick="closeHistory(event)">
+  <div class="hist-modal">
+    <button class="hist-close" onclick="document.getElementById('histOverlay').classList.remove('open')">✕</button>
+    <div class="hist-modal-title" id="histTitle">과거 유사 뉴스</div>
+    <div class="hist-modal-sub" id="histSub">이 주제와 관련된 이전 뉴스 기록입니다</div>
+    <div id="histBody"></div>
+  </div>
+</div>
 
+<script>
+/* ═══════════════════════════════════════
+   날짜 표시
+═══════════════════════════════════════ */
+const _d=new Date(),_wd=['일','월','화','수','목','금','토'];
+document.getElementById('hdate').textContent=
+  `${_d.getFullYear()}.${_d.getMonth()+1}.${_d.getDate()} (${_wd[_d.getDay()]})`;
+
+/* ═══════════════════════════════════════
+   탭 전환
+═══════════════════════════════════════ */
 function go(id,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
@@ -933,9 +1325,214 @@ function go(id,btn){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function tog(id){document.getElementById(id)?.classList.toggle('open')}
+
+/* ═══════════════════════════════════════
+   스크롤 프로그레스바
+═══════════════════════════════════════ */
 window.addEventListener('scroll',()=>{
   const h=document.documentElement;
   document.getElementById('prog').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+});
+
+/* ═══════════════════════════════════════
+   몇 분 전 표시 (data-pubtime 속성 기반)
+═══════════════════════════════════════ */
+function renderTimeAgo(){
+  const now=new Date();
+  document.querySelectorAll('[data-pubtime]').forEach(el=>{
+    const pub=new Date(el.dataset.pubtime);
+    if(isNaN(pub)) return;
+    const diff=Math.floor((now-pub)/1000);
+    let label;
+    if(diff<60) label='방금 전';
+    else if(diff<3600) label=Math.floor(diff/60)+'분 전';
+    else if(diff<86400) label=Math.floor(diff/3600)+'시간 전';
+    else label=Math.floor(diff/86400)+'일 전';
+    el.textContent='🕒 '+label;
+  });
+}
+renderTimeAgo();
+setInterval(renderTimeAgo, 60000);
+
+/* ═══════════════════════════════════════
+   뉴스 업데이트 시간 표시 (meta 태그 기반)
+   GitHub Actions가 <meta name="last-updated"> 를 주입함
+   자동 업데이트: 매일 오전 7:30 / 오후 5:30 KST
+═══════════════════════════════════════ */
+(function(){
+  const meta=document.querySelector('meta[name="last-updated"]');
+  const el=document.getElementById('hdr-update');
+  if(meta && meta.content){
+    const t=new Date(meta.content);
+    if(!isNaN(t)){
+      const h=t.getHours().toString().padStart(2,'0');
+      const m=t.getMinutes().toString().padStart(2,'0');
+      const mo=t.getMonth()+1;
+      const d=t.getDate();
+      el.textContent=`🕐 ${mo}/${d} ${h}:${m} 업데이트`;
+    }
+  } else {
+    const now=new Date();
+    const mo=now.getMonth()+1;
+    const d=now.getDate();
+    el.textContent=`🕐 ${mo}/${d} 업데이트`;
+  }
+})();
+
+/* ═══════════════════════════════════════
+   심플 모드 토글 (iOS-inspired 간소화)
+═══════════════════════════════════════ */
+function toggleTheme(){
+  const isSimple=document.body.classList.toggle('simple-mode');
+  const btn=document.getElementById('themeToggleBtn');
+  if(isSimple){
+    btn.textContent='☰ 기본 보기';
+    btn.title='기본 스타일로 전환';
+  } else {
+    btn.textContent='☰ 간소화';
+    btn.title='헤드라인 간소화 모드로 전환';
+  }
+  localStorage.setItem('briefing-theme', isSimple ? 'simple' : 'default');
+}
+// 저장된 테마 복원
+(function(){
+  const saved=localStorage.getItem('briefing-theme');
+  if(saved==='simple'){
+    document.body.classList.add('simple-mode');
+    const btn=document.getElementById('themeToggleBtn');
+    if(btn){ btn.textContent='☰ 기본 보기'; btn.title='기본 스타일로 전환'; }
+  }
+})();
+
+/* ═══════════════════════════════════════
+   과거 동일 뉴스 히스토리 모달
+═══════════════════════════════════════ */
+const HISTORY_DATA = {
+  'samsung_buyback': {
+    title: '삼성·SK 자사주 소각',
+    items: [
+      { date: '2018.12.05', title: '삼성전자 9.3조 자사주 소각 발표', bullets: ['역대 최대 규모 자사주 소각 계획 공개', '발표 이후 2주간 주가 +6.2% 상승', '코리아 디스카운트 해소 기대감 형성'] },
+      { date: '2021.03.11', title: 'SK하이닉스, 1조 규모 자사주 매입 결정', bullets: ['반도체 슈퍼사이클 진입 시점에 주주환원 강화', '외국인 매수세 유입의 계기로 작용', '국내 반도체 투자 심리 개선'] },
+      { date: '2023.06.20', title: '금융당국 "자사주 소각 의무화" 검토', bullets: ['기업 밸류업 프로그램 일환으로 논의 시작', '일본 도쿄증권거래소 자사주 정책 벤치마킹', '코리아 디스카운트 해소 정책 기조 강화'] },
+    ]
+  },
+  'hormuz': {
+    title: '호르무즈 해협 위기',
+    items: [
+      { date: '2019.07.18', title: '이란, 영국 유조선 나포 — 호르무즈 긴장 고조', bullets: ['미·이란 갈등으로 해협 통과 선박 감소', '국제유가 WTI +3.8% 급등', 'HMM 등 국내 선사 우회 항로 검토'] },
+      { date: '2020.01.03', title: '솔레이마니 제거 — 이란 보복 위협', bullets: ['이란 혁명수비대 사령관 피격 사망', '중동 리스크 최고조, 유가 4% 급등', 'KOSPI 단기 2% 하락 후 2주 내 회복'] },
+      { date: '2024.01.15', title: '후티 반군 홍해 공격 — 해운 대란', bullets: ['수에즈 운하 대신 희망봉 우회 급증', '해운 운임 BDI지수 40% 폭등', '국내 HMM 주가 단기 15% 급등'] },
+    ]
+  },
+  'iran_war': {
+    title: '이란-이스라엘 분쟁',
+    items: [
+      { date: '2024.04.14', title: '이란, 이스라엘 본토 직접 공격 (드론·미사일 300기)', bullets: ['이란 역사상 첫 이스라엘 직접 타격', '이스라엘 방공망이 99% 요격 성공', '국제유가 일시 +5%, 이후 안정'] },
+      { date: '2024.10.01', title: '이란, 이스라엘에 탄도미사일 180발 발사', bullets: ['헤즈볼라 지도자 나스랄라 제거 보복', '이스라엘, 재보복 공습 예고', 'KOSPI -1.8%, 원/달러 +12원 급등'] },
+      { date: '2025.06.12', title: '이스라엘, 이란 핵시설 공습 — 전면전 위기', bullets: ['나탄즈·포르도 우라늄 농축 시설 피격', '이란 "결정적 보복" 천명', '국제유가 WTI 87달러 돌파'] },
+    ]
+  },
+  'gni': {
+    title: '한국 1인당 GNI/소득',
+    items: [
+      { date: '2023.06.07', title: '2022년 한국 1인당 GNI 3만2,886달러 — 전년比 8.5% 급감', bullets: ['원화 가치 하락으로 달러 환산 소득 급감', '37개국 중 24위로 하락', '환율 1,300원대가 소득 지표 왜곡'] },
+      { date: '2024.05.22', title: '2023년 1인당 GNI 3만5,563달러 회복', bullets: ['반도체 수출 회복으로 소득 증가', 'OECD 평균(3만7,000달러)에 근접', '1인당 GDP는 일본 제쳐 아시아 2위'] },
+    ]
+  },
+  'credit_margin': {
+    title: '신용융자 반대매매',
+    items: [
+      { date: '2022.09.26', title: '신용융자 20조 → 반대매매 폭발 — 코스피 2,200선 붕괴', bullets: ['금리 인상 국면 하락장에 반대매매 쇄도', '개인 투자자 손실 규모 사상 최대', '이후 3개월간 증시 저점 횡보'] },
+      { date: '2023.08.02', title: '에코프로 급등 시 신용 25조 육박 — 버블 경고', bullets: ['2차전지 테마주 급등 주도 신용 급증', '금감원, 신용융자 한도 축소 조치 경고', '에코프로 40% 급락 후 반대매매 연쇄'] },
+    ]
+  },
+  'labor_law': {
+    title: '노봉법(노동조합법 개정)',
+    items: [
+      { date: '2023.11.09', title: '노조법 2·3조 개정안 국회 통과 (재석 179명, 찬성 165명)', bullets: ['야당 단독 처리 — 여당 퇴장 후 가결', '윤석열 전 대통령 거부권 행사 예고', '경총 "헌법 소원 제기" 즉각 반발'] },
+      { date: '2024.03.07', title: '헌법재판소, 노봉법 위헌 여부 심판 착수', bullets: ['원청 사용자 책임 범위 논란 핵심 쟁점', '헌재 결정까지 최소 1년 이상 예상', '노사 갈등 불씨 지속'] },
+    ]
+  },
+  'rent': {
+    title: '서울 월세·부동산',
+    items: [
+      { date: '2024.08.14', title: '강남 월세 500만원 시대 — 전세→월세 전환 가속', bullets: ['전세사기 여파로 월세 선호 급증', '강남3구 월세 평균 300만원 돌파', '청년 주거비 부담 역대 최고'] },
+      { date: '2025.01.20', title: '서울 외곽 노원·도봉까지 월세 200만원대 확산', bullets: ['강남 과부하 → 외곽 풍선효과', '서울 전체 평균 전월세 전환율 4.7%', '임차인 주거 안정 정책 실효성 의문'] },
+    ]
+  },
+  'samsung_chip': {
+    title: '삼성 반도체·AI',
+    items: [
+      { date: '2024.10.31', title: '삼성전자, HBM3E 엔비디아 공급 최종 불합격', bullets: ['SK하이닉스 독점 공급 구도 굳어짐', '삼성 파운드리 적자 지속 — 감산 고려', 'AI 반도체 시장에서 삼성 입지 위협'] },
+      { date: '2025.04.08', title: '삼성전자, 2nm 파운드리 양산 시험 시작', bullets: ['TSMC 2nm 대비 6개월 후발', '엔비디아, 삼성 2nm 시험 물량 발주', '시스템반도체 재건 장기 로드맵 가동'] },
+    ]
+  },
+  'wsj_oil': {
+    title: '원유·에너지 시장',
+    items: [
+      { date: '2022.03.08', title: 'WTI 130달러 — 우크라이나 전쟁 에너지 대란', bullets: ['러 원유 수출 금지 우려로 폭등', '미국, 전략비축유 1억8천만 배럴 방출', '한국 에너지 안보 비상'] },
+      { date: '2023.09.05', title: 'OPEC+ 감산 연장 — 유가 95달러 돌파', bullets: ['사우디·러시아 자발적 감산 연말까지 연장', '미국 소비 물가 재상승 우려', '연준 추가 긴축 압력 가중'] },
+    ]
+  },
+  'nyt_ai': {
+    title: 'AI 자율무기·미중 경쟁',
+    items: [
+      { date: '2024.02.20', title: 'GPT-4 군사 활용 논란 — OpenAI 금지 정책 폐기', bullets: ['OpenAI, 군사용 AI 금지 조항 삭제', '팔란티어·앤트로픽 국방부 계약 확대', 'AI 윤리 전문가 집단 반발'] },
+      { date: '2025.07.14', title: '가자 전쟁서 AI 표적 시스템 "라벤더" 첫 공개', bullets: ['이스라엘 군, AI 기반 표적 선정 인정', '민간인 오폭 리스크 논란 국제 확산', '유엔 자율무기 금지 결의안 추진'] },
+    ]
+  },
+  'nikkei_gni': {
+    title: '한일 경제 비교',
+    items: [
+      { date: '2023.07.05', title: '한국 1인당 GDP, 처음으로 일본 역전', bullets: ['2022년 기준 한국 $32,886 vs 일본 $33,849', '근소한 차이로 일본 추월 주목', '닛케이 "엔저 효과로 곧 역전" 반박'] },
+      { date: '2024.06.21', title: '일본, 엔화 회복으로 1인당 GNI 한국 재역전', bullets: ['엔/달러 145→135 엔화 강세 전환', '달러 환산 일본 소득 급증', '한국 고환율 구조의 취약성 노출'] },
+    ]
+  },
+  'ft_hormuz': {
+    title: '유럽 에너지 위기',
+    items: [
+      { date: '2022.08.31', title: '러시아 노르트스트림 가스 공급 완전 중단', bullets: ['유럽 에너지 가격 폭등 — 천연가스 400% 급등', 'EU 긴급 에너지 절약 목표 15% 설정', '독일 산업계 생산 감소 위기'] },
+      { date: '2024.03.15', title: '유럽 LNG 수입 기록 경신 — 미국산 비중 65%', bullets: ['러시아 의존도 제로화 성공', '미국 LNG 터미널 증설 가속', '에너지 전환 비용 EU 재정 압박'] },
+    ]
+  },
+  'guardian_climate': {
+    title: '기후·환경 정책',
+    items: [
+      { date: '2023.11.30', title: 'COP28 — 화석연료 "단계적 폐지" 합의 실패', bullets: ['사우디 등 산유국 반대로 "전환(transition)" 표현으로 후퇴', '과학자들 "실질적 진전 없는 문서"', '한국, 2038년 석탄 폐지 선언'] },
+      { date: '2024.09.18', title: '군비 지출 기록 경신 — 2조3천억 달러 — 탄소 발자국 급증', bullets: ['나토 국방비 증가분 연간 4억톤 CO₂ 추가', '러-우 전쟁 탄소 배출량 스웨덴 연간치 맞먹어', '기후와 안보의 트레이드오프 논쟁 격화'] },
+    ]
+  },
+  'mobis': {
+    title: '현대·기아 유럽 진출',
+    items: [
+      { date: '2023.05.25', title: '현대차, 미국 조지아 EV 공장 완공', bullets: ['미 IRA 보조금 대상 첫 한국 기업', '연 30만대 생산 능력 확보', '테슬라·GM과 현지 경쟁 본격화'] },
+      { date: '2024.10.08', title: '기아, 유럽 슬로바키아 공장 EV 전환 완료', bullets: ['연 15만대 전기차 전용 생산 라인', 'EU 탄소 규제 대응 선제 투자', '현대모비스 현지 부품 공급 연동'] },
+    ]
+  },
+};
+
+function openHistory(key, e){
+  e.stopPropagation();
+  const data = HISTORY_DATA[key];
+  if(!data) return;
+  document.getElementById('histTitle').textContent = '📂 ' + data.title + ' — 과거 뉴스 추적';
+  document.getElementById('histSub').textContent = '동일 주제의 과거 보도를 시간순으로 확인하세요';
+  const body = document.getElementById('histBody');
+  body.innerHTML = data.items.map(item => `
+    <div class="hist-item">
+      <div class="hist-item-date">📅 ${item.date}</div>
+      <div class="hist-item-title">${item.title}</div>
+      <div class="hist-item-bullet">${item.bullets.map(b=>'· '+b).join('<br>')}</div>
+    </div>
+  `).join('');
+  document.getElementById('histOverlay').classList.add('open');
+}
+function closeHistory(e){
+  if(e.target===document.getElementById('histOverlay'))
+    document.getElementById('histOverlay').classList.remove('open');
+}
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') document.getElementById('histOverlay').classList.remove('open');
 });
 </script>
 </body>
