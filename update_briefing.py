@@ -23,7 +23,7 @@ if GEMINI_KEY:
     try:
         import google.generativeai as genai
         genai.configure(api_key=GEMINI_KEY)
-        gemini_model = genai.GenerativeModel("gemini-1.5-flash")
+        gemini_model = genai.GenerativeModel("gemini-2.0-flash")
         print("✅ Gemini API 연결 완료")
     except Exception as e:
         print(f"⚠️  Gemini 초기화 실패: {e}")
@@ -44,13 +44,13 @@ HEADERS = {
 
 RSS_SOURCES = {
     "경제 · 금융": [
-        ("조선일보", "c", "https://www.chosun.com/arc/outboundfeeds/rss/category/economy/"),
+        ("조선일보", "c", "https://www.chosun.com/arc/outboundfeeds/rss/"),
         ("매일경제", "e", "https://www.mk.co.kr/rss/30000001/"),
         ("한국경제", "e", "https://www.hankyung.com/feed/economy"),
         ("연합뉴스", "w", "https://www.yonhapnews.co.kr/rss/economy.xml"),
     ],
     "기 업": [
-        ("조선일보", "c", "https://www.chosun.com/arc/outboundfeeds/rss/category/economy/"),
+        ("조선일보", "c", "https://www.chosun.com/arc/outboundfeeds/rss/"),
         ("한국경제", "e", "https://www.hankyung.com/feed/economy"),
         ("매일경제", "e", "https://www.mk.co.kr/rss/30200030/"),
     ],
@@ -61,7 +61,7 @@ RSS_SOURCES = {
     ],
     "국 제": [
         ("연합뉴스", "w", "https://www.yonhapnews.co.kr/rss/international.xml"),
-        ("조선일보", "c", "https://www.chosun.com/arc/outboundfeeds/rss/category/international/"),
+        ("조선일보", "c", "https://www.chosun.com/arc/outboundfeeds/rss/"),
     ],
 }
 
