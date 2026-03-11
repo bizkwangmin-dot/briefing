@@ -3,41 +3,45 @@
 """
 오늘의 브리핑 자동 업데이트 스크립트
 GitHub Actions에서 실행 (오전 7:30 / 오후 5:30 KST)
-
-동작:
-  1. 주요 언론사 RSS 뉴스 수집 (제목 + 링크 + 시간)
-  2. 섹션별로 카드 자동 생성
-  3. index.html 업데이트
-  4. GitHub Actions가 자동 커밋·푸시
+Gemini Flash API로 5줄 요약 자동 생성 (무료)
 """
 
-import os, re, sys
-from datetime import datetime, timezone, timedelta
+import os, re, sys, time
+from datetime import datetime
 from email.utils import parsedate_to_datetime
 import pytz
 import requests
 from bs4 import BeautifulSoup
-import google.generativeai as genai  # Gemini 추가
 
+# ─────────────────────────────────────────
 # Gemini API 설정
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
+# ─────────────────────────────────────────
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
+gemini_model = None
+
 if GEMINI_KEY:
-    genai.configure(api_key=GEMINI_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    try:
+        import google.generativeai as genai
+        genai.configure(api_key=GEMINI_KEY)
+        gemini_model = genai.GenerativeModel("gemini-1.5-flash")
+        print("✅ Gemini API 연결 완료")
+    except Exception as e:
+        print(f"⚠️  Gemini 초기화 실패: {e}")
 else:
-    model = None
+    print("⚠️  GEMINI_API_KEY 없음 — 요약 없이 제목만 사용")
 
 KST = pytz.timezone("Asia/Seoul")
 now_kst = datetime.now(KST)
 now_iso = now_kst.strftime("%Y-%m-%dT%H:%M:%S+09:00")
 now_display = now_kst.strftime("%Y.%m.%d %H:%M KST")
-print(f"[{now_display}] 브리핑 자동 업데이트 시작 (AI 요약 포함)")
+print(f"[{now_display}] 브리핑 자동 업데이트 시작")
 
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                  'AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/120.0 Safari/537.36'
 }
 
-# --- (RSS_SOURCES, SECTION_COLORS, CARD_COLORS는 기존 코드와 동일) ---
 RSS_SOURCES = {
     "경제 · 금융": [
         ("조선일보", "c", "https://www.chosun.com/arc/outboundfeeds/rss/category/economy/"),
@@ -61,81 +65,117 @@ RSS_SOURCES = {
     ],
 }
 
-SECTION_COLORS = {"경제 · 금융": "var(--red)", "기 업": "var(--navy)", "정책 · 사회": "var(--gold)", "국 제": "var(--dark)"}
-CARD_COLORS = {"경제 · 금융": "red", "기 업": "navy", "정책 · 사회": "gold", "국 제": "dk"}
+SECTION_COLORS = {
+    "경제 · 금융": "var(--red)",
+    "기 업":       "var(--navy)",
+    "정책 · 사회": "var(--gold)",
+    "국 제":       "var(--dark)",
+}
+CARD_COLORS = {
+    "경제 · 금융": "red",
+    "기 업":       "navy",
+    "정책 · 사회": "gold",
+    "국 제":       "dk",
+}
 
-def get_ai_summary(title):
-    """제목을 바탕으로 뉴스 내용을 예측하여 요약 (무료 티어 속도 고려)"""
-    if not model:
-        return "AI 요약을 불러올 수 없습니다."
-    
+def get_summary(title):
+    """Gemini로 뉴스 제목 → 5줄 요약"""
+    if not gemini_model:
+        return None
+    prompt = f"""뉴스 기사 제목: '{title}'
+
+이 뉴스의 핵심 내용을 5줄로 요약해줘.
+규칙:
+- 각 줄은 숫자나 기호 없이 바로 내용만
+- 한 줄에 50자 이내
+- 구체적인 수치나 사실 위주로
+- 한국어로 작성
+- 5줄만 출력 (그 외 설명 없이)"""
     try:
-        prompt = f"뉴스 제목: '{title}'\n이 뉴스의 핵심 내용을 5줄 이내로 요약해줘. 각 줄 끝에는 적절한 이모지를 붙여줘. 한국어로 작성해."
-        response = model.generate_content(prompt)
-        return response.text.replace("\n", "<br>")
+        response = gemini_model.generate_content(prompt)
+        lines = [l.strip().lstrip('·-•123456789. ').strip()
+                 for l in response.text.strip().split('\n') if l.strip()]
+        return [l for l in lines if l][:5]
     except Exception as e:
-        print(f" 요약 실패: {e}")
-        return "요약을 생성하는 중 오류가 발생했습니다."
+        print(f"    ⚠️  요약 실패: {e}")
+        time.sleep(3)
+        return None
 
-def fetch_rss(source, src_class, url, max_items=4):
+def fetch_rss(source, src_class, url, max_items=5):
     try:
         r = requests.get(url, headers=HEADERS, timeout=12)
         r.raise_for_status()
         soup = BeautifulSoup(r.content, "lxml-xml")
         items = []
         for item in soup.find_all("item")[:max_items]:
-            title = item.find("title").get_text(strip=True)
-            link  = item.find("link").get_text(strip=True)
-            pub   = item.find("pubDate") or item.find("dc:date")
-            
-            # 요약 생성
-            print(f"  🤖 요약 중: {title[:20]}...")
-            summary = get_ai_summary(title)
-
+            title_tag = item.find("title")
+            link_tag  = item.find("link")
+            pub_tag   = item.find("pubDate") or item.find("dc:date")
+            if not title_tag: continue
+            title_text = title_tag.get_text(strip=True)
+            link_text  = link_tag.get_text(strip=True) if link_tag else "#"
+            if not link_text:
+                link_text = str(link_tag.next_sibling).strip() if link_tag and link_tag.next_sibling else "#"
             pub_iso = now_iso
-            if pub:
+            if pub_tag:
                 try:
-                    pub_dt = parsedate_to_datetime(pub.get_text(strip=True))
+                    pub_dt  = parsedate_to_datetime(pub_tag.get_text(strip=True))
                     pub_kst = pub_dt.astimezone(KST)
                     pub_iso = pub_kst.strftime("%Y-%m-%dT%H:%M:%S+09:00")
                 except: pass
-
             items.append({
-                "source": source, "src_class": src_class, "title": title,
-                "url": link, "pubtime": pub_iso, "summary": summary
+                "source": source, "src_class": src_class,
+                "title": title_text, "url": link_text, "pubtime": pub_iso,
             })
         return items
     except Exception as e:
-        print(f"  ⚠️ {source} RSS 실패: {e}")
+        print(f"  ⚠️  {source} RSS 실패: {e}")
         return []
 
-# --- (뉴스 수집 로직) ---
-print("📡 뉴스 RSS 수집 및 AI 요약 중...")
+# ─────────────────────────────────────────
+# 뉴스 수집 + Gemini 요약
+# ─────────────────────────────────────────
+print("📡 뉴스 RSS 수집 + Gemini 요약 시작...")
 section_news = {}
+total = 0
+
 for section, sources in RSS_SOURCES.items():
     seen_titles = set()
     news_list = []
     for source, src_class, url in sources:
-        items = fetch_rss(source, src_class, url, max_items=2) # 속도를 위해 소스당 2개로 조정
+        items = fetch_rss(source, src_class, url, max_items=4)
         for item in items:
             key = item["title"][:15]
             if key not in seen_titles:
                 seen_titles.add(key)
+                print(f"  🤖 [{source}] {item['title'][:30]}...")
+                item["bullets"] = get_summary(item["title"])
                 news_list.append(item)
-        if len(news_list) >= 3: # 섹션당 3개면 충분
+                time.sleep(1)  # API 속도 제한 방지
+        if len(news_list) >= 5:
             break
-    section_news[section] = news_list[:3]
+    section_news[section] = news_list[:5]
+    total += len(news_list[:5])
+    print(f"  ✅ {section}: {len(news_list[:5])}건 완료")
+
+print(f"  📰 총 {total}건 처리 완료")
 
 # ─────────────────────────────────────────
-# HTML 카드 생성 (요약 칸 추가)
+# HTML 카드 생성
 # ─────────────────────────────────────────
 def make_card(item, card_color):
-    title  = item["title"].replace('<','&lt;').replace('>','&gt;').replace('"','&quot;')
-    summary = item["summary"]
-    url    = item["url"]
-    source = item["source"]
-    src_cls= item["src_class"]
-    pub    = item["pubtime"]
+    title   = item["title"].replace('<','&lt;').replace('>','&gt;').replace('"','&quot;')
+    url     = item["url"]
+    source  = item["source"]
+    src_cls = item["src_class"]
+    pub     = item["pubtime"]
+    bullets = item.get("bullets")
+
+    bullets_html = ""
+    if bullets:
+        bullets_html = '<ul class="cpts">' + "".join(
+            f"<li>{b}</li>" for b in bullets
+        ) + "</ul>"
 
     return f'''
     <div class="card {card_color}">
@@ -144,37 +184,57 @@ def make_card(item, card_color):
         <span class="ctime" data-pubtime="{pub}">🕒 --</span>
       </div>
       <div class="ch"><a href="{url}" class="ch-link" target="_blank">{title}</a></div>
-      <div class="card-summary" style="font-size:13px; color:#555; background:#f9f9f9; padding:10px; border-radius:8px; margin:10px 0;">
-        {summary}
-      </div>
+      {bullets_html}
       <div class="card-history-row">
         <a href="{url}" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
       </div>
     </div>'''
 
-# --- (이후 index.html 업데이트 로직은 기존과 동일) ---
 def make_section_html(section_name, items, color, card_color):
     html = f'\n    <div class="sec"><span class="sec-tag" style="background:{color}">{section_name}</span><div class="sec-line"></div></div>\n'
     for item in items:
         html += make_card(item, card_color)
     return html
 
+# ─────────────────────────────────────────
+# index.html 업데이트
+# ─────────────────────────────────────────
 INDEX_PATH = "index.html"
+if not os.path.exists(INDEX_PATH):
+    print(f"❌ {INDEX_PATH} 없음")
+    sys.exit(1)
+
 with open(INDEX_PATH, "r", encoding="utf-8") as f:
     html = f.read()
 
+# last-updated 갱신
 meta_new = f'<meta name="last-updated" content="{now_iso}">'
-html = re.sub(r'<meta name="last-updated"[^>]*>', meta_new, html) if '<meta name="last-updated"' in html else html.replace('<meta charset="UTF-8">', f'<meta charset="UTF-8">\n{meta_new}')
+if '<meta name="last-updated"' in html:
+    html = re.sub(r'<meta name="last-updated"[^>]*>', meta_new, html)
+else:
+    html = html.replace('<meta charset="UTF-8">', f'<meta charset="UTF-8">\n{meta_new}')
 
+# AUTO_NEWS 마커 사이 교체
 new_news_html = "\n"
 for section, items in section_news.items():
     if items:
-        new_news_html += make_section_html(section, items, SECTION_COLORS[section], CARD_COLORS[section])
+        new_news_html += make_section_html(
+            section, items, SECTION_COLORS[section], CARD_COLORS[section]
+        )
 
-auto_block = f"{new_news_html}\n    "
-html = re.sub(r'.*?', auto_block, html, flags=re.DOTALL)
+auto_block = f"<!-- AUTO_NEWS_START -->{new_news_html}\n    <!-- AUTO_NEWS_END -->"
+
+if "<!-- AUTO_NEWS_START -->" in html and "<!-- AUTO_NEWS_END -->" in html:
+    html = re.sub(
+        r'<!-- AUTO_NEWS_START -->.*?<!-- AUTO_NEWS_END -->',
+        auto_block, html, flags=re.DOTALL
+    )
+    print("✅ 뉴스 섹션 교체 완료")
+else:
+    print("⚠️  AUTO_NEWS 마커 없음")
 
 with open(INDEX_PATH, "w", encoding="utf-8") as f:
     f.write(html)
 
-print(f"💾 업데이트 완료 🎉")
+print(f"💾 index.html 저장 완료")
+print(f"[{now_display}] 🎉 모든 업데이트 완료!")
