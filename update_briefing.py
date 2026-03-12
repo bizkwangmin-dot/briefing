@@ -112,7 +112,22 @@ HEADLINE_SOURCES = [
     ("경향","p","https://www.khan.co.kr/rss/rssdata/kh_politics.xml"),
 ]
 
-SECTION_COLORS = {
+INTL_SOURCES = [
+    ("블룸버그",    "intl", "https://feeds.bloomberg.com/markets/news.rss"),
+    ("파이낸셜타임스","intl","https://www.ft.com/rss/home"),
+    ("월스트리트저널","intl","https://feeds.a.dj.com/rss/RSSWorldNews.xml"),
+    ("뉴욕타임스",  "intl", "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml"),
+    ("니혼게이자이신문","intl","https://www.nikkei.com/rss/"),
+    ("가디언",      "intl", "https://www.theguardian.com/world/rss"),
+]
+INTL_HIST_KEYS = {
+    "블룸버그":     "iran_war",
+    "파이낸셜타임스":"us_tariff",
+    "월스트리트저널":"samsung_buyback",
+    "뉴욕타임스":   "iran_war",
+    "니혼게이자이신문":"iran_war",
+    "가디언":       "iran_war",
+}
     "경제 · 금융": "var(--red)",
     "기 업":       "var(--navy)",
     "정책 · 사회": "var(--gold)",
@@ -221,8 +236,59 @@ for section, sources in NEWS_SOURCES.items():
     print(f"  ✅ {section}: {len(news[:5])}건")
 
 # ════════════════════════════════════════════════════════════
-# STEP 2: 칼럼 수집 + 요약
+# STEP 1b: 해외 뉴스 수집 + 한국어 번역 요약
 # ════════════════════════════════════════════════════════════
+print("\n🌐 [1b] 해외 뉴스 수집 + 번역...")
+intl_news = []
+seen_intl = set()
+
+def translate_and_summarize(title, source):
+    """영문 제목 → 한국어 번역 + 3줄 요약"""
+    text = claude(
+        f"해외 뉴스 제목: '{title}'\n"
+        f"출처: {source}\n"
+        "1. 이 제목을 자연스러운 한국어로 번역해줘 (원문 느낌 살려서, 30자 이내)\n"
+        "2. 내용을 3줄로 요약해줘 (각 줄 40자 이내, 한국 독자 관점에서)\n"
+        "출력 형식 (다른 텍스트 없이):\n"
+        "번역: [한국어 제목]\n"
+        "요약1: [첫째줄]\n"
+        "요약2: [둘째줄]\n"
+        "요약3: [셋째줄]",
+        max_tokens=200
+    )
+    if not text:
+        return title, None
+    lines = text.strip().split('\n')
+    ko_title = title
+    bullets = []
+    for line in lines:
+        line = line.strip()
+        if line.startswith('번역:'):
+            ko_title = line[3:].strip()
+        elif line.startswith('요약'):
+            content = re.sub(r'^요약\d+:\s*', '', line).strip()
+            if content:
+                bullets.append(content)
+    return ko_title, bullets if len(bullets) >= 2 else None
+
+for source, src_class, url in INTL_SOURCES:
+    items = fetch_rss(source, src_class, url, max_items=2)
+    for item in items:
+        key = item["title"][:15]
+        if key not in seen_intl and len(intl_news) < 7:
+            seen_intl.add(key)
+            print(f"  🌐 [{source}] {item['title'][:35]}...")
+            ko_title, bullets = translate_and_summarize(item["title"], source)
+            item["ko_title"] = ko_title
+            item["orig_title"] = item["title"]
+            item["bullets"] = bullets
+            item["hist_key"] = INTL_HIST_KEYS.get(source, "iran_war")
+            intl_news.append(item)
+            time.sleep(0.4)
+        if len(intl_news) >= 7:
+            break
+
+print(f"  ✅ 해외 뉴스 {len(intl_news)}건")
 print("\n✍️  [2/4] 칼럼 수집...")
 columns = []
 seen_col = set()
@@ -340,7 +406,48 @@ for section, items in section_news.items():
         news_html += make_news_card(item, cc, hk)
 news_html += "\n"
 
-# ── 칼럼 HTML (v4 구조) ───────────────────────────────────
+# ── 해외 시각 카드 ────────────────────────────────────────
+def make_intl_card(item):
+    ko_title   = esc(item.get("ko_title", item["title"]))
+    orig_title = esc(item.get("orig_title", ""))
+    url        = item["url"]
+    src        = item["source"]
+    pub        = item["pubtime"]
+    bullets    = item.get("bullets") or []
+    hist_key   = item.get("hist_key", "iran_war")
+    hist_label = HIST_LABELS.get(hist_key, hist_key)
+
+    if bullets:
+        li_html = "".join(f"<li>{esc(b)}</li>" for b in bullets[:3])
+        bullets_html = f'<ul class="cpts">{li_html}</ul>'
+    else:
+        bullets_html = '<ul class="cpts"><li>번역 로딩 중...</li></ul>'
+
+    orig_html = f'<div class="ch-orig">{orig_title}</div>' if orig_title else ''
+
+    return f'''
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">{src}</span><span class="ctime" data-pubtime="{pub}">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">{ko_title}</div>
+      <div class="card-expand">
+        {orig_html}
+        {bullets_html}
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>'''
+
+intl_html = '\n    <div class="sec"><span class="sec-tag intl">해 외 시 각</span><div class="sec-line"></div></div>\n'
+for item in intl_news:
+    intl_html += make_intl_card(item)
+intl_html += "\n"
 col_colors = ["navy", "red", "gold", "dk"]
 
 col_html = '\n    <div class="sec"><span class="sec-tag" style="background:var(--navy)">오늘의 추천 칼럼</span><div class="sec-line"></div></div>\n'
@@ -524,6 +631,7 @@ def replace_block(html, s, e, content):
     return html
 
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',     '<!-- AUTO_NEWS_END -->',     news_html)
+html = replace_block(html, '<!-- AUTO_INTL_START -->',     '<!-- AUTO_INTL_END -->',     intl_html)
 html = replace_block(html, '<!-- AUTO_COLUMN_START -->',   '<!-- AUTO_COLUMN_END -->',   col_html)
 html = replace_block(html, '<!-- AUTO_RIGHT_START -->',    '<!-- AUTO_RIGHT_END -->',    right_html)
 html = replace_block(html, '<!-- AUTO_COL_RIGHT_START -->', '<!-- AUTO_COL_RIGHT_END -->', col_right_html)
