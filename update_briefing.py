@@ -10,7 +10,7 @@
 - 뉴모피즘 간소화 모드 호환
 """
 
-import os, re, sys, time, json
+import os, re, sys, time, json, random as _random
 from datetime import datetime, timedelta
 from email.utils import parsedate_to_datetime
 import pytz, requests
@@ -87,8 +87,8 @@ RSS_FALLBACKS = {
     ]),
     "중앙일보": ("c", [
         "https://rss.joins.com/joins_news_list.xml",
-        "https://www.joongang.co.kr/sitemap/rss",
-        "https://rss.joinsmsn.com/joins_news_list.xml",
+        "https://rss.joins.com/joins_news_list.xml",
+        "https://rss.joins.com/joins_news_list.xml",
     ]),
     "동아일보": ("c", [
         "https://rss.donga.com/total.xml",
@@ -107,8 +107,8 @@ RSS_FALLBACKS = {
         "https://www.hani.co.kr/rss/economy/",
     ]),
     "경향신문": ("p", [
-        "https://www.khan.co.kr/rss/rssdata/kh_economy.xml",
-        "https://www.khan.co.kr/rss/rssdata/total_news.xml",
+        "https://khan.co.kr/rss/rssdata/kh_economy.xml",
+        "https://khan.co.kr/rss/rssdata/total_news.xml",
     ]),
     "연합뉴스": ("w", [
         "https://www.yna.co.kr/rss/economy.xml",
@@ -136,12 +136,12 @@ NEWS_SOURCES = {sec: ALL_NEWS_SOURCES[sec] for sec in ALL_NEWS_SOURCES}
 
 COLUMN_SOURCES = [
     ("조선일보","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-    ("중앙일보","c","https://www.joongang.co.kr/sitemap/rss"),
+    ("중앙일보","c","https://rss.joins.com/joins_news_list.xml"),
     ("동아일보","c","https://rss.donga.com/opinion.xml"),
     ("한국경제","e","https://www.hankyung.com/feed/opinion"),
     ("매일경제","e","https://www.mk.co.kr/rss/30300001/"),
     ("한겨레",  "p","https://www.hani.co.kr/rss/opinion/"),
-    ("경향신문","p","https://www.khan.co.kr/rss/rssdata/kh_opinion.xml"),
+    ("경향신문","p","https://khan.co.kr/rss/rssdata/kh_opinion.xml"),
     ("연합뉴스","w","https://www.yna.co.kr/rss/politics.xml"),
 ]
 
@@ -156,12 +156,12 @@ INTL_COLUMN_SOURCES = [
 
 HEADLINE_SOURCES = [
     ("조선","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-    ("중앙","c","https://rss.joinsmsn.com/joins_news_list.xml"),
+    ("중앙","c","https://rss.joins.com/joins_news_list.xml"),
     ("동아","c","https://rss.donga.com/economy.xml"),
     ("매경","e","https://www.mk.co.kr/rss/30000001/"),
     ("한경","e","https://www.hankyung.com/feed/economy"),
     ("한겨레","p","https://www.hani.co.kr/rss/"),
-    ("경향","p","https://www.khan.co.kr/rss/rssdata/kh_politics.xml"),
+    ("경향","p","https://khan.co.kr/rss/rssdata/kh_politics.xml"),
     ("연합","w","https://www.yonhapnews.co.kr/rss/economy.xml"),
 ]
 
@@ -494,7 +494,7 @@ COLUMN_URLS = {
     ],
     "중앙일보": [
         "https://rss.joins.com/joins_news_list.xml",
-        "https://www.joongang.co.kr/sitemap/rss",
+        "https://rss.joins.com/joins_news_list.xml",
     ],
     "동아일보": [
         "https://rss.donga.com/opinion.xml",
@@ -513,8 +513,8 @@ COLUMN_URLS = {
         "https://www.hani.co.kr/rss/",
     ],
     "경향신문": [
-        "https://www.khan.co.kr/rss/rssdata/kh_opinion.xml",
-        "https://www.khan.co.kr/rss/rssdata/kh_economy.xml",
+        "https://khan.co.kr/rss/rssdata/kh_opinion.xml",
+        "https://khan.co.kr/rss/rssdata/kh_economy.xml",
     ],
     "연합뉴스": [
         "https://www.yna.co.kr/rss/news.xml",
