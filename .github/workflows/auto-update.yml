@@ -28,7 +28,7 @@ jobs:
         run: python update_briefing.py
         env:
           TZ: Asia/Seoul
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: 커밋 & 푸시
         run: |
