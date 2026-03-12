@@ -128,6 +128,7 @@ INTL_HIST_KEYS = {
     "니혼게이자이신문":"iran_war",
     "가디언":       "iran_war",
 }
+SECTION_COLORS = {
     "경제 · 금융": "var(--red)",
     "기 업":       "var(--navy)",
     "정책 · 사회": "var(--gold)",
