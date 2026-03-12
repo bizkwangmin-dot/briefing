@@ -79,50 +79,53 @@ def esc(s):
 
 # ── RSS 소스 ─────────────────────────────────────────────────
 # 전체 신문사 RSS 소스 (섹션별 최적 URL)
+# 신문사별 RSS URL 목록 (주 URL 실패 시 대안 순서대로 시도)
+RSS_FALLBACKS = {
+    "조선일보": ("c", [
+        "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml",
+        "https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
+    ]),
+    "중앙일보": ("c", [
+        "https://rss.joins.com/joins_news_list.xml",
+        "https://www.joongang.co.kr/sitemap/rss",
+        "https://rss.joinsmsn.com/joins_news_list.xml",
+    ]),
+    "동아일보": ("c", [
+        "https://rss.donga.com/total.xml",
+        "https://rss.donga.com/economy.xml",
+    ]),
+    "한국경제": ("e", [
+        "https://www.hankyung.com/feed/economy",
+        "https://www.hankyung.com/feed/all",
+    ]),
+    "매일경제": ("e", [
+        "https://www.mk.co.kr/rss/30000001/",
+        "https://www.mk.co.kr/rss/40300001/",
+    ]),
+    "한겨레":   ("p", [
+        "https://www.hani.co.kr/rss/",
+        "https://www.hani.co.kr/rss/economy/",
+    ]),
+    "경향신문": ("p", [
+        "https://www.khan.co.kr/rss/rssdata/kh_economy.xml",
+        "https://www.khan.co.kr/rss/rssdata/total_news.xml",
+    ]),
+    "연합뉴스": ("w", [
+        "https://www.yna.co.kr/rss/economy.xml",
+        "https://www.yna.co.kr/rss/news.xml",
+    ]),
+}
+ALL_SOURCE_NAMES = ["조선일보","중앙일보","동아일보","한국경제","매일경제","한겨레","경향신문","연합뉴스"]
+
+# 하위 호환용 (기존 코드가 참조할 수 있도록)
 ALL_NEWS_SOURCES = {
-    "경제 · 금융": [
-        ("조선일보","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-        ("중앙일보","c","https://www.joongang.co.kr/sitemap/rss"),
-        ("동아일보","c","https://rss.donga.com/total.xml"),
-        ("한국경제","e","https://www.hankyung.com/feed/economy"),
-        ("매일경제","e","https://www.mk.co.kr/rss/30000001/"),
-        ("한겨레",  "p","https://www.hani.co.kr/rss/economy/"),
-        ("경향신문","p","https://www.khan.co.kr/rss/rssdata/kh_economy.xml"),
-        ("연합뉴스","w","https://www.yna.co.kr/rss/economy.xml"),
-    ],
-    "기 업": [
-        ("조선일보","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-        ("중앙일보","c","https://www.joongang.co.kr/sitemap/rss"),
-        ("동아일보","c","https://rss.donga.com/total.xml"),
-        ("한국경제","e","https://www.hankyung.com/feed/economy"),
-        ("매일경제","e","https://www.mk.co.kr/rss/30200030/"),
-        ("한겨레",  "p","https://www.hani.co.kr/rss/"),
-        ("경향신문","p","https://www.khan.co.kr/rss/rssdata/kh_politics.xml"),
-        ("연합뉴스","w","https://www.yna.co.kr/rss/economy.xml"),
-    ],
-    "정책 · 사회": [
-        ("조선일보","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-        ("중앙일보","c","https://www.joongang.co.kr/sitemap/rss"),
-        ("동아일보","c","https://rss.donga.com/politics.xml"),
-        ("한국경제","e","https://www.hankyung.com/feed/economy"),
-        ("매일경제","e","https://www.mk.co.kr/rss/30200001/"),
-        ("한겨레",  "p","https://www.hani.co.kr/rss/"),
-        ("경향신문","p","https://www.khan.co.kr/rss/rssdata/kh_politics.xml"),
-        ("연합뉴스","w","https://www.yna.co.kr/rss/politics.xml"),
-    ],
-    "국 제": [
-        ("조선일보","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-        ("중앙일보","c","https://www.joongang.co.kr/sitemap/rss"),
-        ("동아일보","c","https://rss.donga.com/international.xml"),
-        ("한국경제","e","https://www.hankyung.com/feed/economy"),
-        ("매일경제","e","https://www.mk.co.kr/rss/30300001/"),
-        ("한겨레",  "p","https://www.hani.co.kr/rss/international/"),
-        ("경향신문","p","https://www.khan.co.kr/rss/rssdata/kh_world.xml"),
-        ("연합뉴스","w","https://www.yna.co.kr/rss/international.xml"),
-    ],
+    "경제 · 금융": [(n, RSS_FALLBACKS[n][0], RSS_FALLBACKS[n][1][0]) for n in ALL_SOURCE_NAMES],
+    "기 업":       [(n, RSS_FALLBACKS[n][0], RSS_FALLBACKS[n][1][0]) for n in ALL_SOURCE_NAMES],
+    "정책 · 사회": [(n, RSS_FALLBACKS[n][0], RSS_FALLBACKS[n][1][0]) for n in ALL_SOURCE_NAMES],
+    "국 제":       [(n, RSS_FALLBACKS[n][0], RSS_FALLBACKS[n][1][0]) for n in ALL_SOURCE_NAMES],
 }
 
-import random as _random
+
 def build_shuffled_sources(section):
     """섹션별 소스를 랜덤 셔플 — 매 실행마다 신문사 순서 다름"""
     sources = list(ALL_NEWS_SOURCES[section])
@@ -379,29 +382,30 @@ for section in NEWS_SOURCES:
     src_names = [s[0] for s in sources]
     print(f"  [{section}] 소스 {len(sources)}개: {', '.join(src_names)}")
 
-    # ── 단계1: 각 신문사에서 오늘/어제 기사 1개씩 수집 ──────────────
-    for src_name, src_cls, src_url in sources:
+    # ── 각 신문사에서 기사 1개씩 수집 (대안 URL 순차 시도) ──────────
+    for src_name in ALL_SOURCE_NAMES:
+        src_cls, url_list = RSS_FALLBACKS[src_name]
         got = False
-        # 오늘 기사 먼저, 없으면 날짜 무관 최신 기사
-        for try_today in [True, False]:
-            items = fetch_rss(src_name, src_cls, src_url,
-                              max_items=10, today_only=try_today)
-            for item in items:
-                k = dedup_key(item["title"])
-                if k not in seen and k not in global_seen:
-                    seen.add(k); global_seen.add(k)
-                    print(f"    ✅ [{src_name}] {item['title'][:35]}...")
-                    item["bullets"] = get_summary_3(item["title"])
-                    news.append(item)
-                    all_titles.append(item["title"])
-                    update_latest(item["pubtime"])
-                    time.sleep(0.25)
-                    got = True
-                    break
-            if got:
-                break
+        for src_url in url_list:          # 대안 URL 순서대로
+            if got: break
+            for try_today in [True, False]:  # 오늘 → 전체
+                items = fetch_rss(src_name, src_cls, src_url,
+                                  max_items=10, today_only=try_today)
+                for item in items:
+                    k = dedup_key(item["title"])
+                    if k not in seen and k not in global_seen:
+                        seen.add(k); global_seen.add(k)
+                        print(f"    ✅ [{src_name}] {item['title'][:35]}...")
+                        item["bullets"] = get_summary_3(item["title"])
+                        news.append(item)
+                        all_titles.append(item["title"])
+                        update_latest(item["pubtime"])
+                        time.sleep(0.25)
+                        got = True
+                        break
+                if got: break
         if not got:
-            print(f"    ⚠️  [{src_name}] 기사 없음 (RSS 접근 실패 가능)")
+            print(f"    ⚠️  [{src_name}] 모든 URL 실패 — 수집 불가")
 
     section_news[section] = news
     srcs = ','.join(dict.fromkeys(i['source'] for i in news))
@@ -482,24 +486,62 @@ print(f"  ✅ 해외 뉴스 {len(intl_news)}건 (일본·중국·유럽 포함)"
 print("\n✍️  [2/4] 칼럼 수집...")
 columns = []
 seen_col = set()
-# 국내 칼럼: 각 신문사에서 반드시 1개씩 수집 (8개 신문사)
-for source, src_class, url in COLUMN_SOURCES:
+# 국내 칼럼: 신문사별 대안 URL 순차 시도로 반드시 1개씩 수집
+COLUMN_URLS = {
+    "조선일보": [
+        "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml",
+        "https://www.chosun.com/arc/outboundfeeds/rss/category/opinion/?outputType=xml",
+    ],
+    "중앙일보": [
+        "https://rss.joins.com/joins_news_list.xml",
+        "https://www.joongang.co.kr/sitemap/rss",
+    ],
+    "동아일보": [
+        "https://rss.donga.com/opinion.xml",
+        "https://rss.donga.com/total.xml",
+    ],
+    "한국경제": [
+        "https://www.hankyung.com/feed/opinion",
+        "https://www.hankyung.com/feed/all",
+    ],
+    "매일경제": [
+        "https://www.mk.co.kr/rss/30300001/",
+        "https://www.mk.co.kr/rss/30000001/",
+    ],
+    "한겨레": [
+        "https://www.hani.co.kr/rss/opinion/",
+        "https://www.hani.co.kr/rss/",
+    ],
+    "경향신문": [
+        "https://www.khan.co.kr/rss/rssdata/kh_opinion.xml",
+        "https://www.khan.co.kr/rss/rssdata/kh_economy.xml",
+    ],
+    "연합뉴스": [
+        "https://www.yna.co.kr/rss/news.xml",
+        "https://www.yna.co.kr/rss/economy.xml",
+    ],
+}
+for src_name in ALL_SOURCE_NAMES:
+    src_cls = RSS_FALLBACKS[src_name][0]
     got = False
-    items = fetch_rss(source, src_class, url, max_items=8, today_only=False)
-    print(f"  [{source}] RSS {len(items)}건")
-    for item in items:
-        key = dedup_key(item["title"])
-        if key not in seen_col:
-            seen_col.add(key)
-            print(f"  📝 [{source}] {item['title'][:35]}...")
-            item["summary"] = get_column_summary(item["title"])
-            item["is_intl"] = False
-            columns.append(item)
-            time.sleep(0.3)
-            got = True
-            break
+    for url in COLUMN_URLS.get(src_name, RSS_FALLBACKS[src_name][1]):
+        items = fetch_rss(src_name, src_cls, url, max_items=8, today_only=False)
+        print(f"  [{src_name}] {url.split('/')[-1]} → {len(items)}건")
+        for item in items:
+            key = dedup_key(item["title"])
+            if key not in seen_col:
+                seen_col.add(key)
+                print(f"  📝 [{src_name}] {item['title'][:35]}...")
+                item["summary"] = get_column_summary(item["title"])
+                item["is_intl"] = False
+                item["src_class"] = src_cls
+                columns.append(item)
+                time.sleep(0.3)
+                got = True
+                break
+        if got: break
     if not got:
-        print(f"  ⚠️  [{source}] 칼럼 없음")
+        print(f"  ⚠️  [{src_name}] 모든 칼럼 URL 실패")
 
 # 해외 칼럼: 랜덤 2곳 번역 후 국내 칼럼 사이에 삽입
 intl_col_picks = _random.sample(INTL_COLUMN_SOURCES, min(2, len(INTL_COLUMN_SOURCES)))
@@ -835,10 +877,8 @@ def build_archive_entry(section_news_data, date_d, date_sub, date_id):
             url      = item["url"]
             src_name = item.get("source", "")
             src_cls  = item.get("src_class", "")
-            bhtml   = ""
-            if bullets:
-                # 아카이브: 헤드라인 + 신문사만, 요약 없음
-            cards += f'''<div class="card {cc}" style="margin-top:4px;cursor:default">
+            # 아카이브: 헤드라인 + 신문사 배지만 (요약 없음)
+            cards += f'''<div class="card {cc}" style="margin-top:4px">
               <div class="ct"><span class="src" style="background:{color};font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">{section}</span><span class="src {src_cls}" style="margin-left:4px">{src_name}</span></div>
               <div class="ch" style="font-size:12.5px"><a href="{url}" class="ch-link" target="_blank" style="color:inherit">{title}</a></div>
             </div>'''
