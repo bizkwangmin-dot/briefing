@@ -1,863 +1,444 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-  <meta name="last-updated" content="2026-03-12T12:58:10+09:00">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>오늘의 브리핑</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="last-updated" content="">
+  <title>세줄뉴스 — 오늘의 핵심을 3줄로</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f0ede6; --surface:#faf9f6; --ink:#1a1a1a; --ink2:#333333; --ink3:#666666;
-  --border:#d4cfc6; --tagbg:#e8e4dc;
-  --red:#8b1a1a; --navy:#0f2744; --gold:#7a5200; --green:#1a4a2e; --dark:#2c1810;
-  --accent:#1a3a5c; --warm:#c8a96e;
-  --hh:50px;
+  --bg:#eceae3; --surface:#f7f5f0; --ink:#1c1c1e; --ink2:#3a3a3c; --ink3:#6d6d70;
+  --border:#d4cfc5; --tagbg:#e3e0d8;
+  --red:#7a1f1f; --navy:#1a3050; --gold:#7a5800; --green:#1a4a2e; --dark:#2a2a35;
+  --accent:#2c4a6e; --warm:#b89650; --hh:40px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif;font-size:13px;line-height:1.65}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.6}
+a{color:inherit;text-decoration:none}
 
-/* ── PROGRESS ── */
-#prog{position:fixed;top:0;left:0;height:2px;background:var(--red);z-index:9999;width:0;pointer-events:none}
-
-/* ── HEADER ── */
-.hdr{background:var(--ink);position:sticky;top:0;z-index:500;border-bottom:2px solid var(--red)}
-/* Mobile: logo + date on top row, tabs on second row */
-.hdr-in{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;padding:0}
-.hdr-top{display:flex;align-items:center;height:44px;padding:0 14px;gap:10px}
-.logo{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:900;color:#fff;letter-spacing:-.02em;white-space:nowrap;flex-shrink:0}
-.logo b{color:var(--red)}
-.hdr-right{margin-left:auto;text-align:right;flex-shrink:0;display:flex;flex-direction:row;align-items:center;gap:8px}
-.hdr-date{font-size:11px;color:#aaa}
-.hdr-update{font-size:10px;color:#555}
-/* Tabs: full-width scrollable row below logo */
-.tabs{display:flex;overflow-x:auto;scrollbar-width:none;background:#111;border-top:1px solid #2a2a2a;padding:0 4px}
+header{background:linear-gradient(135deg,#14243a 0%,#1a3050 60%,#1f3d66 100%);position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.hdr-row{display:flex;align-items:center;height:var(--hh);padding:0 14px;gap:0}
+.logo{font-family:'Noto Serif KR',serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:-.02em;white-space:nowrap;flex-shrink:0}
+.logo b{color:var(--warm)}
+.hdr-meta{display:flex;align-items:center;gap:5px;margin-left:10px;flex-shrink:0}
+.hdr-date{font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap}
+.hdr-update{font-size:10px;color:rgba(255,255,255,.38);white-space:nowrap}
+.tabs{display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;margin-left:12px;flex:1}
 .tabs::-webkit-scrollbar{display:none}
-.tab{background:none;border:none;color:#666;font-family:'Noto Sans KR',sans-serif;font-size:12.5px;font-weight:500;padding:0 14px;height:40px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;flex-shrink:0;transition:color .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
-.tab:hover{color:#aaa}
-.tab.on{color:#fff;border-bottom-color:var(--red)}
-/* Desktop: single row */
-@media(min-width:700px){
-  .hdr-in{flex-direction:row;align-items:center;height:var(--hh);padding:0 16px;gap:12px}
-  .hdr-top{height:auto;padding:0;flex:0 0 auto}
-  .tabs{background:none;border:none;padding:0;height:var(--hh)}
-  .tab{height:var(--hh);margin-bottom:-2px;font-size:12px}
-  .hdr-right{display:block}
-}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.48);font-size:12px;font-weight:400;font-family:'Noto Sans KR',sans-serif;padding:0 13px;height:var(--hh);cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab.on{color:#fff;border-bottom-color:var(--warm);font-weight:600}
+.tab:hover:not(.on){color:rgba(255,255,255,.8)}
+.btn-simple{margin-left:auto;flex-shrink:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:11px;color:rgba(255,255,255,.6);font-size:10px;font-family:'Noto Sans KR',sans-serif;padding:3px 11px;cursor:pointer;transition:all .2s}
+.btn-simple:hover{background:rgba(255,255,255,.15);color:#fff}
 
-/* ── PANELS ── */
-.panel{display:none}
-.panel.on{display:block}
+.panel{display:none}.panel.on{display:block}
+.layout{display:flex;gap:16px;padding:14px 14px 28px;max-width:1220px;margin:0 auto;align-items:flex-start}
+.left{flex:1;min-width:0}
+.right{width:265px;flex-shrink:0;position:sticky;top:var(--hh)}
 
-/* ── WRAP ── */
-.wrap{max-width:1180px;margin:0 auto;padding:12px 12px 0}
-@media(min-width:700px){.wrap{padding:14px 16px 0}}
-
-/* ══════════════════════════════════
-   NEWS + COLUMN + SOCCER + ARCHIVE
-   Shared 2-column layout:
-   left(main) | right(sidebar)
-══════════════════════════════════ */
-.page-layout{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:14px;
-  align-items:start;
-}
-@media(min-width:800px){
-  .page-layout{grid-template-columns:1fr 320px}
-}
-
-/* ── LEFT COLUMN ── */
-.left{}
-
-/* Section label */
-.sec{display:flex;align-items:center;gap:8px;margin:18px 0 8px}
-.sec:first-child{margin-top:0}
-.sec-tag{font-size:9.5px;font-weight:700;letter-spacing:.13em;color:#fff;padding:2px 10px;border-radius:2px;flex-shrink:0}
+.sec{display:flex;align-items:center;gap:10px;margin:16px 0 7px}
+.sec:first-child{margin-top:4px}
+.sec-tag{font-size:10px;font-weight:700;color:#fff;padding:3px 10px;border-radius:2px;letter-spacing:.07em;white-space:nowrap;font-family:'Noto Serif KR',serif}
 .sec-line{flex:1;height:1px;background:var(--border)}
 
-/* ── NEWS CARD (1-column) ── */
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-left:3px solid var(--border);
-  border-radius:5px;
-  padding:13px 14px;
-  margin-bottom:8px;
-  transition:box-shadow .14s,transform .12s;
-}
-@media(min-width:600px){
-  .card:hover{box-shadow:0 3px 14px rgba(0,0,0,.09);transform:translateY(-1px)}
-}
-.card.red  {border-left-color:var(--red)}
-.card.navy {border-left-color:var(--navy)}
-.card.gold {border-left-color:var(--gold)}
-.card.green{border-left-color:var(--green)}
-.card.dk   {border-left-color:var(--dark)}
+.card{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--border);border-radius:4px;padding:11px 13px 9px;margin-bottom:5px;transition:box-shadow .14s,transform .12s}
+.card:hover{box-shadow:0 3px 16px rgba(0,0,0,.1);transform:translateY(-1px)}
+.card.red{border-left-color:var(--red)}.card.navy{border-left-color:var(--navy)}
+.card.gold{border-left-color:var(--gold)}.card.green{border-left-color:var(--green)}.card.dk{border-left-color:var(--dark)}
 
-/* Card top row */
-.ct{display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.ct{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.src{font-size:9px;font-weight:700;color:#fff;padding:2px 6px;border-radius:2px;letter-spacing:.04em;flex-shrink:0}
+.src.c{background:var(--red)}.src.e{background:var(--navy)}.src.p{background:var(--green)}.src.w{background:var(--dark)}
+.ctime{font-size:10px;color:var(--ink3);margin-left:auto}
+.ch{font-size:14px;font-weight:600;color:var(--ink);line-height:1.5;margin-bottom:6px}
+.ch-link:hover{color:var(--accent)}
+.cpts{list-style:none;padding:0 0 0 10px;margin:5px 0 7px;border-left:2px solid var(--border)}
+.cpts li{font-size:12px;color:var(--ink2);line-height:1.55;margin-bottom:3px}
+.cpts li:last-child{margin-bottom:0}
+.cpts li::before{content:"·";margin-right:4px;color:var(--ink3)}
 
-/* Source badges */
-.src{font-size:9px;font-weight:700;letter-spacing:.04em;padding:1px 7px;border-radius:2px;flex-shrink:0}
-.src.c {background:#fde8e6;color:#9a1f1c}   /* 보수 */
-.src.p {background:#e8f0fd;color:#1a3a8c}   /* 진보 */
-.src.e {background:#fef5e0;color:#7a5500}   /* 경제지 */
-.src.w {background:#e8f4ed;color:#1a5c38}   /* 통신·해외 */
-.src.int{background:#f0e8fd;color:#5a1a8c}  /* 해외 */
+.card-btns{display:flex;align-items:center;justify-content:flex-end;margin-top:6px;gap:5px}
+.cbtn{font-size:10px;padding:2px 9px;border-radius:20px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border:1px solid var(--border);background:var(--tagbg);color:var(--ink3);transition:background .13s,color .13s;white-space:nowrap}
+.cbtn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cbtn.origin{color:var(--accent);border-color:rgba(44,74,110,.3)}
+.cbtn.hist{color:var(--gold)}.cbtn.result{color:var(--green)}
 
-/* 성향 pill */
-.lean{font-size:8.5px;padding:1px 6px;border-radius:10px;border:1px solid var(--border);color:var(--ink3);flex-shrink:0}
-
-.ccat{font-size:10px;color:var(--ink3)}
-.cstar{font-size:10px;color:var(--gold);font-weight:700}
-
-/* Headline */
-.ch{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:600;line-height:1.45;color:var(--ink);margin-bottom:6px}
-@media(min-width:600px){.ch{font-size:14.5px}}
-
-/* Bullet points */
-.cpts{list-style:none;display:flex;flex-direction:column;gap:3px}
-.cpts li{font-size:12.5px;color:var(--ink2);padding-left:12px;position:relative;line-height:1.6}
-.cpts li::before{content:'·';position:absolute;left:2px;color:var(--ink3);font-weight:700}
-@media(min-width:600px){.cpts li{font-size:12px;line-height:1.55}}
-
-/* Tags */
-.ctags{margin-top:8px;display:flex;gap:4px;flex-wrap:wrap}
-.ctag{font-size:9.5px;padding:1px 7px;border-radius:20px;background:var(--tagbg);color:var(--ink3);border:1px solid var(--border)}
-
-/* Read time */
-.ctime{margin-left:auto;font-size:9.5px;color:var(--ink3)}
-
-/* ── RIGHT SIDEBAR ── */
-.right{display:flex;flex-direction:column;gap:10px;order:-1}
-@media(min-width:800px){
-  .right{order:0;position:sticky;top:calc(84px + 14px)}
-}
-
-.sbox{background:var(--surface);border:1px solid var(--border);border-radius:5px;overflow:hidden}
-.sbox-hd{font-size:10px;font-weight:700;letter-spacing:.1em;padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;color:var(--ink3)}
-.sbox-hd .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-
-/* Stat row */
-.mini-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border)}
-.mstat{padding:9px 4px;text-align:center;border-right:1px solid var(--border)}
-.mstat:last-child{border-right:none}
-.mnum{font-family:'Noto Serif KR',serif;font-size:16px;font-weight:900;line-height:1;color:var(--navy)}
-.mnum.r{color:var(--red)}
-.mlbl{font-size:9px;color:var(--ink3);margin-top:2px;line-height:1.3}
-
-/* Headline list */
-.hlist{}
-.hitem{padding:8px 12px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start}
-.hitem:last-child{border-bottom:none}
-.hitem:hover{background:var(--bg)}
-.hi-src{font-size:8.5px;font-weight:700;padding:1px 6px;border-radius:2px;margin-top:2px;flex-shrink:0}
-.hi-txt{font-size:11.5px;color:var(--ink);line-height:1.4;font-weight:500}
-.hi-sub{font-size:10px;color:var(--ink3);margin-top:1px;line-height:1.3}
-
-/* ══════════════════════════════════
-   INFO PANEL
-══════════════════════════════════ */
-.info-grid{display:grid;gap:10px;grid-template-columns:1fr}
-@media(min-width:580px){.info-grid{grid-template-columns:1fr 1fr}}
-@media(min-width:900px){.info-grid{grid-template-columns:1fr 1fr 1fr}}
-
-.icard{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:15px;border-top:3px solid var(--navy)}
-.icard.r{border-top-color:var(--red)}.icard.g{border-top-color:var(--gold)}.icard.gr{border-top-color:var(--green)}
-.ititle{font-family:'Noto Serif KR',serif;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--ink)}
-.isub{font-size:10px;color:var(--ink3);margin-bottom:10px}
-.bchart{display:flex;flex-direction:column;gap:6px}
-.brow{display:grid;grid-template-columns:68px 1fr 50px;align-items:center;gap:6px}
-.blbl{font-size:10.5px;color:var(--ink3);text-align:right}
-.btrack{background:#edead3;border-radius:2px;height:12px;overflow:hidden}
-.bfill{height:100%;border-radius:2px;background:var(--navy)}
-.bfill.r{background:var(--red)}.bfill.g{background:var(--gold)}.bfill.gr{background:var(--green)}
-.bval{font-size:10.5px;font-weight:700;color:var(--ink)}
-.sstat{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.sb{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:9px 4px;text-align:center}
-.sbn{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:900;color:var(--navy);line-height:1.1}
-.sbn.r{color:var(--red)}.sbn.gr{color:var(--green)}
-.sbl{font-size:9px;color:var(--ink3);margin-top:2px;line-height:1.3}
-.inote{font-size:10.5px;color:var(--ink3);margin-top:9px;padding-top:8px;border-top:1px dashed var(--border);line-height:1.5}
-
-/* ══════════════════════════════════
-   COLUMN PANEL
-══════════════════════════════════ */
-.col-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-left:3px solid var(--navy);border-radius:5px;
-  padding:14px 16px;margin-bottom:8px;
-  transition:box-shadow .14s;
-}
+.col-card{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--navy);border-radius:4px;padding:13px 15px;margin-bottom:7px;transition:box-shadow .14s}
 .col-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.09)}
-.col-card.red{border-left-color:var(--red)}
-.col-card.gold{border-left-color:var(--gold)}
-.col-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
-.col-paper{font-size:9px;font-weight:700;padding:1px 7px;border-radius:2px}
+.col-card.red{border-left-color:var(--red)}.col-card.navy{border-left-color:var(--navy)}
+.col-card.gold{border-left-color:var(--gold)}.col-card.dk{border-left-color:var(--dark)}
+.col-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.col-paper{font-size:9px;font-weight:700;color:#fff;padding:2px 6px;border-radius:2px}
 .col-writer{font-size:11px;color:var(--ink3)}
 .col-date{font-size:10px;color:var(--ink3);margin-left:auto}
-.col-title{font-family:'Noto Serif KR',serif;font-size:14.5px;font-weight:600;line-height:1.42;color:var(--ink);margin-bottom:6px}
-.col-summary{font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:8px}
-.col-quote{
-  background:var(--tagbg);border-left:3px solid var(--border);
-  padding:8px 12px;font-size:12px;color:var(--ink2);
-  font-style:italic;line-height:1.6;border-radius:0 4px 4px 0;
-  margin-bottom:8px;
-}
-.col-readmore{
-  font-size:11px;color:var(--navy);font-weight:700;
-  text-decoration:none;border-bottom:1px solid var(--border);
-}
-.col-readmore:hover{color:var(--red)}
+.col-title{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:8px}
+.col-body{font-size:12px;color:var(--ink2);line-height:1.75;padding:9px 11px;background:var(--tagbg);border-radius:3px;border-left:2px solid var(--border)}
+.col-more{font-size:10px;color:var(--accent);cursor:pointer;margin-top:5px;text-align:right;display:block;padding:2px 0}
 
-/* ══════════════════════════════════
-   SOCCER PANEL
-══════════════════════════════════ */
-.soccer-box{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:28px 22px;text-align:center}
-.soccer-box h3{font-family:'Noto Serif KR',serif;font-size:16px;color:var(--ink);margin:10px 0 5px}
-.wc-grid{display:grid;gap:8px;margin-top:16px}
-@media(min-width:580px){.wc-grid{grid-template-columns:1fr 1fr}}
-.wc-card{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:12px 14px;text-align:left;font-size:12px;color:var(--ink2);line-height:1.8}
-.wc-card strong{display:block;font-size:13px;color:var(--ink);margin-bottom:4px}
-
-/* ══════════════════════════════════
-   ARCHIVE PANEL
-══════════════════════════════════ */
-.arch-list{display:flex;flex-direction:column;gap:6px}
-.arch-row{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:12px 15px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:box-shadow .13s;user-select:none}
-.arch-row:hover{box-shadow:0 2px 10px rgba(0,0,0,.08)}
-.aday{min-width:36px;text-align:center}
+.arch-list{padding:6px 0}
+.arch-row{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;border-radius:4px;transition:background .13s;border-bottom:1px solid var(--border)}
+.arch-row:hover{background:var(--tagbg)}
+.aday{flex-shrink:0;text-align:center;min-width:38px}
 .adaynum{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:900;color:var(--navy);line-height:1}
-.adaysub{font-size:9px;color:var(--ink3);margin-top:1px}
-.ainfo{flex:1}
-.atitle{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
-.aprev{font-size:11.5px;color:var(--ink3)}
-.acnt{font-size:10px;color:var(--ink3);flex-shrink:0}
-.arch-detail{display:none;flex-direction:column;gap:5px;padding:6px 0 2px}
-.arch-detail.open{display:flex}
-.pcard{background:var(--bg);border-radius:4px;padding:9px 13px;border-left:2px solid var(--border)}
-.pcard.r{border-left-color:var(--red)}
-.ph{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:2px}
-.pp{font-size:11px;color:var(--ink3)}
+.adaysub{font-size:9px;color:var(--ink3);margin-top:2px}
+.ainfo{flex:1;min-width:0}
+.atitle{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aprev{font-size:11px;color:var(--ink3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acnt{font-size:11px;color:var(--ink3);flex-shrink:0}
+.arch-detail{display:none;padding:4px 14px 10px}
+.arch-detail.open{display:block}
 
-/* ══════════════════════════════════
-   FOOTER LINKS
-══════════════════════════════════ */
-.footer{
-  background:var(--ink);color:#666;
-  margin-top:32px;padding:24px 16px 28px;
-}
-.footer-in{max-width:1180px;margin:0 auto}
-.footer-title{font-size:11px;font-weight:700;letter-spacing:.1em;color:#888;margin-bottom:16px;text-align:center}
-.link-groups{display:grid;gap:16px;grid-template-columns:1fr}
-@media(min-width:500px){.link-groups{grid-template-columns:1fr 1fr}}
-@media(min-width:800px){.link-groups{grid-template-columns:repeat(4,1fr)}}
-.link-group-title{font-size:9.5px;font-weight:700;letter-spacing:.12em;color:#666;margin-bottom:8px;text-transform:uppercase}
-.link-list{display:flex;flex-direction:column;gap:4px}
-.link-list a{font-size:12px;color:#888;text-decoration:none;transition:color .13s;display:flex;align-items:center;gap:6px;padding:3px 0;min-height:28px}
-.link-list a:hover{color:#ddd}
-.link-list a .lbadge{font-size:8.5px;padding:1px 5px;border-radius:2px;flex-shrink:0}
-.footer-note{text-align:center;font-size:10px;color:#444;margin-top:20px;padding-top:16px;border-top:1px solid #2a2a2a}
+.sbox{background:var(--surface);border:1px solid var(--border);border-radius:5px;margin-bottom:10px;overflow:hidden}
+.sbox-hd{font-size:11px;font-weight:700;color:var(--ink2);padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;letter-spacing:.03em}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.mini-stats{display:grid;grid-template-columns:1fr 1fr 1fr}
+.mstat{padding:10px 5px;text-align:center;border-right:1px solid var(--border)}
+.mstat:last-child{border-right:none}
+.mnum{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:900;line-height:1;color:var(--ink)}
+.mnum.r{color:var(--red)}.mnum.b{color:var(--navy)}
+.mlbl{font-size:9px;color:var(--ink3);margin-top:4px;line-height:1.3}
 
-/* ══════════════════════════════════
-   INVEST PANEL
-══════════════════════════════════ */
-.invest-grid{display:grid;gap:14px;grid-template-columns:1fr;}
-@media(min-width:800px){.invest-grid{grid-template-columns:1fr 320px;}}
-.inv-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--navy); border-radius:5px;padding:15px;margin-bottom:14px;}
-.inv-card.red{border-top-color:var(--red);}
-.inv-card.gold{border-top-color:var(--gold);}
-.inv-title{font-family:'Noto Serif KR',serif;font-size:16px;font-weight:600;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.inv-ai-summary{font-size:12.5px;color:var(--ink2);line-height:1.6;background:var(--bg);padding:12px;border-radius:4px;border-left:3px solid var(--navy);margin-bottom:12px;}
-.inv-chart-place{background:#eaebed;border:1px dashed #ccc;height:120px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;margin-bottom:12px;}
-.inv-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
-.inv-stat{text-align:center;padding:10px 4px;background:var(--bg);border-radius:4px;border:1px solid var(--border);}
-.inv-stat .lbl{font-size:10px;color:var(--ink3);margin-bottom:2px;}
-.inv-stat .val{font-size:15px;font-weight:700;color:var(--ink);}
-.inv-stat .val.up{color:var(--red);}
-.inv-stat .val.dn{color:var(--navy);}
-.inv-signal{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f8f9fa;border:1px solid var(--border);border-radius:4px;font-weight:700;}
-.inv-signal .lbl{font-size:12px;color:var(--ink2);}
-.inv-signal .badge{padding:4px 12px;border-radius:20px;font-size:11px;color:#fff;}
-.inv-signal .badge.buy{background:var(--red);}
-.inv-signal .badge.sell{background:var(--navy);}
-.inv-signal .badge.hold{background:var(--ink3);}
+.info-mini{padding:8px 12px}
+.info-mini-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.info-mini-item:last-child{border-bottom:none}
+.info-mini-label{font-size:11px;color:var(--ink2);flex:1;font-weight:500}
+.info-mini-bar-wrap{width:76px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;flex-shrink:0}
+.info-mini-bar{height:100%;border-radius:3px;transition:width .5s}
+.info-mini-val{font-size:10px;color:var(--ink3);width:36px;text-align:right;flex-shrink:0}
 
-/* Global Link Styles */
-a.ch-link { color: inherit; text-decoration: none; display: block; }
-a.ch-link:hover { text-decoration: underline; color: var(--navy); }
+.hlist{padding:3px 0}
+.hitem{display:flex;align-items:flex-start;gap:8px;padding:7px 12px;border-bottom:1px solid var(--border)}
+.hitem:last-child{border-bottom:none}
+.hi-src{font-size:9px;font-weight:700;color:#fff;padding:2px 5px;border-radius:2px;flex-shrink:0;margin-top:2px}
+.hi-txt{font-size:11px;font-weight:600;color:var(--ink);line-height:1.4}
+.hi-sub{font-size:10px;color:var(--ink3);margin-top:1px;line-height:1.3}
+.hi-date{font-size:9px;color:var(--ink3);margin-top:2px;opacity:.75}
 
-/* ── HEADER CENTER (weather + update time) ── */
-.hdr-center {
-  display: none;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.hdr-center { display: none; }
+.issue-list{padding:6px 12px}
+.issue-item{font-size:11px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.5}
+.issue-item:last-child{border-bottom:none}
+.issue-item::before{content:"▸";margin-right:5px;color:var(--ink3);font-size:9px}
 
-.hdr-update {
-  font-size: 10px;
-  color: #555;
-}
-.tab-simple-btn {
-  background: none;
-  border: 1px solid #333;
-  border-radius: 14px;
-  color: #666;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 3px 12px;
-  cursor: pointer;
-  margin-left: auto;
-  margin-right: 8px;
-  flex-shrink: 0;
-  transition: all .2s;
-  font-family: 'Noto Sans KR', sans-serif;
-  white-space: nowrap;
-  align-self: center;
-  height: 26px;
-  line-height: 1;
-}
-.tab-simple-btn:hover { border-color: #888; color: #fff; }
-body.simple-mode {
-  --bg:#ffffff; --surface:#ffffff; --ink:#111111; --ink2:#333333; --ink3:#888888;
-  --border:#e0e0e0; --tagbg:#f5f5f5;
-  --red:#222222; --navy:#222222; --gold:#222222; --dark:#222222;
-}
-body.simple-mode header { background:#111 !important; }
-body.simple-mode .tab { color:#aaa; font-size:11px; border-bottom:none; }
-body.simple-mode .tab.on { color:#fff; border-bottom:2px solid #fff; }
-body.simple-mode .card {
-  background:#fff; border:none; border-bottom:1px solid #ececec !important;
-  border-left:none !important; border-radius:0; padding:11px 0; margin-bottom:0;
-  box-shadow:none;
-}
-body.simple-mode .card:hover { background:#fafafa; box-shadow:none; transform:none; }
-body.simple-mode .ch { font-size:13px; font-weight:500; }
-body.simple-mode .cpts { display:none; }
-body.simple-mode .sec-tag { background:#111 !important; color:#fff; font-size:9px; border-radius:3px; }
-body.simple-mode .sbox { background:#fff; border:1px solid #ececec; border-radius:8px; }
-body.simple-mode .tab-simple-btn { border-color:#555; color:#aaa; }
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;justify-content:center;align-items:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:7px;width:min(580px,94vw);max-height:84vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.35)}
+.modal-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
+.modal-title{font-size:15px;font-weight:700;color:var(--ink);line-height:1.4}
+.modal-sub{font-size:11px;color:var(--ink3);margin-top:3px}
+.modal-close{margin-left:auto;font-size:20px;cursor:pointer;color:var(--ink3);flex-shrink:0;line-height:1;padding:0 2px}
+.modal-body{overflow-y:auto;padding:12px 18px}
+.hist-item{border:1px solid var(--border);border-radius:5px;padding:11px 13px;margin-bottom:8px;background:var(--bg)}
+.hist-item-date{font-size:10px;color:var(--ink3);margin-bottom:4px}
+.hist-item-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:5px}
+.hist-item-bullets{list-style:none;padding:0}
+.hist-item-bullets li{font-size:11px;color:var(--ink2);line-height:1.5;padding:2px 0 2px 10px;border-left:2px solid var(--border);margin-bottom:3px}
+.result-item{border:1px solid var(--border);border-radius:5px;padding:11px 13px;margin-bottom:8px;background:var(--bg)}
+.result-tag{display:inline-block;font-size:9px;padding:2px 7px;border-radius:20px;margin-bottom:5px;font-weight:700}
+.result-tag.up{background:#e8f5e9;color:#1a5c38}.result-tag.dn{background:#fde8e6;color:#7a1f1f}
+.result-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:5px}
+.result-desc{font-size:11px;color:var(--ink2);line-height:1.5}
 
-/* ══════════════════════════════════
-   SIMPLE MODE (iOS-inspired)
-   헤드라인만, 불릿 숨김, 밝고 미니멀
-══════════════════════════════════ */
-body.simple-mode {
-  --bg: #f2f2f7;
-  --surface: #ffffff;
-  --ink: #1c1c1e;
-  --ink2: #48484a;
-  --ink3: #8e8e93;
-  --border: #e5e5ea;
-  --tagbg: #f2f2f7;
-  --red: #ff3b30;
-  --navy: #007aff;
-  --gold: #ff9500;
-  --green: #34c759;
-  --dark: #3a3a3c;
-  font-size: 13px;
-}
-body.simple-mode .hdr {
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-}
-body.simple-mode .logo { color: #1c1c1e; }
-body.simple-mode .logo b { color: #ff3b30; }
-body.simple-mode .hdr-date { color: #8e8e93; }
-body.simple-mode .hdr-update { color: #8e8e93; }
-body.simple-mode #prog { background: #007aff; }
-body.simple-mode .tabs {
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(0,0,0,0.06);
-}
-body.simple-mode .tab { color: #999; font-size: 12px; }
-body.simple-mode .tab.on { color: #222; border-bottom-color: #222; }
-body.simple-mode .tab:hover { color: #444; }
-body.simple-mode .tab-simple-btn { border-color: #ddd; color: #999; background: none; }
-body.simple-mode .tab-simple-btn:hover { border-color: #aaa; color: #333; }
-
-/* 카드: 플랫하고 둥글게 */
-body.simple-mode .card {
-  background: #ffffff;
-  border: none;
-  border-radius: 12px;
-  border-left: none !important;
-  border-bottom: 1px solid #e5e5ea;
-  box-shadow: none;
-  padding: 13px 16px;
-  margin-bottom: 0;
-  border-radius: 0;
-}
-body.simple-mode .card:first-of-type { border-radius: 12px 12px 0 0; }
-body.simple-mode .card:last-of-type  { border-radius: 0 0 12px 12px; border-bottom: none; }
-body.simple-mode .left > .card:only-of-type { border-radius: 12px; }
-body.simple-mode .card:hover {
-  background: #f9f9fb;
-  box-shadow: none;
-  transform: none;
-}
-
-/* 불릿 포인트 5줄 숨김 */
-body.simple-mode .cpts { display: none; }
-body.simple-mode .ctags { display: none; }
-body.simple-mode .card-history-row { display: none; }
-
-/* 헤드라인 크게, 심플하게 */
-body.simple-mode .ch {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 0;
-}
-body.simple-mode .ccat { font-size: 10px; color: #555; }
-body.simple-mode .cstar { color: #ff9500; }
-body.simple-mode .src { border-radius: 6px; }
-
-/* 섹션 레이블 */
-body.simple-mode .sec-tag { border-radius: 4px; font-size: 9px; background: #e5e5ea !important; color: #555 !important; }
-body.simple-mode .sec-line { background: #e5e5ea; }
-
-/* 사이드바 */
-body.simple-mode .sbox {
-  background: #ffffff;
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-body.simple-mode .hitem:hover { background: #f2f2f7; border-radius: 8px; }
-
-/* 인포그래픽 */
-body.simple-mode .icard {
-  background: #ffffff;
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  border-top: 3px solid #007aff;
-}
-body.simple-mode .icard.r { border-top-color: #ff3b30; }
-body.simple-mode .icard.g { border-top-color: #ff9500; }
-body.simple-mode .icard.gr { border-top-color: #34c759; }
-body.simple-mode .btrack { background: #f2f2f7; }
-body.simple-mode .sb { background: #f2f2f7; border-color: #e5e5ea; border-radius: 10px; }
-
-/* 칼럼 */
-body.simple-mode .col-card {
-  background: #ffffff;
-  border: none;
-  border-radius: 12px;
-  border-left: none !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-body.simple-mode .col-quote { background: #f2f2f7; border-left-color: #007aff; border-radius: 0 8px 8px 0; }
-
-/* 아카이브 */
-body.simple-mode .arch-row {
-  background: #ffffff;
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-
-/* 투자 */
-body.simple-mode .inv-card {
-  background: #ffffff;
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-body.simple-mode .inv-stat { background: #f2f2f7; border-color: #e5e5ea; border-radius: 10px; }
-body.simple-mode .inv-ai-summary { background: #f2f2f7; border-left-color: #007aff; border-radius: 0 8px 8px 0; }
-
-/* 히스토리 모달 */
-body.simple-mode .hist-modal {
-  background: #ffffff;
-  border: none;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-}
-body.simple-mode .hist-item { border-left-color: #e5e5ea; }
-body.simple-mode .hist-item:hover { border-left-color: #007aff; }
-
-/* 푸터 */
-body.simple-mode .footer { background: #1c1c1e; }
-
-/* 스크롤바 숨김 느낌 */
-body.simple-mode ::-webkit-scrollbar { width: 4px; height: 4px; }
-body.simple-mode ::-webkit-scrollbar-track { background: transparent; }
-body.simple-mode ::-webkit-scrollbar-thumb { background: #c7c7cc; border-radius: 4px; }
+/* 간소화 */
+body.simple-mode{--bg:#fff;--surface:#fff;--ink:#111;--ink2:#333;--ink3:#888;--border:#dedede;--tagbg:#f5f5f5}
+body.simple-mode header{background:#111 !important;box-shadow:none}
+body.simple-mode .tab{color:#666}.body.simple-mode .tab.on{color:#fff}
+body.simple-mode .tab.on{color:#fff;border-bottom-color:#fff}
+body.simple-mode .btn-simple{border-color:#444;color:#999;background:none}
+body.simple-mode .logo b{color:#ccc}
+body.simple-mode .hdr-date,.hdr-update{color:rgba(255,255,255,.4)}
+body.simple-mode .card{background:#fff;border:none !important;border-bottom:2px solid #ccc !important;border-left:none !important;border-radius:0;padding:11px 2px;margin-bottom:0;box-shadow:none}
+body.simple-mode .card:hover{background:#fafafa;transform:none;box-shadow:none}
+body.simple-mode .cpts{display:none}
+body.simple-mode .cbtn.hist,.cbtn.result{display:none}
+body.simple-mode .sec-tag{background:#222 !important;border-radius:2px}
+body.simple-mode .sbox{border-color:#ddd}
+body.simple-mode .col-card{border-left:none !important;border-color:#ddd;box-shadow:none;border-radius:0;border-bottom:2px solid #ccc !important}
 
 @media(max-width:699px){
-  .hdr-top{padding:0 10px;gap:6px}
-  .logo{font-size:15px}
-  .tab{font-size:11px;padding:8px 9px}
-  .layout{padding:8px 6px 0;flex-direction:column}
-  .card{padding:9px 10px;margin-bottom:4px}
-  .ch{font-size:13px;line-height:1.5}
-  .cpts li{font-size:12px}
+  .hdr-row{padding:0 10px}
+  .logo{font-size:14px}
+  .hdr-meta{gap:4px}
+  .tab{font-size:11px;padding:0 10px}
+  .layout{padding:8px 8px 20px;flex-direction:column}
   .right{display:none}
   .left{width:100%}
+  .card{padding:10px 11px}
+  .ch{font-size:13px}
 }
 </style>
-
 </head>
 <body>
 
-<div id="prog"></div>
-
-<!-- ══ HEADER ══ -->
-<header class="hdr">
-  <div class="hdr-in">
-    <div class="hdr-top">
-      <div class="logo">오늘의<b>브리핑</b></div>
-      <div class="hdr-right">
-        <span class="hdr-date" id="hdate"></span>
-        <span class="hdr-update" id="hdr-update"></span>
-      </div>
+<header>
+  <div class="hdr-row">
+    <div class="logo">세줄<b>뉴스</b></div>
+    <div class="hdr-meta">
+      <span class="hdr-date" id="hdate"></span>
+      <span class="hdr-update" id="hdr-update"></span>
     </div>
     <nav class="tabs">
-      <button class="tab on"  onclick="go('news',this)">📰 오늘의 뉴스</button>
-      <button class="tab"     onclick="go('column',this)">✍️ 칼럼</button>
-      <button class="theme-toggle-btn tab-simple-btn" id="themeToggleBtn" onclick="toggleTheme()" title="간소화 모드로 전환">☰ 간소화</button>
-</nav>
+      <button class="tab on" onclick="go('news',this)">뉴스</button>
+      <button class="tab"    onclick="go('column',this)">✍️ 칼럼</button>
+      <button class="tab"    onclick="go('archive',this)">🗂 지난 뉴스</button>
+    </nav>
+    <button class="btn-simple" id="themeToggleBtn" onclick="toggleTheme()">☰ 간소화</button>
   </div>
 </header>
 
-<div class="wrap">
-
-<!-- ══════════════════════════════════════
-     TAB 1: 오늘의 뉴스
-══════════════════════════════════════ -->
+<!-- ══ 뉴스 패널 ══ -->
 <div class="panel on" id="panel-news">
-<div class="page-layout">
-
-  <!-- LEFT: 1-column news stream -->
+<div class="layout">
   <div class="left">
 <!-- AUTO_NEWS_START -->
-
-
     <div class="sec"><span class="sec-tag" style="background:var(--red)">경제 · 금융</span><div class="sec-line"></div></div>
-
     <div class="card red">
-      <div class="ct">
-        <span class="src e">매일경제</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:13:50+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.mk.co.kr/news/it/11986135" class="ch-link" target="_blank">K-첨단 기술, 세계 무대 홀렸다…과기부 현지화 지원에 1228만 달러 성과</a></div>
-      <ul class="cpts"><li>과학기술정보통신부가 한국 첨단 기술의 해외 현지화를 지원해 1228만 달러의 성과를 달성했다.</li><li>K-첨단 기술이 국제 시장에서 높은 평가를 받으며 경쟁력을 입증했다.</li><li>정부의 글로벌 기술 진출 지원 정책이 실질적 경제 효과를 창출했다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.mk.co.kr/news/it/11986135" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card red">
-      <div class="ct">
-        <span class="src e">매일경제</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:00:00+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.mk.co.kr/news/business/11986077" class="ch-link" target="_blank">“폭삭 망했다” 깔봐서 미안…‘임영웅 효과’ 쌍용차, 아빠차로 KGM 성공시대 연다 [세상만車]</a></div>
-      <ul class="cpts"><li>임영웅의 광고 출연으로 쌍용차 이미지 개선 효과를 얻었다.</li><li>KGM 모델이 '아빠차' 포지셔닝으로 시장에서 성공을 거두고 있다.</li><li>과거 부정적 평가를 받던 쌍용차가 브랜드 이미지 회복 중이다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.mk.co.kr/news/business/11986077" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card red">
-      <div class="ct">
-        <span class="src e">매일경제</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:00:00+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.mk.co.kr/news/economy/11986110" class="ch-link" target="_blank">5년 만에 꺾인 사교육비…고물가에 학원비마저 졸라맸다</a></div>
-      <ul class="cpts"><li>년 만에 사교육비가 감소했다.</li><li>고물가 상황으로 인해 학원비 지출을 줄였다.</li><li>가계의 경제적 부담이 사교육 수요 감소로 이어졌다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.mk.co.kr/news/economy/11986110" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card red">
-      <div class="ct">
-        <span class="src e">매일경제</span>
-        <span class="ctime" data-pubtime="2026-03-12T11:56:19+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.mk.co.kr/news/society/11986131" class="ch-link" target="_blank">[속보] ‘대출 사기’ 양문석 당선무효형 확정…공직선거법 위반 혐의는 파기환송</a></div>
-      <ul class="cpts"><li>양문석 당선자가 대출 사기 혐의로 당선무효형이 확정됐다.</li><li>공직선거법 위반 혐의는 파기환송 결정이 나왔다.</li><li>법원의 최종 판단으로 당선무효 처분이 유지된다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.mk.co.kr/news/society/11986131" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card red">
-      <div class="ct">
-        <span class="src e">매일경제</span>
-        <span class="ctime" data-pubtime="2026-03-12T11:48:37+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.mk.co.kr/news/it/11986129" class="ch-link" target="_blank">출산 후 기침만 해도 소변이 샌다면...잘못된 산후조리 탓</a></div>
-      <ul class="cpts"><li>출산 후 기침이나 재채기 시 소변이 새는 증상은 잘못된 산후조리 때문이다.</li><li>골반저근이 임신과 출산으로 손상되어 회복이 필요한 시기에 무리하면 악화된다.</li><li>적절한 산후조리와 골반저근 운동으로 증상 개선이 가능하다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.mk.co.kr/news/it/11986129" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="sec"><span class="sec-tag" style="background:var(--navy)">기 업</span><div class="sec-line"></div></div>
-
-    <div class="card navy">
-      <div class="ct">
-        <span class="src e">매일경제</span>
-        <span class="ctime" data-pubtime="2026-03-12T10:21:40+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.mk.co.kr/news/politics/11985995" class="ch-link" target="_blank">‘커플 가죽 자켓’ 입은 김정은·김주애…군수공장서 신형 권총 잡았다, 무슨 일?</a></div>
-      <ul class="cpts"><li>김정은이 딸 김주애와 함께 커플 가죽 자켓을 입고 군수공장을 방문했다.</li><li>두 사람이 신형 권총을 들고 있는 모습이 공개되었다.</li><li>북한의 무기 개발 현황을 대외에 드러낸 것으로 보인다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.mk.co.kr/news/politics/11985995" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card navy">
-      <div class="ct">
-        <span class="src e">매일경제</span>
-        <span class="ctime" data-pubtime="2026-03-11T22:30:53+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.mk.co.kr/news/politics/11985662" class="ch-link" target="_blank">기상청 “북한 자강도 낭림 북서쪽서 규모 2.2 지진…자연지진”</a></div>
-      <ul class="cpts"><li>기상청이 북한 자강도 낭림 북서쪽에서 규모 2.2 지진 발생을 확인했다.</li><li>지진은 자연지진으로 판단되며 핵실험과는 무관한 것으로 보인다.</li><li>북한 지역 지진 발생은 지질학적 활동의 결과로 분석된다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.mk.co.kr/news/politics/11985662" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card navy">
-      <div class="ct">
-        <span class="src e">매일경제</span>
-        <span class="ctime" data-pubtime="2026-03-11T14:38:31+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.mk.co.kr/news/politics/11985123" class="ch-link" target="_blank">김정은 또다시 최현호 순항미사일 시험 참관…해군 핵무장화 강조</a></div>
-      <ul class="cpts"><li>김정은이 순항미사일 시험을 다시 참관하며 해군 핵무장을 강조했다.</li><li>최현호 미사일로 명명된 무기 시스템의 성능을 검증한 것으로 보인다.</li><li>북한은 해군력 강화를 통해 핵 억지력 확대 의지를 드러냈다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.mk.co.kr/news/politics/11985123" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card navy">
-      <div class="ct">
-        <span class="src e">매일경제</span>
-        <span class="ctime" data-pubtime="2026-03-10T18:03:46+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.mk.co.kr/news/politics/11984251" class="ch-link" target="_blank">평양-베이징 국제열차 … 6년 만에 다시 달린다</a></div>
-      <ul class="cpts"><li>평양과 베이징을 잇는 국제열차가 6년 만에 운행을 재개한다.</li><li>북중 간 철도 운송 정상화로 양국의 경제 교류 재개 신호다.</li><li>코로나 이후 처음 운행되는 국제열차로 관계 개선을 의미한다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.mk.co.kr/news/politics/11984251" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card navy">
-      <div class="ct">
-        <span class="src e">매일경제</span>
-        <span class="ctime" data-pubtime="2026-03-10T12:53:47+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.mk.co.kr/news/politics/11983782" class="ch-link" target="_blank">[속보] “북중 여객열차 오는 12일 운행…약 6년만에 재개” &lt;교도&gt;</a></div>
-      <ul class="cpts"><li>북중 여객열차가 12일 운행을 재개한다.</li><li>약 6년 만에 운행이 재개되는 것이다.</li><li>교도통신이 보도한 소식이다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.mk.co.kr/news/politics/11983782" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="sec"><span class="sec-tag" style="background:var(--gold)">정책 · 사회</span><div class="sec-line"></div></div>
-
-    <div class="card gold">
-      <div class="ct">
-        <span class="src p">한겨레</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:58:10+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.hani.co.kr/arti/international/international_general/1248965.html" class="ch-link" target="_blank">‘1조원의 사나이’ 소토를 막아라…한국 WBC 8강 상대는 도미니카공화국</a></div>
-      <ul class="cpts"><li>한국이 WBC 8강에서 도미니카공화국과 대전한다.</li><li>도미니카공화국의 주전 선수는 소토로 1조원대의 계약금을 받은 선수다.</li><li>한국 팀은 소토의 강력한 공격력을 막아야 8강 진출이 가능하다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.hani.co.kr/arti/international/international_general/1248965.html" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card gold">
-      <div class="ct">
-        <span class="src p">한겨레</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:58:10+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.hani.co.kr/arti/society/society_general/1248964.html" class="ch-link" target="_blank">‘이 대통령 공소취소 거래설’ 장인수·김어준, 경찰에 고발돼…“정성호 법무 명예훼손”</a></div>
-      <ul class="cpts"><li>장인수·김어준이 대통령 공소취소 거래설을 제기한 혐의로 경찰에 고발됐다.</li><li>정성호 법무부 장관이 명예훼손으로 두 사람을 고발했다.</li><li>논란이 된 공소취소 거래설의 진위를 두고 갈등이 심화되고 있다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.hani.co.kr/arti/society/society_general/1248964.html" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card gold">
-      <div class="ct">
-        <span class="src p">한겨레</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:58:10+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.hani.co.kr/arti/society/society_general/1248963.html" class="ch-link" target="_blank">화물노동자들 “유가 급등에 한달 유류비 100만원 넘게 늘어…안전운임제 확대를”</a></div>
-      <ul class="cpts"><li>유가 급등으로 화물노동자들의 월간 유류비가 100만원 이상 증가했다.</li><li>운송비 부담이 커지면서 경영난을 겪고 있는 상황이다.</li><li>화물노동자들은 안전운임제 확대를 요구하고 있다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.hani.co.kr/arti/society/society_general/1248963.html" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card gold">
-      <div class="ct">
-        <span class="src p">한겨레</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:58:10+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.hani.co.kr/arti/sports/basketball/1248962.html" class="ch-link" target="_blank">여자농구, 월드컵 최종예선 1차전 독일에 27점차 대패</a></div>
-      <ul class="cpts"><li>한국 여자농구팀이 월드컵 최종예선 1차전에서 독일에 27점차로 패배했다.</li><li>이번 경기는 월드컵 본선 진출을 위한 중요한 경기였다.</li><li>팀의 실력 강화가 시급한 상황이다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.hani.co.kr/arti/sports/basketball/1248962.html" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card gold">
-      <div class="ct">
-        <span class="src p">한겨레</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:58:10+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.hani.co.kr/arti/society/schooling/1248961.html" class="ch-link" target="_blank">지난해 사교육비 27조5천억원…5년 만에 줄었어도 ‘역대 두 번째’</a></div>
-      <ul class="cpts"><li>지난해 사교육비가 27조5천억원으로 집계됐다.</li><li>년 만에 감소했지만 역대 두 번째로 높은 수준이다.</li><li>여전히 국민 가계에 상당한 교육 부담을 주고 있다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.hani.co.kr/arti/society/schooling/1248961.html" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="sec"><span class="sec-tag" style="background:var(--dark)">국 제</span><div class="sec-line"></div></div>
-
-    <div class="card dk">
-      <div class="ct">
-        <span class="src p">한겨레</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:58:10+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.hani.co.kr/arti/international/international_general/1248965.html" class="ch-link" target="_blank">‘1조원의 사나이’ 소토를 막아라…한국 WBC 8강 상대는 도미니카공화국</a></div>
-      <ul class="cpts"><li>WBC 8강 대전상대는 도미니카공화국으로 결정되었다.</li><li>도미니카공화국의 주전 선수는 소토로 1조원의 연봉을 받는다.</li><li>한국팀은 소토를 저지해야 8강 진출을 이룰 수 있다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.hani.co.kr/arti/international/international_general/1248965.html" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card dk">
-      <div class="ct">
-        <span class="src p">한겨레</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:58:10+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.hani.co.kr/arti/international/international_general/1248954.html" class="ch-link" target="_blank">미 국방부 “헤그세스 장관 사진 안 좋게 나와”…기자 출입 금지</a></div>
-      <ul class="cpts"><li>미 국방부가 헤그세스 장관의 사진이 안 좋게 나왔다는 이유로 기자 출입을 금지했다.</li><li>국방부는 장관의 이미지 관리를 위해 언론 접근을 제한하는 조치를 취했다.</li><li>이는 투명성과 언론자유를 둘러싼 논란을 야기할 것으로 예상된다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.hani.co.kr/arti/international/international_general/1248954.html" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card dk">
-      <div class="ct">
-        <span class="src p">한겨레</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:58:10+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.hani.co.kr/arti/international/international_general/1248951.html" class="ch-link" target="_blank">이스라엘, 이란 정권 붕괴 기대했지만…“환호가 좌절로”</a></div>
-      <ul class="cpts"><li>이스라엘이 이란 정권 붕괴를 기대했으나 예상과 달랐다.</li><li>이란 내부 상황이 이스라엘의 예측과 다르게 전개됐다.</li><li>초기 환호감이 좌절로 변한 상황이다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.hani.co.kr/arti/international/international_general/1248951.html" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card dk">
-      <div class="ct">
-        <span class="src p">한겨레</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:58:10+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.hani.co.kr/arti/international/arabafrica/1248949.html" class="ch-link" target="_blank">IEA “4억 배럴 방출”에도 유가↑…이란의 유조선 공격 확대 여파</a></div>
-      <ul class="cpts"><li>국제에너지기구(IEA)가 4억 배럴의 석유 방출을 결정했다.</li><li>이란의 유조선 공격이 확대되면서 유가가 상승했다.</li><li>공급 증대에도 지정학적 리스크가 유가 상승을 주도했다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.hani.co.kr/arti/international/arabafrica/1248949.html" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
-      </div>
-    </div>
-    <div class="card dk">
-      <div class="ct">
-        <span class="src p">한겨레</span>
-        <span class="ctime" data-pubtime="2026-03-12T12:58:10+09:00">🕒 --</span>
-      </div>
-      <div class="ch"><a href="https://www.hani.co.kr/arti/international/america/1248947.html" class="ch-link" target="_blank">미국도 비축유 1억7천만배럴 푼다…“그래도 유가 진정 안 돼”</a></div>
-      <ul class="cpts"><li>미국이 전략 석유 비축량 1억7천만배럴을 방출하기로 결정했다.</li><li>그러나 공급 확대에도 불구하고 유가는 여전히 하락하지 않고 있다.</li><li>글로벌 에너지 수급 불균형이 지속되고 있는 상황이다.</li></ul>
-      <div class="card-history-row">
-        <a href="https://www.hani.co.kr/arti/international/america/1248947.html" target="_blank" style="font-size:10px;color:var(--navy);text-decoration:none;">↗ 원문 보기</a>
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="">🕒 --</span></div>
+      <div class="ch"><a href="#" class="ch-link">업데이트 대기 중 — Actions 실행 후 최신 뉴스로 교체됩니다</a></div>
+      <ul class="cpts"><li>오전 7:30 / 오후 5:30 자동 업데이트</li><li>Claude AI가 핵심 내용을 3줄로 요약</li><li>원문·과거유사·결과추적 버튼 제공</li></ul>
+      <div class="card-btns">
+        <button class="cbtn origin" onclick="window.open('#')">↗ 원문 보기</button>
+        <button class="cbtn hist"   onclick="openHistory('samsung_buyback',event)">📂 과거 유사</button>
+        <button class="cbtn result" onclick="openResult('samsung_buyback',event)">📈 결과 추적</button>
       </div>
     </div>
 <!-- AUTO_NEWS_END -->
-    </div><!-- /left -->
-
-  <!-- RIGHT SIDEBAR -->
+  </div>
   <div class="right">
 <!-- AUTO_RIGHT_START -->
-
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치</div>
       <div class="mini-stats">
-        <div class="mstat">
-          <div class="mnum r">1228만 달러</div>
-          <div class="mlbl">기술지원<br><small style="font-size:9px;color:var(--ink3)">K-기술 현지화</small></div>
-        </div>
-        <div class="mstat">
-          <div class="mnum r">27조5천억</div>
-          <div class="mlbl">사교육비<br><small style="font-size:9px;color:var(--ink3)">지난해 규모</small></div>
-        </div>
-        <div class="mstat">
-          <div class="mnum r">27점차</div>
-          <div class="mlbl">여자농구<br><small style="font-size:9px;color:var(--ink3)">독일전 패배</small></div>
-        </div>
+        <div class="mstat"><div class="mnum r">--</div><div class="mlbl">업데이트 대기</div></div>
+        <div class="mstat"><div class="mnum">--</div><div class="mlbl">업데이트 대기</div></div>
+        <div class="mstat"><div class="mnum">--</div><div class="mlbl">업데이트 대기</div></div>
       </div>
     </div>
-
     <div class="sbox">
-      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>신문사별 1면 헤드라인</div>
-      <div class="hlist">
-        <div class="hitem">
-          <span class="hi-src src c">연합</span>
-          <div><div class="hi-txt">K-첨단기술 세계무대</div><div class="hi-sub">과기부 지원 1228만달러</div></div>
-        </div>
-        <div class="hitem">
-          <span class="hi-src src e">한국</span>
-          <div><div class="hi-txt">임영웅 효과 쌍용차</div><div class="hi-sub">KGM 성공시대 연다</div></div>
-        </div>
-        <div class="hitem">
-          <span class="hi-src src p">동아</span>
-          <div><div class="hi-txt">5년만에 꺾인 사교육비</div><div class="hi-sub">고물가에 학원비 축소</div></div>
-        </div>
-        <div class="hitem">
-          <span class="hi-src src p">뉴스</span>
-          <div><div class="hi-txt">북중 여객열차 재개</div><div class="hi-sub">6년만에 평양-베이징</div></div>
-        </div>
-        <div class="hitem">
-          <span class="hi-src src w">로이터</span>
-          <div><div class="hi-txt">IEA 석유 방출도 유가상승</div><div class="hi-sub">이란 유조선 공격 여파</div></div>
-        </div>
+      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 인포그래픽</div>
+      <div class="info-mini">
+        <div class="info-mini-item"><div class="info-mini-label">업데이트 대기</div><div class="info-mini-bar-wrap"><div class="info-mini-bar" style="width:0%;background:var(--navy)"></div></div><div class="info-mini-val">--</div></div>
+        <div class="info-mini-item"><div class="info-mini-label">업데이트 대기</div><div class="info-mini-bar-wrap"><div class="info-mini-bar" style="width:0%;background:var(--gold)"></div></div><div class="info-mini-val">--</div></div>
+        <div class="info-mini-item"><div class="info-mini-label">업데이트 대기</div><div class="info-mini-bar-wrap"><div class="info-mini-bar" style="width:0%;background:var(--red)"></div></div><div class="info-mini-val">--</div></div>
       </div>
     </div>
-
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--dark)"></span>신문사별 1면 헤드라인</div>
+      <div class="hlist">
+        <div class="hitem"><span class="hi-src src c">조선</span><div><div class="hi-txt">업데이트 대기</div><div class="hi-date" id="sidebar-date">--</div></div></div>
+      </div>
+    </div>
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
       <div class="hlist">
-        <div class="hitem">
-          <span class="hi-src src c" style="background:#f0ede6;color:#0f2744;font-weight:700">①</span>
-          <div><div class="hi-txt">한국 WBC 8강전</div><div class="hi-sub">도미니카공화국 상대로 소토 저지</div></div>
-        </div>
-        <div class="hitem">
-          <span class="hi-src src c" style="background:#f0ede6;color:#0f2744;font-weight:700">②</span>
-          <div><div class="hi-txt">북한 미사일 시험</div><div class="hi-sub">최현호 순항미사일 해군 핵무장화</div></div>
-        </div>
-        <div class="hitem">
-          <span class="hi-src src c" style="background:#f0ede6;color:#0f2744;font-weight:700">③</span>
-          <div><div class="hi-txt">사교육비 변화</div><div class="hi-sub">5년만에 감소하나 역대 2위 수준</div></div>
-        </div>
-        <div class="hitem">
-          <span class="hi-src src c" style="background:#f0ede6;color:#0f2744;font-weight:700">④</span>
-          <div><div class="hi-txt">중동 유가 긴장</div><div class="hi-sub">이란 공격으로 글로벌 유가 상승</div></div>
-        </div>
+        <div class="hitem"><span style="font-size:12px;font-weight:700;color:var(--navy);flex-shrink:0;width:18px;margin-top:1px">①</span><div><div class="hi-txt">업데이트 대기</div><div class="hi-sub">자동 갱신 예정</div></div></div>
       </div>
     </div>
-
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--dark)"></span>오늘의 주요 이슈</div>
-      <ul style="list-style:none;padding:0;margin:8px 0 0"><li style="margin-bottom:4px;font-size:12px;color:var(--ink2)">K-첨단기술 세계시장 1228만달러</li><li style="margin-bottom:4px;font-size:12px;color:var(--ink2)">사교육비 27조5천억원 5년만 감소</li><li style="margin-bottom:4px;font-size:12px;color:var(--ink2)">북중 열차 6년만에 운행 재개</li></ul>
+      <div class="issue-list"><div class="issue-item">업데이트 대기 중</div></div>
     </div>
 <!-- AUTO_RIGHT_END -->
-</div></div>
-
+  </div>
 </div>
-</div><!-- /panel-column -->
+</div>
 
+<!-- ══ 칼럼 패널 ══ -->
+<div class="panel" id="panel-column">
+<div class="layout">
+  <div class="left">
+<!-- AUTO_COLUMN_START -->
+    <div class="sec"><span class="sec-tag" style="background:var(--navy)">오늘의 추천 칼럼</span><div class="sec-line"></div></div>
+    <div class="col-card navy">
+      <div class="col-top">
+        <span class="col-paper src e">한국경제</span>
+        <span class="col-writer">논설위원</span>
+        <span class="col-date">업데이트 대기</span>
+      </div>
+      <div class="col-title"><a href="#" class="ch-link">칼럼 자동 업데이트 대기 중</a></div>
+      <div class="col-body">Actions 실행 시 최신 칼럼 10줄 요약으로 자동 교체됩니다.</div>
+    </div>
+<!-- AUTO_COLUMN_END -->
+  </div>
+  <div class="right">
+<!-- AUTO_COL_RIGHT_START -->
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
+      <div class="issue-list"><div class="issue-item" style="line-height:1.6">오늘의 논점이 여기에 표시됩니다</div></div>
+    </div>
+<!-- AUTO_COL_RIGHT_END -->
+  </div>
+</div>
+</div>
 
+<!-- ══ 지난 뉴스 패널 ══ -->
+<div class="panel" id="panel-archive">
+<div class="layout">
+  <div class="left" style="max-width:740px">
+<!-- AUTO_ARCHIVE_START -->
+<div class="arch-list">
+  <div>
+    <div class="arch-row" onclick="tog('d_placeholder')">
+      <div class="aday"><div class="adaynum">--</div><div class="adaysub">업데이트</div></div>
+      <div class="ainfo">
+        <div class="atitle">날짜별 뉴스 아카이브 — Actions 실행 후 자동 생성</div>
+        <div class="aprev">날짜를 클릭하면 해당일 뉴스 목록을 펼쳐볼 수 있어요</div>
+      </div>
+      <div class="acnt">-- ▾</div>
+    </div>
+    <div class="arch-detail" id="d_placeholder">
+      <div class="card navy" style="margin-top:6px"><div class="ch"><a href="#" class="ch-link" style="font-size:13px">하루 2회(오전 7:30 / 오후 5:30) 자동 업데이트됩니다</a></div></div>
+    </div>
+  </div>
+</div>
+<!-- AUTO_ARCHIVE_END -->
+  </div>
+  <div class="right">
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>아카이브 안내</div>
+      <div class="issue-list">
+        <div class="issue-item">날짜 클릭 → 해당일 뉴스 펼치기</div>
+        <div class="issue-item">오전 7:30 / 오후 5:30 자동 갱신</div>
+        <div class="issue-item">최근 7일 뉴스 보관</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 
-<!-- ══════════════════════════════════════
-     TAB: 투자 분석 (NEW)
-══════════════════════════════════════ -->
+<!-- 모달: 과거유사뉴스 -->
+<div class="modal-overlay" id="histModal" onclick="if(event.target===this)closeModal('histModal')">
+  <div class="modal">
+    <div class="modal-hd">
+      <div><div class="modal-title" id="histTitle"></div><div class="modal-sub" id="histSub"></div></div>
+      <span class="modal-close" onclick="closeModal('histModal')">✕</span>
+    </div>
+    <div class="modal-body" id="histBody"></div>
+  </div>
+</div>
 
+<!-- 모달: 결과추적 -->
+<div class="modal-overlay" id="resultModal" onclick="if(event.target===this)closeModal('resultModal')">
+  <div class="modal">
+    <div class="modal-hd">
+      <div><div class="modal-title" id="resultTitle"></div><div class="modal-sub" id="resultSub"></div></div>
+      <span class="modal-close" onclick="closeModal('resultModal')">✕</span>
+    </div>
+    <div class="modal-body" id="resultBody"></div>
+  </div>
+</div>
+
+<script>
+function go(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  const p=document.getElementById('panel-'+id);if(p)p.classList.add('on');
+  if(btn)btn.classList.add('on');
+}
+function toggleTheme(){
+  const s=document.body.classList.toggle('simple-mode');
+  document.getElementById('themeToggleBtn').textContent=s?'☰ 기본 보기':'☰ 간소화';
+}
+(function(){
+  const days=['일','월','화','수','목','금','토'],now=new Date();
+  const y=now.getFullYear(),mo=now.getMonth()+1,d=now.getDate();
+  const el=document.getElementById('hdate');
+  if(el)el.textContent=`${y}.${mo}.${d} (${days[now.getDay()]})`;
+  const sd=document.getElementById('sidebar-date');
+  if(sd)sd.textContent=`${mo}월 ${d}일 기준`;
+  const meta=document.querySelector('meta[name="last-updated"]');
+  const uel=document.getElementById('hdr-update');
+  if(uel&&meta&&meta.content){
+    const t=new Date(meta.content);
+    if(!isNaN(t)){
+      const h=t.getHours(),m=String(t.getMinutes()).padStart(2,'0');
+      uel.textContent=`· ${h<12?'오전':'오후'} ${h%12||12}:${m} 업데이트`;
+    }
+  }
+})();
+function renderTimeAgo(){
+  const now=new Date();
+  document.querySelectorAll('[data-pubtime]').forEach(el=>{
+    const pub=new Date(el.dataset.pubtime);
+    if(!el.dataset.pubtime||isNaN(pub)){el.textContent='🕒 --';return;}
+    const diff=Math.floor((now-pub)/1000);
+    let label;
+    if(diff<60)label='방금 전';
+    else if(diff<3600)label=Math.floor(diff/60)+'분 전';
+    else if(diff<86400)label=Math.floor(diff/3600)+'시간 전';
+    else label=Math.floor(diff/86400)+'일 전';
+    el.textContent='🕒 '+label;
+  });
+}
+renderTimeAgo();setInterval(renderTimeAgo,60000);
+
+function tog(id){const el=document.getElementById(id);if(el)el.classList.toggle('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('histModal');closeModal('resultModal')}});
+
+const HISTORY_DATA={
+  'samsung_buyback':{title:'삼성·SK 자사주 소각',items:[
+    {date:'2018.12.05',title:'삼성전자 9.3조 자사주 소각 발표',bullets:['역대 최대 규모 자사주 소각 계획 공개','발표 이후 2주간 주가 +6.2% 상승','코리아 디스카운트 해소 기대감 형성']},
+    {date:'2021.03.11',title:'SK하이닉스, 1조 규모 자사주 매입 결정',bullets:['반도체 슈퍼사이클 수혜 기대감 반영','주주환원 정책 강화 신호로 해석','외국인 순매수 전환 계기']},
+    {date:'2023.11.23',title:'삼성전자 10조 자사주 전량 소각 결정',bullets:['1개월 내 전량 소각으로 유통주식 감소','코스피 외국인 매수세 유입 촉발','밸류업 프로그램 선도 사례로 평가']}]},
+  'iran_war':{title:'이란 중동 정세',items:[
+    {date:'2024.04.14',title:'이란, 이스라엘 본토 직접 공격',bullets:['드론·미사일 300여 발, 대부분 요격','중동 전쟁 확전 우려로 국제유가 급등','한국 증시 -1.2%, 방산주 강세']},
+    {date:'2024.10.01',title:'이란, 이스라엘에 탄도미사일 공격',bullets:['180여 발 발사, 이스라엘 철통 방어','국제유가 배럴당 5달러 급등','글로벌 증시 변동성 확대']}]},
+  'us_tariff':{title:'미국 관세·무역',items:[
+    {date:'2018.03.08',title:'트럼프 1기, 철강·알루미늄 관세 25%',bullets:['한국 철강 수출 직격, 현대·포스코 하락','한미 FTA 재협상 압박 병행','무역전쟁 서막, 글로벌 공급망 재편']},
+    {date:'2025.02.01',title:'트럼프 2기, 대중 관세 10% 추가',bullets:['반도체·배터리 한국 반사이익 기대','중국 보복관세 우려로 수출주 혼조','원/달러 환율 1,460원대 상승']}]},
+  'kospi_drop':{title:'코스피 급락·증시 변동',items:[
+    {date:'2020.03.19',title:'코스피 1,457 — 10년 만의 최저점',bullets:['코로나19 팬데믹 공포로 외국인 대량 매도','서킷브레이커 2회 발동, 역대 최대 낙폭','이후 8개월간 회복, 2021년 3,300 돌파']},
+    {date:'2022.09.30',title:'코스피 2,155 — 2년 만의 최저치',bullets:['미 연준 금리 인상 충격 본격화','원/달러 1,430원 돌파, 이중 압박','6개월 후 2,600대 회복']}]}
+};
+function openHistory(key,e){
+  if(e)e.stopPropagation();
+  const keys=Object.keys(HISTORY_DATA);
+  const data=HISTORY_DATA[key]||HISTORY_DATA[keys[0]];
+  document.getElementById('histTitle').textContent='📂 '+data.title+' — 과거 유사 뉴스';
+  document.getElementById('histSub').textContent='동일 주제의 과거 보도를 시간순으로 확인하세요';
+  document.getElementById('histBody').innerHTML=data.items.map(item=>`
+    <div class="hist-item">
+      <div class="hist-item-date">📅 ${item.date}</div>
+      <div class="hist-item-title">${item.title}</div>
+      <ul class="hist-item-bullets">${item.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>
+    </div>`).join('');
+  document.getElementById('histModal').classList.add('open');
+}
+
+const RESULT_DATA={
+  'samsung_buyback':{title:'삼성·SK 자사주 소각 — 결과 추적',items:[
+    {tag:'주가 반응',up:true,title:'발표 후 2주 삼성전자 +4.2%, SK하이닉스 +3.1%',desc:'외국인 순매수 전환, 기관도 매수 동참하며 코스피 상승 견인'},
+    {tag:'장기 영향',up:true,title:'밸류업 정책과 맞물려 증시 신뢰도 상승',desc:'이후 국내 주요 기업들의 주주환원 정책 확대 흐름으로 이어짐'},
+    {tag:'시장 평가',up:true,title:'코리아 디스카운트 해소 기대감 일부 현실화',desc:'외국인 지분율 소폭 상승, PBR 개선 효과 확인'}]},
+  'iran_war':{title:'이란 중동 정세 — 결과 추적',items:[
+    {tag:'유가 변동',up:true,title:'공격 직후 WTI +6% → 1주 내 안정화',desc:'이스라엘 보복 수위 조절로 전면전 회피, 유가 재하락'},
+    {tag:'증시 영향',up:false,title:'글로벌 증시 단기 충격 후 빠른 회복',desc:'방산주 강세 지속, 에너지주도 단기 급등 후 차익 실현'},
+    {tag:'외교 결과',up:false,title:'미국 중재 속 교전 축소 · 장기화 양상',desc:'완전한 종전 미달성, 간헐적 충돌 지속'}]},
+  'us_tariff':{title:'미국 관세 정책 — 결과 추적',items:[
+    {tag:'무역 수지',up:false,title:'미·중 무역 적자 지속 — 관세 효과 제한적',desc:'중국산 우회 수출 증가, 미국 물가 상승 부작용'},
+    {tag:'한국 영향',up:true,title:'반도체·배터리 반사이익 일부 현실화',desc:'미국 공장 투자 확대로 장기적으로 긍정 효과 기대'},
+    {tag:'환율',up:false,title:'원/달러 1,400원대 고착화',desc:'수출 기업 환차익 vs 수입 물가 상승 상충'}]},
+  'kospi_drop':{title:'코스피 급락 — 결과 추적',items:[
+    {tag:'V자 반등',up:true,title:'저점 이후 6개월 내 30~50% 반등',desc:'역사적으로 패닉셀 이후 장기 보유자 수익 실현'},
+    {tag:'정책 대응',up:true,title:'정부 긴급 시장 안정화 조치 효과',desc:'증권사 콜옵션, ETF 매수 등 하방 지지'},
+    {tag:'교훈',up:true,title:'공포 극대화 시점이 역사적 매수 기회',desc:'2020년 1,457 저점 매수자 2021년 +125% 수익'}]}
+};
+function openResult(key,e){
+  if(e)e.stopPropagation();
+  const keys=Object.keys(RESULT_DATA);
+  const data=RESULT_DATA[key]||RESULT_DATA[keys[0]];
+  document.getElementById('resultTitle').textContent='📈 '+data.title;
+  document.getElementById('resultSub').textContent='뉴스 발생 이후 실제 결과와 시장 반응을 추적합니다';
+  document.getElementById('resultBody').innerHTML=data.items.map(item=>`
+    <div class="result-item">
+      <span class="result-tag ${item.up?'up':'dn'}">${item.up?'▲ 긍정':'▼ 부정'} · ${item.tag}</span>
+      <div class="result-title">${item.title}</div>
+      <div class="result-desc">${item.desc}</div>
+    </div>`).join('');
+  document.getElementById('resultModal').classList.add('open');
+}
+</script>
+</body>
+</html>
