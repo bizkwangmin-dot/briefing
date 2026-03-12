@@ -2,8 +2,8 @@ name: 브리핑 자동 업데이트
 
 on:
   schedule:
-    - cron: '30 22 * * *'
-    - cron: '30 8 * * *'
+    - cron: '30 22 * * *'   # 오전 7:30 KST
+    - cron: '30 8 * * *'    # 오후 5:30 KST
   workflow_dispatch:
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
           python-version: '3.11'
 
       - name: 패키지 설치
-        run: pip install requests beautifulsoup4 pytz lxml google-generativeai
+        run: pip install requests beautifulsoup4 pytz lxml
 
       - name: 브리핑 업데이트 실행
         run: python update_briefing.py
