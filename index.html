@@ -284,10 +284,6 @@ function toggleColArchive(el){
   if(items) items.classList.toggle('open');
 }
 
-/* ── 관전포인트 번호 토글 ── */
-function togglePt(card){
-  card.classList.toggle('pt-open');
-}
 
 /* ── 사이드박스 토글 ── */
 .sbox-toggle{cursor:pointer;user-select:none}
@@ -947,7 +943,7 @@ function togglePt(card){
 <!-- AUTO_RIGHT_START -->
 
     <!-- 핵심수치 sbox: 클릭 토글 -->
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this)">
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
       <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치<span class="sbox-arr">▾</span></div>
       <div class="sbox-body">
         <div class="mini-stats">
@@ -962,12 +958,12 @@ function togglePt(card){
     </div>
 
     <!-- 관전포인트 sbox: 클릭 토글 -->
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this)">
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
       <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트<span class="sbox-arr">▾</span></div>
       <div class="sbox-body">
         <div class="pt-wrap">
           <div class="pt-card">
-            <div class="pt-hd" onclick="togglePt(this.closest('.pt-card'))">
+            <div class="pt-hd" onclick="togglePt(this.closest('.pt-card'), event)">
               <span class="pt-num">①</span><span class="pt-title">한국 디지털 규제, 미국의 표적이 됐나?</span>
             </div>
             <div class="pt-body">
@@ -977,7 +973,7 @@ function togglePt(card){
             </div>
           </div>
           <div class="pt-card">
-            <div class="pt-hd" onclick="togglePt(this.closest('.pt-card'))">
+            <div class="pt-hd" onclick="togglePt(this.closest('.pt-card'), event)">
               <span class="pt-num">②</span><span class="pt-title">이란전쟁, 정말 곧 끝날까?</span>
             </div>
             <div class="pt-body">
@@ -987,7 +983,7 @@ function togglePt(card){
             </div>
           </div>
           <div class="pt-card">
-            <div class="pt-hd" onclick="togglePt(this.closest('.pt-card'))">
+            <div class="pt-hd" onclick="togglePt(this.closest('.pt-card'), event)">
               <span class="pt-num">③</span><span class="pt-title">유가, 다시 오를 수 있을까?</span>
             </div>
             <div class="pt-body">
@@ -997,7 +993,7 @@ function togglePt(card){
             </div>
           </div>
           <div class="pt-card">
-            <div class="pt-hd" onclick="togglePt(this.closest('.pt-card'))">
+            <div class="pt-hd" onclick="togglePt(this.closest('.pt-card'), event)">
               <span class="pt-num">④</span><span class="pt-title">오늘 증시, 어느 방향으로 튈까?</span>
             </div>
             <div class="pt-body">
@@ -1011,7 +1007,7 @@ function togglePt(card){
     </div>
 
     <!-- 오늘의 용어 sbox: 클릭 토글 -->
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this)">
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
       <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>오늘의 용어<span class="sbox-arr">▾</span></div>
       <div class="sbox-body">
         <div class="term-list">
@@ -1185,12 +1181,15 @@ function toggleColArchive(el){
 }
 
 /* ── 관전포인트 번호 토글 ── */
-function togglePt(card){
+function togglePt(card, event){
+  if(event){ event.stopPropagation(); event.preventDefault(); }
   card.classList.toggle('pt-open');
 }
 
 /* ── 사이드박스 토글 ── */
-function toggleSbox(el){
+function toggleSbox(el, event){
+  // pt-hd 클릭이 버블링된 경우 무시
+  if(event && event.target.closest('.pt-hd')) return;
   el.classList.toggle('closed');
 }
 // 페이지 로드 시 핵심수치·관전포인트 기본 접힘
