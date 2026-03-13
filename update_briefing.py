@@ -85,8 +85,8 @@ SECTION_RSS = {
     "경제 · 금융": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://www.joongang.co.kr/rss/news/economy",
-                     "https://www.joongang.co.kr/rss/news"],
+        "중앙일보": ["https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+                     "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko"],
         "동아일보": ["https://rss.donga.com/economy.xml",
                      "https://rss.donga.com/total.xml"],
         "한국경제": ["https://www.hankyung.com/feed/economy"],
@@ -99,8 +99,8 @@ SECTION_RSS = {
     "기 업": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://www.joongang.co.kr/rss/news/economy",
-                     "https://www.joongang.co.kr/rss/news"],
+        "중앙일보": ["https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+                     "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko"],
         "동아일보": ["https://rss.donga.com/economy.xml",
                      "https://rss.donga.com/total.xml"],
         "한국경제": ["https://www.hankyung.com/feed/economy"],
@@ -114,8 +114,8 @@ SECTION_RSS = {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/politics/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/category/national/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://www.joongang.co.kr/rss/news/politics",
-                     "https://www.joongang.co.kr/rss/news"],
+        "중앙일보": ["https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+                     "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko"],
         "동아일보": ["https://rss.donga.com/politics.xml",
                      "https://rss.donga.com/national.xml",
                      "https://rss.donga.com/total.xml"],
@@ -131,8 +131,8 @@ SECTION_RSS = {
     "국 제": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/international/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://www.joongang.co.kr/rss/news/world",
-                     "https://www.joongang.co.kr/rss/news"],
+        "중앙일보": ["https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+                     "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko"],
         "동아일보": ["https://rss.donga.com/international.xml",
                      "https://rss.donga.com/total.xml"],
         "한국경제": ["https://www.hankyung.com/feed/international",
@@ -152,8 +152,8 @@ RSS_FALLBACKS = {
         "https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
     ]),
     "중앙일보": ("c", [
-        "https://www.joongang.co.kr/rss/news/economy",
-        "https://www.joongang.co.kr/rss/news",
+        "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+        "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
     ]),
     "동아일보": ("c", [
         "https://rss.donga.com/total.xml",
@@ -189,8 +189,8 @@ COLUMN_SOURCES_DEF = [
         "https://www.chosun.com/arc/outboundfeeds/rss/category/opinion/?outputType=xml",
     ]),
     ("중앙일보", "c", [
-        "https://www.joongang.co.kr/rss/news/opinion",
-        "https://www.joongang.co.kr/rss/news/column",
+        "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+        "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
     ]),
     ("동아일보", "c", [
         "https://rss.donga.com/opinion.xml",
@@ -267,7 +267,7 @@ INTL_COUNTRY = {
 # ── 헤드라인 소스 (사이드바용) ────────────────────────────────
 HEADLINE_SOURCES = [
     ("조선","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-    ("중앙","c","https://www.joongang.co.kr/rss/news"),
+    ("중앙","c","https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko"),
     ("동아","c","https://rss.donga.com/total.xml"),
     ("매경","e","https://www.mk.co.kr/rss/30000001/"),
     ("한경","e","https://www.hankyung.com/feed/economy"),
@@ -426,18 +426,23 @@ def fetch_rss(source, src_class, url, max_items=15, today_only=True):
 
             link = "#"
             if lk:
-                # atom feed: <link href="..."/> 형식 (조선일보 등)
-                href = lk.get("href")
-                if href:
+                href = lk.get("href", "")
+                if href and href.startswith("http"):
                     link = href
                 else:
                     txt = lk.get_text(strip=True)
-                    # lxml-xml이 <link>텍스트</link> 안의 텍스트를 못 읽을 때
-                    # next_sibling이 실제 URL인 경우 처리
                     if not txt:
                         sib = lk.next_sibling
                         txt = str(sib).strip() if sib else ""
-                    link = txt if txt and txt.startswith("http") else "#"
+                    if txt and txt.startswith("http"):
+                        link = txt
+            # href/text 모두 없으면 guid 시도 (조선·동아 일부 피드)
+            if link == "#":
+                guid = item.find("guid")
+                if guid:
+                    g = guid.get_text(strip=True)
+                    if g.startswith("http"):
+                        link = g
 
             pub_iso  = now_iso
             pub_date = today_date
@@ -564,6 +569,7 @@ def collect_one(src_name, src_cls, url_list):
                     continue
                 if is_hard_excluded(item["title"]):
                     continue
+                global_title_seen.add(k)   # 즉시 등록 → 신문사 독점 차단
                 return item
     return None
 
@@ -582,8 +588,6 @@ for section in NEWS_SECTIONS:
 
         item = collect_one(src_name, src_cls, url_list)
         if item:
-            k = dedup_key(item["title"])
-            global_title_seen.add(k)
             print(f"    ✅ [{src_name}] {item['title'][:40]}...")
             item["bullets"] = get_summary_3(item["title"])
             time.sleep(0.25)
@@ -830,7 +834,6 @@ def make_news_card(item, card_color, hist_key):
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
           <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
@@ -853,6 +856,55 @@ for section in NEWS_SECTIONS:
         news_html += make_news_card(item, cc, hk)
     news_html += '    </div>\n'
 news_html += "\n"
+
+# ── 주요 뉴스 섹션: 각 섹션 첫 번째 기사 1개씩 묶기 ─────────
+headline_html = "\n"
+headline_html += (
+    '\n    <div class="sec sec-collapsed" onclick="toggleSection(this)">'
+    '<span class="sec-tag" style="background:var(--accent)">주 요 뉴 스</span>'
+    '<div class="sec-line"></div><span class="sec-toggle">▾</span></div>\n'
+    '    <div class="sec-body collapsed">\n'
+)
+for section in NEWS_SECTIONS:
+    items = section_news.get(section, [])
+    if not items:
+        continue
+    item  = items[0]
+    color = SECTION_COLORS[section]
+    cc    = CARD_COLORS[section]
+    hk    = HIST_KEYS[section]
+    title      = esc(item["title"])
+    url        = item["url"]
+    src        = esc(item["source"])
+    sc         = item["src_class"]
+    pub        = item["pubtime"]
+    bullets    = item.get("bullets") or []
+    hist_label = HIST_LABELS.get(hk, hk)
+    li_html      = "".join(f"<li>{esc(b)}</li>" for b in bullets[:3]) if bullets else "<li>요약 로딩 중...</li>"
+    bullets_html = f'<ul class="cpts">{li_html}</ul>'
+    headline_html += f"""
+    <div class="card {cc}" onclick="toggleCard(this)">
+      <div class="ct">
+        <span class="hl-sec-tag" style="background:{color}">{section}</span>
+        <span class="src {sc}">{src}</span>
+        <span class="ctime" data-pubtime="{pub}">🕒 --</span>
+        <span class="expand-hint">▾</span>
+      </div>
+      <div class="ch">{title}</div>
+      <div class="card-expand">
+        {bullets_html}
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hk}',event)">📂 {hist_label}</button>
+          <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>"""
+headline_html += "    </div>\n"
+
 
 def make_intl_card(item):
     ko_title   = esc(item.get("ko_title", item["title"]))
@@ -881,7 +933,6 @@ def make_intl_card(item):
         {orig_html}
         {bullets_html}
         <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
           <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
@@ -1075,6 +1126,7 @@ def replace_block(html, s, e, content):
     print(f"  ⚠️  마커 없음: {s[:40]}")
     return html
 
+html = replace_block(html, '<!-- AUTO_HEADLINE_START -->', '<!-- AUTO_HEADLINE_END -->', headline_html)
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
 html = replace_block(html, '<!-- AUTO_INTL_START -->',      '<!-- AUTO_INTL_END -->',      intl_html)
 html = replace_block(html, '<!-- AUTO_COLUMN_START -->',    '<!-- AUTO_COLUMN_END -->',    col_html)
