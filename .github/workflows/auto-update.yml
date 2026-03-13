@@ -2,8 +2,8 @@ name: 세줄뉴스 자동 업데이트
 
 on:
   schedule:
-    - cron: '30 22 * * *'   # 오전 7:30 KST
-    - cron: '30 8 * * *'    # 오후 5:30 KST
+    - cron: '25 22 * * *'   # 오전 7:25 KST
+    - cron: '20 8 * * *'    # 오후 5:20 KST
   workflow_dispatch:
 
 jobs:
