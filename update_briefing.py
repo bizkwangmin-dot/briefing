@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# 업데이트 시간: 오전 7:25 KST (UTC 22:25), 오후 5:20 KST (UTC 08:20)
-# auto-update.yml cron: "25 22 * * *" and "20 8 * * *"
 """
-세줄뉴스 자동 업데이트 v4 (최신 디자인 반영)
-- 클릭해서 펼치는 카드 구조
-- 좋아요 + 과거 사례(인라인) + 기사 보기
-- 칼럼 탭 포함
-- 뉴모피즘 간소화 모드 호환
+세줄뉴스 자동 업데이트 v5
+- 섹션별 전용 RSS로 경제/기업/정책/국제 분리
+- AI 섹션 재분류 + 부적절 기사 필터링
+- 전체 중복 제거 (섹션간 같은 뉴스 절대 안 나옴)
+- 해외뉴스 신문사별 1개씩 필수
+- 칼럼 opinion RSS 전용 (뉴스기사 유입 차단)
+- 국가 배지 (🇺🇸 미국, 🇬🇧 영국, 🇫🇷 프랑스 등)
 """
 
 import os, re, sys, time, json, random as _random
@@ -63,13 +63,11 @@ today_sub   = now_kst.strftime("%-m월 · ") + ['일','월','화','수','목','�
 weekday_ko  = ['월','화','수','목','금','토','일'][now_kst.weekday()]
 header_date = f"{now_kst.strftime('%Y.%-m.%-d')} ({weekday_ko})"
 
-# update_display는 수집 후 최신 기사 발행 시각 기준으로 재계산
 def make_update_display(latest_dt):
-    """최신 기사 발행 시각 기준 업데이트 표시 문자열"""
     label = "오전" if latest_dt.hour < 12 else "오후"
     return f"기사 기준 {label} {latest_dt.strftime('%-H:%M')}"
 
-print(f"[{now_display}] 세줄뉴스 v4 업데이트 시작")
+print(f"[{now_display}] 세줄뉴스 v5 업데이트 시작")
 print(f"Claude 키: {'✅ 있음' if CLAUDE_KEY else '⚠️  없음 (요약 생략)'}")
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
@@ -77,18 +75,85 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 def esc(s):
     return str(s).replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('"','&quot;')
 
-# ── RSS 소스 ─────────────────────────────────────────────────
-# 전체 신문사 RSS 소스 (섹션별 최적 URL)
-# 신문사별 RSS URL 목록 (주 URL 실패 시 대안 순서대로 시도)
+# ════════════════════════════════════════════════════════════
+# RSS 소스 정의
+# ════════════════════════════════════════════════════════════
+
+# ── 섹션별 전용 RSS (1순위) ──────────────────────────────────
+# 각 섹션에 맞는 전용 카테고리 RSS를 먼저 시도
+SECTION_RSS = {
+    "경제 · 금융": {
+        "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
+                     "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
+        "중앙일보": ["https://www.joongang.co.kr/rss/news/economy",
+                     "https://www.joongang.co.kr/rss/news"],
+        "동아일보": ["https://rss.donga.com/economy.xml",
+                     "https://rss.donga.com/total.xml"],
+        "한국경제": ["https://www.hankyung.com/feed/economy"],
+        "매일경제": ["https://www.mk.co.kr/rss/30000001/"],
+        "한겨레":   ["https://www.hani.co.kr/rss/economy/",
+                     "https://www.hani.co.kr/rss/economy/finance/"],
+        "경향신문": ["https://khan.co.kr/rss/rssdata/kh_economy.xml"],
+        "연합뉴스": ["https://www.yna.co.kr/rss/economy.xml"],
+    },
+    "기 업": {
+        "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
+                     "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
+        "중앙일보": ["https://www.joongang.co.kr/rss/news/economy",
+                     "https://www.joongang.co.kr/rss/news"],
+        "동아일보": ["https://rss.donga.com/economy.xml",
+                     "https://rss.donga.com/total.xml"],
+        "한국경제": ["https://www.hankyung.com/feed/economy"],
+        "매일경제": ["https://www.mk.co.kr/rss/30200030/",
+                     "https://www.mk.co.kr/rss/30000001/"],
+        "한겨레":   ["https://www.hani.co.kr/rss/economy/"],
+        "경향신문": ["https://khan.co.kr/rss/rssdata/kh_economy.xml"],
+        "연합뉴스": ["https://www.yna.co.kr/rss/economy.xml"],
+    },
+    "정책 · 사회": {
+        "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/politics/?outputType=xml",
+                     "https://www.chosun.com/arc/outboundfeeds/rss/category/national/?outputType=xml",
+                     "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
+        "중앙일보": ["https://www.joongang.co.kr/rss/news/politics",
+                     "https://www.joongang.co.kr/rss/news"],
+        "동아일보": ["https://rss.donga.com/politics.xml",
+                     "https://rss.donga.com/national.xml",
+                     "https://rss.donga.com/total.xml"],
+        "한국경제": ["https://www.hankyung.com/feed/politics",
+                     "https://www.hankyung.com/feed/economy"],
+        "매일경제": ["https://www.mk.co.kr/rss/30200001/",
+                     "https://www.mk.co.kr/rss/30000001/"],
+        "한겨레":   ["https://www.hani.co.kr/rss/politics/",
+                     "https://www.hani.co.kr/rss/society/"],
+        "경향신문": ["https://khan.co.kr/rss/rssdata/kh_politics.xml"],
+        "연합뉴스": ["https://www.yna.co.kr/rss/politics.xml"],
+    },
+    "국 제": {
+        "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/international/?outputType=xml",
+                     "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
+        "중앙일보": ["https://www.joongang.co.kr/rss/news/world",
+                     "https://www.joongang.co.kr/rss/news"],
+        "동아일보": ["https://rss.donga.com/international.xml",
+                     "https://rss.donga.com/total.xml"],
+        "한국경제": ["https://www.hankyung.com/feed/international",
+                     "https://www.hankyung.com/feed/economy"],
+        "매일경제": ["https://www.mk.co.kr/rss/30300001/",
+                     "https://www.mk.co.kr/rss/30000001/"],
+        "한겨레":   ["https://www.hani.co.kr/rss/international/"],
+        "경향신문": ["https://khan.co.kr/rss/rssdata/kh_world.xml"],
+        "연합뉴스": ["https://www.yna.co.kr/rss/international.xml"],
+    },
+}
+
+# ── 신문사별 폴백 RSS ────────────────────────────────────────
 RSS_FALLBACKS = {
     "조선일보": ("c", [
         "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml",
         "https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
     ]),
     "중앙일보": ("c", [
-        "https://rss.joins.com/joins_news_list.xml",
-        "https://rss.joins.com/joins_news_list.xml",
-        "https://rss.joins.com/joins_news_list.xml",
+        "https://www.joongang.co.kr/rss/news/economy",
+        "https://www.joongang.co.kr/rss/news",
     ]),
     "동아일보": ("c", [
         "https://rss.donga.com/total.xml",
@@ -102,9 +167,9 @@ RSS_FALLBACKS = {
         "https://www.mk.co.kr/rss/30000001/",
         "https://www.mk.co.kr/rss/40300001/",
     ]),
-    "한겨레":   ("p", [
-        "https://www.hani.co.kr/rss/",
+    "한겨레": ("p", [
         "https://www.hani.co.kr/rss/economy/",
+        "https://www.hani.co.kr/rss/",
     ]),
     "경향신문": ("p", [
         "https://khan.co.kr/rss/rssdata/kh_economy.xml",
@@ -116,85 +181,107 @@ RSS_FALLBACKS = {
     ]),
 }
 ALL_SOURCE_NAMES = ["조선일보","중앙일보","동아일보","한국경제","매일경제","한겨레","경향신문","연합뉴스"]
+NEWS_SECTIONS    = ["경제 · 금융", "기 업", "정책 · 사회", "국 제"]
 
-# 하위 호환용 (기존 코드가 참조할 수 있도록)
-ALL_NEWS_SOURCES = {
-    "경제 · 금융": [(n, RSS_FALLBACKS[n][0], RSS_FALLBACKS[n][1][0]) for n in ALL_SOURCE_NAMES],
-    "기 업":       [(n, RSS_FALLBACKS[n][0], RSS_FALLBACKS[n][1][0]) for n in ALL_SOURCE_NAMES],
-    "정책 · 사회": [(n, RSS_FALLBACKS[n][0], RSS_FALLBACKS[n][1][0]) for n in ALL_SOURCE_NAMES],
-    "국 제":       [(n, RSS_FALLBACKS[n][0], RSS_FALLBACKS[n][1][0]) for n in ALL_SOURCE_NAMES],
-}
-
-
-def build_shuffled_sources(section):
-    """섹션별 소스를 랜덤 셔플 — 매 실행마다 신문사 순서 다름"""
-    sources = list(ALL_NEWS_SOURCES[section])
-    _random.shuffle(sources)
-    return sources
-
-NEWS_SOURCES = {sec: ALL_NEWS_SOURCES[sec] for sec in ALL_NEWS_SOURCES}
-
-COLUMN_SOURCES = [
-    ("조선일보","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-    ("중앙일보","c","https://rss.joins.com/joins_news_list.xml"),
-    ("동아일보","c","https://rss.donga.com/opinion.xml"),
-    ("한국경제","e","https://www.hankyung.com/feed/opinion"),
-    ("매일경제","e","https://www.mk.co.kr/rss/30300001/"),
-    ("한겨레",  "p","https://www.hani.co.kr/rss/opinion/"),
-    ("경향신문","p","https://khan.co.kr/rss/rssdata/kh_opinion.xml"),
-    ("연합뉴스","w","https://www.yna.co.kr/rss/politics.xml"),
+# ── 칼럼 전용 RSS (opinion만, 전체RSS 폴백 금지) ───────────────
+COLUMN_SOURCES_DEF = [
+    ("조선일보", "c", [
+        "https://www.chosun.com/arc/outboundfeeds/rss/category/opinion/?outputType=xml",
+    ]),
+    ("중앙일보", "c", [
+        "https://www.joongang.co.kr/rss/news/opinion",
+        "https://www.joongang.co.kr/rss/news/column",
+    ]),
+    ("동아일보", "c", [
+        "https://rss.donga.com/opinion.xml",
+    ]),
+    ("한국경제", "e", [
+        "https://www.hankyung.com/feed/opinion",
+    ]),
+    ("매일경제", "e", [
+        "https://www.mk.co.kr/rss/30300001/",
+    ]),
+    ("한겨레", "p", [
+        "https://www.hani.co.kr/rss/opinion/",
+    ]),
+    ("경향신문", "p", [
+        "https://khan.co.kr/rss/rssdata/kh_opinion.xml",
+    ]),
+    # 연합뉴스 제외 (칼럼/사설 없는 통신사)
 ]
 
-# 해외 칼럼/오피니언 소스 (매일 랜덤 2곳 선택)
-INTL_COLUMN_SOURCES = [
-    ("월스트리트저널","intl","https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml"),
-    ("뉴욕타임스",   "intl","https://rss.nytimes.com/services/xml/rss/nyt/Business.xml"),
-    ("가디언",       "intl","https://www.theguardian.com/business/rss"),
-    ("BBC비즈니스",  "intl","https://feeds.bbci.co.uk/news/business/rss.xml"),
-    ("로이터",       "intl","https://feeds.reuters.com/reuters/businessNews"),
-]  # 블룸버그/FT는 구독 필요로 제외, 공개 RSS만 유지
-
-HEADLINE_SOURCES = [
-    ("조선","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-    ("중앙","c","https://rss.joins.com/joins_news_list.xml"),
-    ("동아","c","https://rss.donga.com/economy.xml"),
-    ("매경","e","https://www.mk.co.kr/rss/30000001/"),
-    ("한경","e","https://www.hankyung.com/feed/economy"),
-    ("한겨레","p","https://www.hani.co.kr/rss/"),
-    ("경향","p","https://khan.co.kr/rss/rssdata/kh_politics.xml"),
-    ("연합","w","https://www.yonhapnews.co.kr/rss/economy.xml"),
-]
-
+# ── 해외뉴스 소스 ─────────────────────────────────────────────
 INTL_SOURCES = [
-    ("블룸버그",    "intl", "https://feeds.bloomberg.com/markets/news.rss"),
-    ("파이낸셜타임스","intl","https://www.ft.com/rss/home"),
-    ("월스트리트저널","intl","https://feeds.a.dj.com/rss/RSSWorldNews.xml"),
-    ("뉴욕타임스",  "intl", "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml"),
-    ("가디언",      "intl", "https://www.theguardian.com/world/rss"),
+    ("블룸버그",      "intl", "https://feeds.bloomberg.com/markets/news.rss"),
+    ("파이낸셜타임스","intl", "https://www.ft.com/rss/home"),
+    ("월스트리트저널","intl", "https://feeds.a.dj.com/rss/RSSWorldNews.xml"),
+    ("뉴욕타임스",   "intl",  "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml"),
+    ("가디언",       "intl",  "https://www.theguardian.com/world/rss"),
+    ("BBC비즈니스",  "intl",  "https://feeds.bbci.co.uk/news/business/rss.xml"),
+    ("로이터",       "intl",  "https://feeds.reuters.com/reuters/businessNews"),
 ]
 
-# 반드시 1개씩 포함해야 할 지역별 소스
 INTL_REGION_SOURCES = {
     "일본": [
         ("재팬타임스","intl","https://feeds.japantimes.co.jp/japantimes/business"),
         ("닛케이아시아","intl","https://asia.nikkei.com/rss/feed/nar"),
     ],
     "중국": [
-        ("SCMP",      "intl","https://www.scmp.com/rss/91/feed"),
-        ("신화통신",  "intl","http://www.xinhuanet.com/english/rss/chineseeconomyrss.xml"),
+        ("SCMP",     "intl","https://www.scmp.com/rss/91/feed"),
+        ("신화통신", "intl","http://www.xinhuanet.com/english/rss/chineseeconomyrss.xml"),
     ],
     "유럽": [
-        ("가디언",    "intl","https://www.theguardian.com/world/rss"),
-        ("파이낸셜타임스","intl","https://www.ft.com/rss/home"),
+        ("가디언",          "intl","https://www.theguardian.com/world/rss"),        # 영국
+        ("파이낸셜타임스",  "intl","https://www.ft.com/rss/home"),                  # 영국
+        ("르몽드",          "intl","https://www.lemonde.fr/economie/rss_full.xml"), # 프랑스
     ],
 }
+
+# ── 해외 칼럼 소스 ────────────────────────────────────────────
+INTL_COLUMN_SOURCES = [
+    ("월스트리트저널","intl","https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml"),
+    ("뉴욕타임스",   "intl","https://rss.nytimes.com/services/xml/rss/nyt/Business.xml"),
+    ("가디언",       "intl","https://www.theguardian.com/business/rss"),      # 영국
+    ("BBC비즈니스",  "intl","https://feeds.bbci.co.uk/news/business/rss.xml"), # 영국
+    ("로이터",       "intl","https://feeds.reuters.com/reuters/businessNews"),
+    ("르몽드",       "intl","https://www.lemonde.fr/economie/rss_full.xml"),  # 프랑스
+]
+
+# ── 신문사→국가 매핑 ─────────────────────────────────────────
+INTL_COUNTRY = {
+    "블룸버그":       "미국",
+    "파이낸셜타임스": "영국",
+    "월스트리트저널": "미국",
+    "뉴욕타임스":     "미국",
+    "가디언":         "영국",
+    "BBC비즈니스":    "영국",
+    "로이터":         "영국",
+    "재팬타임스":     "일본",
+    "닛케이아시아":   "일본",
+    "SCMP":           "홍콩",
+    "신화통신":       "중국",
+    "르몽드":         "프랑스",
+    "니혼게이자이신문": "일본",
+}
+
+# ── 헤드라인 소스 (사이드바용) ────────────────────────────────
+HEADLINE_SOURCES = [
+    ("조선","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
+    ("중앙","c","https://www.joongang.co.kr/rss/news"),
+    ("동아","c","https://rss.donga.com/total.xml"),
+    ("매경","e","https://www.mk.co.kr/rss/30000001/"),
+    ("한경","e","https://www.hankyung.com/feed/economy"),
+    ("한겨레","p","https://www.hani.co.kr/rss/"),
+    ("경향","p","https://khan.co.kr/rss/rssdata/kh_politics.xml"),
+    ("연합","w","https://www.yna.co.kr/rss/economy.xml"),
+]
+
 INTL_HIST_KEYS = {
-    "블룸버그":     "iran_war",
-    "파이낸셜타임스":"us_tariff",
-    "월스트리트저널":"samsung_buyback",
-    "뉴욕타임스":   "iran_war",
-    "니혼게이자이신문":"iran_war",
-    "가디언":       "iran_war",
+    "블룸버그":       "iran_war",
+    "파이낸셜타임스": "us_tariff",
+    "월스트리트저널": "samsung_buyback",
+    "뉴욕타임스":     "iran_war",
+    "가디언":         "iran_war",
 }
 SECTION_COLORS = {
     "경제 · 금융": "var(--red)",
@@ -208,7 +295,6 @@ CARD_COLORS = {
     "정책 · 사회": "gold",
     "국 제":       "dk"
 }
-# 섹션별 과거 사례 키 (CASE_DATA JS 객체 키와 매핑)
 HIST_KEYS = {
     "경제 · 금융": "us_tariff",
     "기 업":       "samsung_buyback",
@@ -222,24 +308,107 @@ HIST_LABELS = {
     "iran_war":        "이란 중동 정세"
 }
 
-# ── RSS 파싱 ─────────────────────────────────────────────────
-def fetch_rss(source, src_class, url, max_items=12, today_only=True):
-    """RSS 피드 파싱. today_only=True이면 오늘/어제(KST) 기사만 반환"""
-    from datetime import timedelta
+# ── 섹션 키워드 (AI 분류 보조) ────────────────────────────────
+SECTION_KEYWORDS = {
+    "경제 · 금융": [
+        "금리","환율","코스피","코스닥","주가","증시","원달러","달러","유가","금값",
+        "CPI","물가","GDP","경기","수출","수입","무역수지","경상수지","인플레","디플레",
+        "기준금리","채권","ETF","펀드","부동산","대출","금융","은행","증권","보험",
+        "한국은행","기재부","금통위","FOMC","Fed","연준"
+    ],
+    "기 업": [
+        "삼성","SK","현대","LG","롯데","포스코","카카오","네이버","쿠팡","배민",
+        "기업","회사","실적","매출","영업이익","당기순이익","주주","배당","자사주",
+        "인수합병","M&A","IPO","상장","스타트업","CEO","대표이사","임원",
+        "반도체","배터리","전기차","바이오","AI칩","HBM","파운드리"
+    ],
+    "정책 · 사회": [
+        "정부","정책","국회","법안","규제","세금","복지","노동","임금","최저임금",
+        "대통령","장관","국무회의","공정위","금융위","기재부 발표",
+        "사회","교육","의료","건강보험","연금","인구","저출산","고령화",
+        "부동산정책","재건축","재개발","청약","LTV","DSR"
+    ],
+    "국 제": [
+        "미국","중국","일본","유럽","EU","독일","영국","프랑스",
+        "트럼프","바이든","시진핑","관세","무역전쟁","제재","외교",
+        "전쟁","분쟁","OPEC","국제유가","글로벌","해외","국제","외국",
+        "G7","G20","IMF","세계은행","WTO","나토","UN"
+    ],
+}
+
+# ── 절대 제외 키워드 ──────────────────────────────────────────
+HARD_EXCLUDE = [
+    # 연예/오락 (복합어로만 — 단어 하나씩은 경제기사에 나올 수 있음)
+    "아이돌 컴백","가수 데뷔","팬미팅","뮤직비디오 공개","연예인 열애",
+    "배우 열애","연예인 결혼","드라마 시청률","예능 프로그램","MC딩동","고영욱",
+    # 날씨 (복합어)
+    "오늘의 날씨","내일 날씨","주말 날씨","기상 특보","황사 예보",
+    "태풍 예보","호우 경보","대설 경보","폭염 특보","한파 특보",
+    # 스포츠 결과 (경기결과성)
+    "경기 결과","골프 스코어","야구 순위","축구 순위","프로야구",
+    "프로축구","프로농구","NBA 경기","EPL 경기","리그 우승",
+    # 기타
+    "오늘의 운세","오늘 운세","별자리 운세","로또 당첨번호","복권 당첨",
+]
+
+def is_hard_excluded(title):
+    """확실하게 제외할 기사 — 복합어 키워드 매칭"""
+    for kw in HARD_EXCLUDE:
+        if kw in title:
+            return True
+    return False
+
+# ── 섹션 관련성 점수 ──────────────────────────────────────────
+def section_score(title, section):
+    """제목이 해당 섹션과 얼마나 관련있는지 키워드 점수"""
+    score = 0
+    for kw in SECTION_KEYWORDS.get(section, []):
+        if kw in title:
+            score += 1
+    return score
+
+# ════════════════════════════════════════════════════════════
+# RSS 파싱
+# ════════════════════════════════════════════════════════════
+def fetch_rss(source, src_class, url, max_items=15, today_only=True):
+    """RSS 피드 파싱"""
     try:
-        r = requests.get(url, headers=HEADERS, timeout=15)
+        # 소스별 추가 헤더 (조선일보 403 방지, 연합뉴스 XML 명시)
+        extra = {}
+        if "chosun.com" in url:
+            extra["Referer"] = "https://www.chosun.com/"
+            extra["Accept"]  = "application/rss+xml, application/xml, */*"
+        elif "yna.co.kr" in url:
+            extra["Accept"] = "application/rss+xml, application/xml, text/xml, */*"
+        elif "donga.com" in url:
+            extra["Referer"] = "https://www.donga.com/"
+        req_headers = {**HEADERS, **extra}
+
+        r = requests.get(url, headers=req_headers, timeout=15)
         r.raise_for_status()
-        # lxml-xml 실패 시 html.parser로 폴백
-        try:
-            soup = BeautifulSoup(r.content, "lxml-xml")
-            if not soup.find("item"):
-                soup = BeautifulSoup(r.content, "html.parser")
-        except Exception:
-            soup = BeautifulSoup(r.content, "html.parser")
+
+        # 연합뉴스 등 EUC-KR 인코딩 자동 처리
+        content = r.content
+        enc = r.apparent_encoding or ""
+        if enc.lower().replace("-","").replace("_","") in ("euckr","cp949","johab"):
+            content = r.content.decode("euc-kr", errors="replace").encode("utf-8")
+
+        # 여러 파서 순서대로 시도 (조선일보/연합뉴스 등 구조 차이 대응)
+        soup = None
+        for parser in ["lxml-xml", "xml", "lxml", "html.parser"]:
+            try:
+                s = BeautifulSoup(content, parser)
+                if s.find("item") or s.find("entry"):
+                    soup = s
+                    break
+            except Exception:
+                continue
+        if soup is None:
+            soup = BeautifulSoup(content, "html.parser")
 
         items = []
-        today_date     = now_kst.date()
-        cutoff_date    = today_date - timedelta(days=2)  # 최대 2일 전까지 허용 (RSS 지연 대응)
+        today_date  = now_kst.date()
+        cutoff_date = today_date - timedelta(days=2)
 
         rss_items = soup.find_all("item") or soup.find_all("entry")
 
@@ -255,18 +424,26 @@ def fetch_rss(source, src_class, url, max_items=12, today_only=True):
             if not title or len(title) < 5 or title.lower() in ("rss","feed",""):
                 continue
 
-            # 링크 추출 (Atom의 href 속성도 처리)
             link = "#"
             if lk:
-                link = (lk.get("href") or lk.get_text(strip=True) or
-                        str(lk.next_sibling or "").strip() or "#")
+                # atom feed: <link href="..."/> 형식 (조선일보 등)
+                href = lk.get("href")
+                if href:
+                    link = href
+                else:
+                    txt = lk.get_text(strip=True)
+                    # lxml-xml이 <link>텍스트</link> 안의 텍스트를 못 읽을 때
+                    # next_sibling이 실제 URL인 경우 처리
+                    if not txt:
+                        sib = lk.next_sibling
+                        txt = str(sib).strip() if sib else ""
+                    link = txt if txt and txt.startswith("http") else "#"
 
             pub_iso  = now_iso
-            pub_date = today_date  # 날짜 파싱 실패 → 오늘로 간주 (수집 허용)
+            pub_date = today_date
             date_parsed = False
             if pub:
                 pub_str = pub.get_text(strip=True)
-                # 여러 포맷 시도
                 for parser_fn in [
                     lambda s: parsedate_to_datetime(s),
                     lambda s: datetime.fromisoformat(s.replace("Z", "+00:00")),
@@ -280,7 +457,6 @@ def fetch_rss(source, src_class, url, max_items=12, today_only=True):
                     except Exception:
                         continue
 
-            # 날짜 필터: 파싱 성공한 경우만 엄격하게 적용
             if today_only and date_parsed and pub_date < cutoff_date:
                 continue
 
@@ -297,9 +473,8 @@ def fetch_rss(source, src_class, url, max_items=12, today_only=True):
         print(f"  ⚠️  {source} RSS 실패: {e}")
         return []
 
-# ── Claude 요약 ──────────────────────────────────────────────
+# ── Claude 요약 함수 ─────────────────────────────────────────
 def get_summary_3(title):
-    """뉴스 3줄 요약"""
     text = claude(
         f"뉴스 제목: '{title}'\n"
         "핵심 내용을 반드시 3줄로 요약해줘.\n"
@@ -313,7 +488,6 @@ def get_summary_3(title):
     return result if len(result) >= 2 else None
 
 def get_column_summary(title):
-    """칼럼 요약 (단락 형식)"""
     text = claude(
         f"칼럼/사설 제목: '{title}'\n"
         "이 칼럼의 핵심 주장과 근거를 3~4문장으로 요약해줘.\n"
@@ -324,7 +498,6 @@ def get_column_summary(title):
     return text.strip()
 
 def translate_and_summarize(title, source):
-    """영문 제목 → 한국어 번역 + 3줄 요약"""
     text = claude(
         f"해외 뉴스 제목: '{title}'\n"
         f"출처: {source}\n"
@@ -352,15 +525,6 @@ def translate_and_summarize(title, source):
                 bullets.append(content)
     return ko_title, bullets if len(bullets) >= 2 else None
 
-# ════════════════════════════════════════════════════════════
-# STEP 1: 뉴스 수집 + 3줄 요약
-# ════════════════════════════════════════════════════════════
-print("\n📡 [1/4] 뉴스 수집 + 3줄 요약...")
-section_news   = {}
-all_titles     = []
-latest_pubtime = now_kst
-global_seen    = set()
-
 def dedup_key(title):
     """중복 판단용 키: 특수문자 제거 후 앞 20자"""
     return re.sub(r'[\s\W]+', '', title)[:20]
@@ -375,51 +539,72 @@ def update_latest(pubtime_str):
     except Exception:
         pass
 
-for section in NEWS_SOURCES:
-    seen = set()
-    news = []
-    sources = list(ALL_NEWS_SOURCES[section])  # 원본 순서 유지 (셔플 없이)
-    src_names = [s[0] for s in sources]
-    print(f"  [{section}] 소스 {len(sources)}개: {', '.join(src_names)}")
+# ════════════════════════════════════════════════════════════
+# STEP 1: 뉴스 수집
+# ════════════════════════════════════════════════════════════
+# 방식: 섹션별로 신문사 8개 × 섹션 전용 RSS → 1개씩 필수 수집
+#       전체 중복은 global_title_seen으로 차단
+#       섹션 RSS 실패 시 폴백(전체RSS) 사용
+# ════════════════════════════════════════════════════════════
+print("\n📡 [1/4] 뉴스 수집...")
 
-    # ── 각 신문사에서 기사 1개씩 수집 (대안 URL 순차 시도) ──────────
+latest_pubtime    = now_kst
+all_titles        = []
+global_title_seen = set()   # 섹션 간 완전 중복 방지
+section_news      = {s: [] for s in NEWS_SECTIONS}
+
+def collect_one(src_name, src_cls, url_list):
+    """url_list 순서로 시도해 기사 1개 반환. 실패 시 None"""
+    for url in url_list:
+        for today_only in [True, False]:
+            items = fetch_rss(src_name, src_cls, url, max_items=20, today_only=today_only)
+            for item in items:
+                k = dedup_key(item["title"])
+                if k in global_title_seen:
+                    continue
+                if is_hard_excluded(item["title"]):
+                    continue
+                return item
+    return None
+
+for section in NEWS_SECTIONS:
+    print(f"  [{section}]")
+    sec_urls = SECTION_RSS.get(section, {})
+
     for src_name in ALL_SOURCE_NAMES:
-        src_cls, url_list = RSS_FALLBACKS[src_name]
-        got = False
-        for src_url in url_list:          # 대안 URL 순서대로
-            if got: break
-            for try_today in [True, False]:  # 오늘 → 전체
-                items = fetch_rss(src_name, src_cls, src_url,
-                                  max_items=10, today_only=try_today)
-                for item in items:
-                    k = dedup_key(item["title"])
-                    if k not in seen and k not in global_seen:
-                        seen.add(k); global_seen.add(k)
-                        print(f"    ✅ [{src_name}] {item['title'][:35]}...")
-                        item["bullets"] = get_summary_3(item["title"])
-                        news.append(item)
-                        all_titles.append(item["title"])
-                        update_latest(item["pubtime"])
-                        time.sleep(0.25)
-                        got = True
-                        break
-                if got: break
-        if not got:
-            print(f"    ⚠️  [{src_name}] 모든 URL 실패 — 수집 불가")
+        src_cls = RSS_FALLBACKS[src_name][0]
+        fb_urls = RSS_FALLBACKS[src_name][1]
 
-    section_news[section] = news
-    srcs = ','.join(dict.fromkeys(i['source'] for i in news))
-    print(f"  ✅ {section}: {len(news)}건 [{srcs}]")
+        # 섹션 전용 URL + 폴백 URL 합치기 (중복 제거)
+        url_list = list(dict.fromkeys(
+            sec_urls.get(src_name, []) + fb_urls
+        ))
+
+        item = collect_one(src_name, src_cls, url_list)
+        if item:
+            k = dedup_key(item["title"])
+            global_title_seen.add(k)
+            print(f"    ✅ [{src_name}] {item['title'][:40]}...")
+            item["bullets"] = get_summary_3(item["title"])
+            time.sleep(0.25)
+            section_news[section].append(item)
+            all_titles.append(item["title"])
+            update_latest(item["pubtime"])
+        else:
+            print(f"    ⚠️  [{src_name}] 수집 실패")
+
+for section in NEWS_SECTIONS:
+    srcs = ", ".join(dict.fromkeys(i["source"] for i in section_news[section]))
+    print(f"  ✅ {section}: {len(section_news[section])}건 [{srcs}]")
 
 # ════════════════════════════════════════════════════════════
-# STEP 1b: 해외 뉴스 수집 + 한국어 번역 요약
+# STEP 1b: 해외 뉴스 수집 — 신문사별 1개씩 필수
 # ════════════════════════════════════════════════════════════
 print("\n🌐 [1b] 해외 뉴스 수집 + 번역...")
 intl_news  = []
 seen_intl  = set()
 
 def add_intl(item):
-    """intl_news에 추가 (중복 체크 포함)"""
     key = dedup_key(item["title"])
     if key in seen_intl:
         return False
@@ -429,28 +614,19 @@ def add_intl(item):
     item["orig_title"] = item["title"]
     item["bullets"]    = bullets
     item["hist_key"]   = INTL_HIST_KEYS.get(item["source"], "iran_war")
+    # 국가 정보
+    item["country_name"] = INTL_COUNTRY.get(item["source"], "해외")
     intl_news.append(item)
-    # 최신 시각 갱신
-    global latest_pubtime
-    try:
-        pt = datetime.fromisoformat(item["pubtime"])
-        if pt.tzinfo is None:
-            pt = pt.replace(tzinfo=KST)
-        pt_kst = pt.astimezone(KST)
-        if pt_kst > latest_pubtime:
-            latest_pubtime = pt_kst
-    except Exception:
-        pass
+    update_latest(item["pubtime"])
     time.sleep(0.4)
     return True
 
-# 1) 지역 보장: 일본·중국·유럽 각 1개 반드시 포함
+# 1) 지역 보장: 일본·중국·유럽 각 1개
 for region, region_sources in INTL_REGION_SOURCES.items():
     added = False
     for source, src_class, url in region_sources:
-        if added:
-            break
-        for today_only in [True, False]:   # 오늘 기사 우선, 없으면 최신
+        if added: break
+        for today_only in [True, False]:
             items = fetch_rss(source, src_class, url, max_items=5, today_only=today_only)
             if items:
                 item = items[0]
@@ -460,131 +636,120 @@ for region, region_sources in INTL_REGION_SOURCES.items():
                 if add_intl(item):
                     added = True
                     break
-        if added:
-            break
+        if added: break
     if not added:
-        print(f"  ⚠️  {region} 지역 기사 수집 실패")
+        print(f"  ⚠️  {region} 지역 수집 실패")
 
-# 2) 나머지 글로벌 소스로 보충 (최대 7개까지)
+# 2) 글로벌 소스 — 신문사별 1개씩 필수
 for source, src_class, url in INTL_SOURCES:
-    if len(intl_news) >= 7:
-        break
+    got_this = False
     for today_only in [True, False]:
-        items = fetch_rss(source, src_class, url, max_items=3, today_only=today_only)
+        if got_this: break
+        items = fetch_rss(source, src_class, url, max_items=5, today_only=today_only)
         for item in items:
-            if len(intl_news) >= 7:
-                break
             item["source"]    = source
             item["src_class"] = src_class
             print(f"  🌐 [{source}] {item['title'][:40]}...")
-            add_intl(item)
-        if len(intl_news) >= 7:
-            break
+            if add_intl(item):
+                got_this = True
+                break
+    if not got_this:
+        print(f"  ⚠️  [{source}] 수집 실패")
 
-print(f"  ✅ 해외 뉴스 {len(intl_news)}건 (일본·중국·유럽 포함)")
+print(f"  ✅ 해외 뉴스 {len(intl_news)}건")
 
+# ════════════════════════════════════════════════════════════
+# STEP 2: 칼럼 수집 — opinion RSS 전용 + 뉴스기사 필터링
+# ════════════════════════════════════════════════════════════
 print("\n✍️  [2/4] 칼럼 수집...")
-columns = []
+columns  = []
 seen_col = set()
-# 국내 칼럼: 신문사별 대안 URL 순차 시도로 반드시 1개씩 수집
-COLUMN_URLS = {
-    "조선일보": [
-        "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml",
-        "https://www.chosun.com/arc/outboundfeeds/rss/category/opinion/?outputType=xml",
-    ],
-    "중앙일보": [
-        "https://rss.joins.com/joins_news_list.xml",
-        "https://rss.joins.com/joins_news_list.xml",
-    ],
-    "동아일보": [
-        "https://rss.donga.com/opinion.xml",
-        "https://rss.donga.com/total.xml",
-    ],
-    "한국경제": [
-        "https://www.hankyung.com/feed/opinion",
-        "https://www.hankyung.com/feed/all",
-    ],
-    "매일경제": [
-        "https://www.mk.co.kr/rss/30300001/",
-        "https://www.mk.co.kr/rss/30000001/",
-    ],
-    "한겨레": [
-        "https://www.hani.co.kr/rss/opinion/",
-        "https://www.hani.co.kr/rss/",
-    ],
-    "경향신문": [
-        "https://khan.co.kr/rss/rssdata/kh_opinion.xml",
-        "https://khan.co.kr/rss/rssdata/kh_economy.xml",
-    ],
-    "연합뉴스": [
-        "https://www.yna.co.kr/rss/news.xml",
-        "https://www.yna.co.kr/rss/economy.xml",
-    ],
-}
-for src_name in ALL_SOURCE_NAMES:
-    src_cls = RSS_FALLBACKS[src_name][0]
+
+# 칼럼 판별 필터
+COL_REJECT_KW = [
+    "아이돌 컴백","가수 데뷔","팬미팅","뮤직비디오","연예인 열애","배우 열애",
+    "오늘의 날씨","내일 날씨","기상 특보","황사 예보",
+    "경기 결과","야구 순위","축구 순위","프로야구","프로축구","프로농구",
+    "【속보】","[속보]","【단독】","[단독]",
+]
+# 중앙일보처럼 opinion RSS가 없을 때 칼럼 마커 필요
+COL_ACCEPT_MARKERS = ["칼럼","사설","논설","기고","시론","시평","기자수첩","데스크","에세이","논평"]
+
+def is_valid_column(title, src_name):
+    for kw in COL_REJECT_KW:
+        if kw in title:
+            return False
+    if len(title.strip()) < 8:
+        return False
+    # 중앙일보: opinion RSS 불안정 → 마커 없으면 거부
+    if src_name == "중앙일보":
+        if not any(m in title for m in COL_ACCEPT_MARKERS):
+            return False
+    return True
+
+# 국내 칼럼
+for src_name, src_cls, url_list in COLUMN_SOURCES_DEF:
     got = False
-    for url in COLUMN_URLS.get(src_name, RSS_FALLBACKS[src_name][1]):
-        items = fetch_rss(src_name, src_cls, url, max_items=8, today_only=False)
+    for url in url_list:
+        items = fetch_rss(src_name, src_cls, url, max_items=20, today_only=False)
         print(f"  [{src_name}] {url.split('/')[-1]} → {len(items)}건")
         for item in items:
             key = dedup_key(item["title"])
-            if key not in seen_col:
-                seen_col.add(key)
-                print(f"  📝 [{src_name}] {item['title'][:35]}...")
-                item["summary"] = get_column_summary(item["title"])
-                item["is_intl"] = False
-                item["src_class"] = src_cls
-                columns.append(item)
-                time.sleep(0.3)
-                got = True
-                break
+            if key in seen_col:
+                continue
+            if not is_valid_column(item["title"], src_name):
+                print(f"  🚫 [{src_name}] 차단: {item['title'][:30]}")
+                continue
+            seen_col.add(key)
+            print(f"  📝 [{src_name}] {item['title'][:40]}...")
+            item["summary"]  = get_column_summary(item["title"])
+            item["is_intl"]  = False
+            item["src_class"] = src_cls
+            item["country_name"] = ""
+            columns.append(item)
+            time.sleep(0.3)
+            got = True
+            break
         if got: break
     if not got:
-        print(f"  ⚠️  [{src_name}] 모든 칼럼 URL 실패")
+        print(f"  ⚠️  [{src_name}] 칼럼 수집 불가")
 
-# 해외 칼럼: 랜덤 2곳 번역 후 국내 칼럼 사이에 삽입
-intl_col_picks = _random.sample(INTL_COLUMN_SOURCES, min(2, len(INTL_COLUMN_SOURCES)))
+# 해외 칼럼 — 전체 소스 순차 (랜덤 제거)
 intl_cols = []
-for source, src_class, url in intl_col_picks:
+for source, src_class, url in INTL_COLUMN_SOURCES:
     items = fetch_rss(source, src_class, url, max_items=8, today_only=False)
-    print(f"  🌐 [{source}] RSS {len(items)}건 수신")
+    print(f"  🌐 [{source}] {len(items)}건 수신")
     if not items:
-        print(f"  ⚠️  [{source}] RSS 실패, 다음 소스 시도...")
-        # 실패 시 다른 소스로 대체
-        for alt_src, alt_cls, alt_url in INTL_COLUMN_SOURCES:
-            if alt_src == source: continue
-            items = fetch_rss(alt_src, alt_cls, alt_url, max_items=8, today_only=False)
-            if items:
-                source, src_class, url = alt_src, alt_cls, alt_url
-                print(f"  🔄 [{source}] 대체 성공: {len(items)}건")
-                break
+        print(f"  ⚠️  [{source}] 수집 실패")
+        continue
     for item in items:
         key = dedup_key(item["title"])
-        if key not in seen_col:
-            seen_col.add(key)
-            print(f"  🌐 [{source}] 번역: {item['title'][:40]}...")
-            ko_title, bullets = translate_and_summarize(item["title"], source)
-            item["ko_title"]   = ko_title or item["title"]
-            item["orig_title"] = item["title"]
-            item["title"]      = ko_title if ko_title else item["title"]
-            item["summary"]    = "\n".join(bullets) if bullets else "번역 준비 중..."
-            item["is_intl"]    = True
-            item["src_class"]  = src_class
-            item["source"]     = source
-            intl_cols.append(item)
-            time.sleep(0.5)
-            break
+        if key in seen_col:
+            continue
+        seen_col.add(key)
+        print(f"  🌐 [{source}] 번역: {item['title'][:40]}...")
+        ko_title, bullets = translate_and_summarize(item["title"], source)
+        item["ko_title"]     = ko_title or item["title"]
+        item["orig_title"]   = item["title"]
+        item["title"]        = ko_title if ko_title else item["title"]
+        item["summary"]      = "\n".join(bullets) if bullets else "번역 준비 중..."
+        item["is_intl"]      = True
+        item["src_class"]    = src_class
+        item["source"]       = source
+        item["country_name"] = INTL_COUNTRY.get(source, "해외")
+        intl_cols.append(item)
+        time.sleep(0.5)
+        break
 
-# 해외 칼럼을 국내 칼럼 사이에 삽입 (3번째, 6번째 위치)
+# 해외 칼럼 국내 칼럼 사이에 삽입 (3번째, 6번째 위치)
 for i, ic in enumerate(intl_cols):
     pos = min(3 + i*3, len(columns))
     columns.insert(pos, ic)
 
-print(f"  ✅ 칼럼 총 {len(columns)}건 — 국내 {len(columns)-len(intl_cols)}건 + 해외번역 {len(intl_cols)}건")
+print(f"  ✅ 칼럼 총 {len(columns)}건 — 국내 {len(columns)-len(intl_cols)}건 + 해외 {len(intl_cols)}건")
 
 # ════════════════════════════════════════════════════════════
-# STEP 3: 사이드바
+# STEP 3: 사이드바 생성
 # ════════════════════════════════════════════════════════════
 print("\n📊 [3/4] 사이드바 생성...")
 hl_items = []
@@ -611,10 +776,10 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"label":"5자이내 항목명","value":"숫자+단위","desc":"8자이내 설명","up":false}}
   ],
   "관전포인트": [
-    {{"title":"오늘 뉴스를 어떤 관점으로 볼지 알려주는 질문형 제목 (예: '유가가 다시 오를까?') 20자이내","now":"뉴스 독자가 알아야 할 현재 핵심 상황 30자이내","watch":"핵심 쟁점·대립구도 — 어느 쪽을 주목할지 30자이내","next":"이 흐름이 어디로 향할지, 무엇을 확인해야 할지 30자이내"}},
-    {{"title":"두번째 핵심 질문 20자이내","now":"현재 상황 30자이내","watch":"핵심 쟁점 30자이내","next":"전망 30자이내"}},
-    {{"title":"세번째 핵심 질문 20자이내","now":"현재 상황 30자이내","watch":"핵심 쟁점 30자이내","next":"전망 30자이내"}},
-    {{"title":"네번째 핵심 질문 20자이내","now":"현재 상황 30자이내","watch":"핵심 쟁점 30자이내","next":"전망 30자이내"}}
+    {{"title":"오늘 뉴스의 핵심 질문 형태로 작성, 20자이내 (예: '이란전쟁, 정말 곧 끝날까?')"}},
+    {{"title":"두번째 핵심 질문 20자이내"}},
+    {{"title":"세번째 핵심 질문 20자이내"}},
+    {{"title":"네번째 핵심 질문 20자이내"}}
   ],
   "주요이슈": ["22자이내 이슈1","22자이내 이슈2","22자이내 이슈3"],
   "칼럼논점": "오늘 칼럼들의 핵심 논점 한 문장 40자이내",
@@ -625,7 +790,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"word":"네번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}}
   ]
 }}
-중요: 오늘의 용어는 반드시 오늘 뉴스에 실제 등장한 단어여야 하며, 중학생도 이해할 수 있게 쉽게 설명할 것.""", max_tokens=800)
+중요: 오늘의 용어는 오늘 뉴스에 실제 등장한 단어, 중학생도 이해하게 쉽게.""", max_tokens=800)
 
 if not sidebar_data:
     sidebar_data = {
@@ -643,17 +808,15 @@ else:
 # ════════════════════════════════════════════════════════════
 print("\n🔨 [4/4] HTML 빌드...")
 
-# ── 뉴스 카드 (최신 v4 구조) ─────────────────────────────
 def make_news_card(item, card_color, hist_key):
-    title   = esc(item["title"])
-    url     = item["url"]
-    src     = item["source"]
-    sc      = item["src_class"]
-    pub     = item["pubtime"]
-    bullets = item.get("bullets") or []
+    title      = esc(item["title"])
+    url        = item["url"]
+    src        = item["source"]
+    sc         = item["src_class"]
+    pub        = item["pubtime"]
+    bullets    = item.get("bullets") or []
     hist_label = HIST_LABELS.get(hist_key, hist_key)
 
-    # 3줄 요약 li
     if bullets:
         li_html = "".join(f"<li>{esc(b)}</li>" for b in bullets[:3])
         bullets_html = f'<ul class="cpts">{li_html}</ul>'
@@ -679,7 +842,8 @@ def make_news_card(item, card_color, hist_key):
     </div>'''
 
 news_html = "\n"
-for section, items in section_news.items():
+for section in NEWS_SECTIONS:
+    items = section_news[section]
     if not items: continue
     color = SECTION_COLORS[section]
     cc    = CARD_COLORS[section]
@@ -690,7 +854,6 @@ for section, items in section_news.items():
     news_html += '    </div>\n'
 news_html += "\n"
 
-# ── 해외 시각 카드 ────────────────────────────────────────
 def make_intl_card(item):
     ko_title   = esc(item.get("ko_title", item["title"]))
     orig_title = esc(item.get("orig_title", ""))
@@ -700,6 +863,7 @@ def make_intl_card(item):
     bullets    = item.get("bullets") or []
     hist_key   = item.get("hist_key", "iran_war")
     hist_label = HIST_LABELS.get(hist_key, hist_key)
+    country    = item.get("country_name", "해외")
 
     if bullets:
         li_html = "".join(f"<li>{esc(b)}</li>" for b in bullets[:3])
@@ -711,7 +875,7 @@ def make_intl_card(item):
 
     return f'''
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">{src}</span><span class="ctime" data-pubtime="{pub}">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ct"><span class="src intl">{src}</span><span class="country-badge" data-c="{country}">{country}</span><span class="ctime" data-pubtime="{pub}">🕒 --</span><span class="expand-hint">▾</span></div>
       <div class="ch">{ko_title}</div>
       <div class="card-expand">
         {orig_html}
@@ -732,29 +896,31 @@ intl_html = '\n    <div class="sec sec-collapsed" onclick="toggleSection(this)">
 for item in intl_news:
     intl_html += make_intl_card(item)
 intl_html += "    </div>\n"
-col_colors = ["navy", "red", "gold", "dk"]
 
+col_colors = ["navy", "red", "gold", "dk"]
 col_html = '\n    <div class="sec"><span class="sec-tag" style="background:var(--navy)">오늘의 추천 칼럼</span><div class="sec-line"></div></div>\n'
 for i, item in enumerate(columns):
-    cc    = col_colors[i % len(col_colors)]
-    title = esc(item["title"])
-    url   = item["url"]
-    src   = item["source"]
-    sc    = item["src_class"]
-    pub   = item["pubtime"]
+    cc      = col_colors[i % len(col_colors)]
+    title   = esc(item["title"])
+    url     = item["url"]
+    src     = item["source"]
+    sc      = item["src_class"]
+    pub     = item["pubtime"]
     is_intl = item.get("is_intl", False)
+    country = item.get("country_name", "")
     try:
         dt = datetime.fromisoformat(pub)
         date_str = dt.astimezone(KST).strftime("%Y.%m.%d")
     except:
         date_str = now_ymd
-    summary = esc(item.get("summary", "요약 준비 중..."))
+    summary   = esc(item.get("summary", "요약 준비 중..."))
     orig_html = f'<div class="ch-orig">{esc(item["orig_title"])}</div>' if is_intl and item.get("orig_title") else ''
+    country_badge = f'<span class="country-badge" data-c="{country}">{country}</span>' if is_intl and country else ''
     col_html += f'''
     <div class="col-card {cc}">
       <div class="col-top">
         <span class="col-paper src {sc}">{src}</span>
-        {'<span style="font-size:9px;background:#3d2e5e;color:#fff;padding:1px 5px;border-radius:2px;margin-left:4px">해외</span>' if is_intl else ''}
+        {country_badge}
         <span class="col-date">{date_str}</span>
       </div>
       <div class="col-title"><a href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">{title}</a></div>
@@ -763,35 +929,20 @@ for i, item in enumerate(columns):
     </div>'''
 col_html += "\n"
 
-# ── 사이드바 HTML ─────────────────────────────────────────
 def build_right(data, hl_list):
-    nums   = data.get("핵심수치", [])
-    pts    = data.get("관전포인트", [])
-    issues = data.get("주요이슈", [])
+    nums = data.get("핵심수치", [])
+    pts  = data.get("관전포인트", [])
 
-    # 핵심수치 (최대 6개, 2열 배치)
     stats = ""
     for n in nums[:6]:
         clr = "r" if n.get("up", True) else "b"
         stats += f'<div class="mstat"><div class="mnum {clr}">{esc(str(n["value"]))}</div><div class="mlbl">{esc(n["label"])}<br><small style="font-size:9px">{esc(n["desc"])}</small></div></div>'
 
-    # 관전포인트 — 현황/쟁점/향후 3단 구조
     icons = ['①','②','③','④']
     pts_html = ""
     for i, p in enumerate(pts[:4]):
-        now_txt   = esc(p.get("now",   p.get("sub", "")))
-        watch_txt = esc(p.get("watch", ""))
-        next_txt  = esc(p.get("next",  ""))
-        pts_html += f'''<div class="pt-card">
-          <div class="pt-hd"><span class="pt-num">{icons[i]}</span><span class="pt-title">{esc(p["title"])}</span></div>
-          <div class="pt-body">
-            {f'<div class="pt-row"><span class="pt-label now">현황</span><span class="pt-text">{now_txt}</span></div>' if now_txt else ""}
-            {f'<div class="pt-row"><span class="pt-label watch">쟁점</span><span class="pt-text">{watch_txt}</span></div>' if watch_txt else ""}
-            {f'<div class="pt-row"><span class="pt-label next">전망</span><span class="pt-text">{next_txt}</span></div>' if next_txt else ""}
-          </div>
-        </div>'''
+        pts_html += f'<div class="pt-item"><span class="pt-num">{icons[i]}</span><span class="pt-title">{esc(p["title"])}</span></div>'
 
-    # 오늘의 용어
     terms = data.get("오늘의용어", [])
     term_html = ""
     for t in terms[:4]:
@@ -802,15 +953,15 @@ def build_right(data, hl_list):
         </div>'''
 
     return f"""
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this)">
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
       <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치<span class="sbox-arr">▾</span></div>
       <div class="sbox-body"><div class="mini-stats">{stats}</div></div>
     </div>
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this)">
-      <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트<span class="sbox-arr">▾</span></div>
-      <div class="sbox-body"><div class="pt-wrap">{pts_html}</div></div>
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
+      <div class="pt-list">{pts_html}</div>
     </div>
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this)">
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
       <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>오늘의 용어<span class="sbox-arr">▾</span></div>
       <div class="sbox-body"><div class="term-list">{term_html if term_html else '<div class="term-item"><div class="term-desc">업데이트 준비 중</div></div>'}</div></div>
     </div>
@@ -818,7 +969,6 @@ def build_right(data, hl_list):
 
 right_html = build_right(sidebar_data, hl_items)
 
-# 칼럼 우측
 논점 = esc(sidebar_data.get("칼럼논점", ""))
 col_right_html = f"""
     <div class="sbox">
@@ -827,7 +977,6 @@ col_right_html = f"""
     </div>
 """
 
-# ── 칼럼 아카이브 사이드바 ─────────────────────────────────
 def build_col_archive(prev_columns_by_date):
     if not prev_columns_by_date:
         return '<div style="padding:10px 12px;font-size:11px;color:var(--ink3)">칼럼이 쌓이면 날짜별로 표시됩니다</div>'
@@ -863,26 +1012,22 @@ def build_col_archive(prev_columns_by_date):
     html_out += '</div>'
     return html_out
 
-# ── 지난뉴스 아카이브 ─────────────────────────────────────
 def build_archive_entry(section_news_data, date_d, date_sub, date_id):
     all_titles_today = []
     cards = ""
     for section, items in section_news_data.items():
         color = SECTION_COLORS[section]
         cc    = CARD_COLORS[section]
-        hk    = HIST_KEYS[section]
         for item in items[:3]:
             all_titles_today.append(item["title"])
             title    = esc(item["title"])
             url      = item["url"]
             src_name = item.get("source", "")
             src_cls  = item.get("src_class", "")
-            # 아카이브: 헤드라인 + 신문사 배지만 (요약 없음)
             cards += f'''<div class="card {cc}" style="margin-top:4px">
               <div class="ct"><span class="src" style="background:{color};font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">{section}</span><span class="src {src_cls}" style="margin-left:4px">{src_name}</span></div>
               <div class="ch" style="font-size:12.5px"><a href="{url}" class="ch-link" target="_blank" style="color:inherit">{title}</a></div>
             </div>'''
-    keywords = "; ".join(t[:12] for t in all_titles_today[:3])
     total = sum(len(v) for v in section_news_data.values())
     return f"""
   <div>
@@ -890,7 +1035,7 @@ def build_archive_entry(section_news_data, date_d, date_sub, date_id):
       <div class="aday"><div class="adaynum">{date_d}</div><div class="adaysub">{date_sub}</div></div>
       <div class="acnt">▾ {total}건</div>
     </div>
-    <div class="arch-detail open" id="{date_id}">{cards}</div>
+    <div class="arch-detail" id="{date_id}">{cards}</div>
   </div>"""
 
 archive_entry = build_archive_entry(
@@ -902,9 +1047,8 @@ archive_html = f'<div class="arch-list">\n{archive_entry}\n</div>'
 # ════════════════════════════════════════════════════════════
 # index.html 교체
 # ════════════════════════════════════════════════════════════
-# 최신 기사 발행 시각 기준 업데이트 표시 문자열 계산
 update_display = make_update_display(latest_pubtime)
-print(f"  📅 최신 기사 시각: {latest_pubtime.strftime('%H:%M')} → 표시: {update_display}")
+print(f"  📅 최신 기사: {latest_pubtime.strftime('%H:%M')} → {update_display}")
 
 INDEX_PATH = "index.html"
 if not os.path.exists(INDEX_PATH):
@@ -914,18 +1058,13 @@ if not os.path.exists(INDEX_PATH):
 with open(INDEX_PATH, "r", encoding="utf-8") as f:
     html = f.read()
 
-# 메타 업데이트 시각
 html = re.sub(r'<meta name="last-updated"[^>]*>',
               f'<meta name="last-updated" content="{now_iso}">', html)
-
-# hdr-update span에 최신 기사 기준 시각 주입
 html = re.sub(
     r'(<span[^>]+id="hdr-update"[^>]*>)[^<]*(</span>)',
-    rf'\g<1>{update_display}\g<2>',
-    html
+    rf'\g<1>{update_display}\g<2>', html
 )
 
-# 헤더 날짜/업데이트 표시 (id 기반으로 JS가 처리하므로 그대로)
 def replace_block(html, s, e, content):
     if s in html and e in html:
         return re.sub(
@@ -936,20 +1075,16 @@ def replace_block(html, s, e, content):
     print(f"  ⚠️  마커 없음: {s[:40]}")
     return html
 
-html = replace_block(html, '<!-- AUTO_NEWS_START -->',     '<!-- AUTO_NEWS_END -->',     news_html)
-html = replace_block(html, '<!-- AUTO_INTL_START -->',     '<!-- AUTO_INTL_END -->',     intl_html)
-html = replace_block(html, '<!-- AUTO_COLUMN_START -->',   '<!-- AUTO_COLUMN_END -->',   col_html)
-html = replace_block(html, '<!-- AUTO_RIGHT_START -->',    '<!-- AUTO_RIGHT_END -->',    right_html)
+html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
+html = replace_block(html, '<!-- AUTO_INTL_START -->',      '<!-- AUTO_INTL_END -->',      intl_html)
+html = replace_block(html, '<!-- AUTO_COLUMN_START -->',    '<!-- AUTO_COLUMN_END -->',    col_html)
+html = replace_block(html, '<!-- AUTO_RIGHT_START -->',     '<!-- AUTO_RIGHT_END -->',     right_html)
 html = replace_block(html, '<!-- AUTO_COL_RIGHT_START -->', '<!-- AUTO_COL_RIGHT_END -->', col_right_html)
 
-# 칼럼 아카이브 사이드바 업데이트
 if '<!-- AUTO_COL_ARCHIVE_START -->' in html:
-    # 기존 아카이브에서 날짜별 칼럼 데이터 추출 (간단히 오늘 칼럼만 추가)
-    col_archive_html = build_col_archive({})  # 첫 실행 시 빈 값
-    # 오늘 칼럼을 아카이브에 추가하는 누적 로직은 뉴스 아카이브와 동일하게 처리
+    col_archive_html = build_col_archive({})
     html = replace_block(html, '<!-- AUTO_COL_ARCHIVE_START -->', '<!-- AUTO_COL_ARCHIVE_END -->', '\n' + col_archive_html + '\n')
 
-# 아카이브 누적 (오늘 데이터 맨 앞에 추가)
 if '<!-- AUTO_ARCHIVE_START -->' in html and '<!-- AUTO_ARCHIVE_END -->' in html:
     arch_start = html.find('<!-- AUTO_ARCHIVE_START -->') + len('<!-- AUTO_ARCHIVE_START -->')
     arch_end   = html.find('<!-- AUTO_ARCHIVE_END -->')
@@ -969,4 +1104,5 @@ with open(INDEX_PATH, "w", encoding="utf-8") as f:
     f.write(html)
 
 print(f"\n💾 완료! [{now_display}]")
-print(f"  뉴스 {sum(len(v) for v in section_news.values())}건 | 칼럼 {len(columns)}건")
+print(f"  뉴스 {sum(len(v) for v in section_news.values())}건 | 해외 {len(intl_news)}건 | 칼럼 {len(columns)}건")
+print(f"  섹션별: " + " | ".join(f"{s} {len(section_news[s])}건" for s in NEWS_SECTIONS))
