@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="last-updated" content="2026-03-13T08:02:59+09:00">
+  <meta name="last-updated" content="2026-03-12T07:30:00+09:00">
   <title>세줄뉴스 — 오늘의 핵심을 3줄로</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -304,7 +304,7 @@ function toggleColArchive(el){
 .pt-card.pt-open 
 .pt-card.pt-open .pt-body{display:flex}
 .pt-card.pt-open .pt-num::after{content:" ▴";font-size:8px}
-.pt-num::after{content:" ▾";font-size:8px;color:var(--ink3)}
+.pt-num::after{content:""}
 .pt-card:first-child{border-top:none}
 .pt-hd-inner{display:flex;align-items:center;gap:6px}
 .pt-num{font-size:10px;font-weight:800;color:var(--navy);flex-shrink:0;display:inline}
@@ -320,6 +320,38 @@ function toggleColArchive(el){
   .card{padding:9px 10px}
   .ch{font-size:12.5px}
 }
+
+/* 해외 뉴스·칼럼 국가 배지 */
+.country-badge{
+  display:inline-block;font-size:9px;font-weight:700;
+  color:#fff;background:var(--dark);
+  border-radius:2px;
+  padding:1px 5px;margin-left:4px;flex-shrink:0;white-space:nowrap;
+  letter-spacing:.03em;
+}
+/* 국가별 색상 */
+.country-badge[data-c="미국"]{background:#3a5a8a}
+.country-badge[data-c="영국"]{background:#6a1a3a}
+.country-badge[data-c="일본"]{background:#8a2a2a}
+.country-badge[data-c="중국"]{background:#8a2a1a}
+.country-badge[data-c="홍콩"]{background:#4a3a7a}
+.country-badge[data-c="프랑스"]{background:#1a4a6a}
+
+/* 관전포인트 단순 목록 */
+.pt-list{padding:6px 12px 8px;display:flex;flex-direction:column;gap:0}
+.pt-item{
+  display:flex;align-items:baseline;gap:7px;
+  padding:9px 0;border-top:1px solid var(--border);
+  cursor:default;
+}
+.pt-item:first-child{border-top:none}
+.pt-item .pt-num{
+  font-size:11px;font-weight:800;color:var(--navy);
+  flex-shrink:0;min-width:16px;
+}
+.pt-item .pt-title{
+  font-size:12.5px;font-weight:500;color:var(--ink);line-height:1.45;
+}
 </style>
 </head>
 <body>
@@ -331,7 +363,7 @@ function toggleColArchive(el){
       <div class="logo">세줄<b>뉴스</b></div>
       <div class="hdr-meta">
         <span class="hdr-date" id="hdate"></span>
-        <span class="hdr-update" id="hdr-update">기사 기준 오전 8:02</span>
+        <span class="hdr-update" id="hdr-update"></span>
       </div>
     </div>
     <!-- 2행(모바일) / 1행 이어서(PC): 탭 + 간소화 -->
@@ -352,489 +384,450 @@ function toggleColArchive(el){
   <div class="left">
 <!-- AUTO_NEWS_START -->
 
-
     <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--red)">경제 · 금융</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
     <div class="sec-body collapsed">
 
     <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-13T08:00:32+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">이스라엘 총리, 전쟁 후 첫 기자회견 “이란 폭군 정권 전복이 목표”</div>
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-12T06:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">미국 USTR, 한·중·일 포함 16개국 무역법 301조 조사 공식 개시</div>
       <div class="card-expand">
-        <ul class="cpts"><li>이스라엘 총리가 전쟁 후 첫 기자회견을 개최했다.</li><li>총리는 이란 폭군 정권 전복을 전쟁의 목표로 명시했다.</li><li>현재 중동 지역의 긴장 상황이 고조되고 있다.</li></ul>
+        <ul class="cpts">
+          <li>연방대법원 상호관세 위법 판결 이후 대체 관세 수단으로 추진</li>
+          <li>한국엔 플랫폼 규제·망사용료·CSAP 등 디지털 비관세장벽 쟁점화 전망</li>
+          <li>조사 결과에 따라 기존 15% 관세 수준 유지 또는 인상 가능</li>
+        </ul>
         <div class="card-btns">
           <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
           <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.chosun.com/international/international_general/2026/03/13/K7HAP4YXNJAYFONH524OANF3FE/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/economy/article/2026031200001" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
         <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 미국 관세·무역</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body" id="case-us_tariff"></div>
         </div>
       </div>
     </div>
-    <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-13T08:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">국내 공연시장 1.7조원 시대 열렸다…티켓 예매 2400만매 기록</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>국내 공연시장 규모가 1조 7000억원에 도달했다.</li><li>올해 티켓 예매량이 2400만매를 기록했다.</li><li>공연산업이 새로운 성장 시대를 맞이했다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.donga.com/news/Culture/article/all/20260312/133514741/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-13T07:30:04+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">페라리 오픈카 '아말피 스파이더' 공개…640마력 V8 엔진 장착</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>페라리가 오픈카 모델 '아말피 스파이더'를 공개했다.</li><li>마력의 V8 엔진이 탑재되었다.</li><li>고성능 스포츠카의 새로운 라인업이 추가되었다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603127822i" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-13T08:01:18+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">“유가 10%나 급등했다”…트럼프 보다 입김 센 이란 최고지도자의 한마디</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>이란 최고지도자의 발언으로 유가가 10% 급등했다.</li><li>트럼프 대통령보다 이란 최고지도자의 영향력이 더 크다는 평가다.</li><li>에너지 시장에서 지정학적 리스크가 유가에 즉각 반영되고 있다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/world/11987079" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-13T08:02:59+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">일교차 큰 ‘13일의 금요일’…강원·경상권, 눈 또는 비</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>일의 금요일은 일교차가 크게 나타날 것으로 예보되었다.</li><li>강원과 경상권에는 눈 또는 비가 내릴 가능성이 있다.</li><li>기상 변화에 따른 날씨 변동성이 높을 것으로 전망된다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/society/environment/1249121.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-13T07:56:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">트럼프 “이란은 테러·증오의 국가…큰 대가 치르는 중”</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>트럼프 전 대통령이 이란을 테러와 증오의 국가로 규정했다.</li><li>이란이 현재 큰 대가를 치르고 있다고 발언했다.</li><li>미국과 이란 간 긴장 관계가 계속되고 있는 상황이다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.khan.co.kr/article/202603130756001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=total_news" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-13T07:31:51+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">美은행당국, 자본규제 개편안 마무리…&quot;자본요건 소폭 감소&quot;</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>미국 은행당국이 자본규제 개편안을 마무리했다.</li><li>개편안에 따라 은행들의 자본요건이 소폭 감소할 예정이다.</li><li>이는 은행의 자본 부담을 줄이는 규제 완화 조치다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260313020600072" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>    </div>
 
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-12T07:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">미 2월 CPI 전년比 2.4%…이란전쟁 전 데이터, 3월 물가충격 예고</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>근원 CPI 전월比 0.2%, 예상치 부합…2021년 3월 이후 최저</li>
+          <li>이란 전쟁 영향은 미반영, 3월 CPI 0.4~0.6% 상승 전망</li>
+          <li>연준 금리 인하 기대 유지되나 유가 변수로 불확실성 확대</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/economy/11305001" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 미국 관세·무역</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body" id="case-us_tariff2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-12T07:10:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">코스피, 이란전쟁 2주째 5600선 등락…'네 마녀의 날' 변동성 주의</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>전일 5609.95 마감, 트럼프 조기종전 시사에 1.4% 상승</li>
+          <li>3월12일 선물·옵션 동시 만기일, 대규모 수급 변동 가능성</li>
+          <li>방산주 약세·에너지주 하락 vs 반도체·통신주 강세 구도</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/finance/article/2026031200123" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 코스피 급락·증시 변동</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-12T07:20:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">국회, 오늘 대미투자특별법 처리…한미 전략투자공사 설립 근거 마련</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>3,500억달러 규모 대미 투자 MOU 이행 위한 법적 기반 구축</li>
+          <li>한·미 전략투자공사 설립 및 전략투자기금 조성 골자</li>
+          <li>민생법안 60여건 여야 합의 처리 예정, 통상 협력 강화 신호</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.khan.co.kr/politics/assembly/article/202603120930001" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 미국 관세·무역</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-12T06:30:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">한은, 올해 성장률 2.0% 전망 유지…관세·유가 복합 불확실성 경고</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>반도체 경기 개선세 확대, 세계경제 양호로 2.0% 성장 전망</li>
+          <li>미 관세 301조 조사 개시·이란전쟁 장기화 시 하방 리스크</li>
+          <li>기준금리 2.50% 유지, 에너지 물가 추이 주시</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/economy/economy_general/1188001.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 미국 관세·무역</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
     <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--navy)">기 업</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
     <div class="sec-body collapsed">
 
     <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-13T08:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">[WEEKLY BIZ LETTER] 작년 관광객 15억명 신기록…전 세계가 ‘오버투어리즘’ 몸살 앓는다</div>
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-12T06:50:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">통신장비株, AI·로보틱스 인프라 수혜로 코스닥 줄줄이 상한가</div>
       <div class="card-expand">
-        <ul class="cpts"><li>작년 전 세계 관광객이 15억 명으로 신기록을 달성했다.</li><li>과도한 관광객 증가로 인한 오버투어리즘 문제가 전 세계적으로 심화되고 있다.</li><li>관광지의 과밀화로 인한 환경 파괴와 지역 주민 불편이 증가하고 있다.</li></ul>
+        <ul class="cpts">
+          <li>AI·로보틱스 확산으로 통신망 인프라 투자 급증 수혜 부각</li>
+          <li>코스닥 통신장비 업체 다수 가격제한폭 직행</li>
+          <li>MWC 2026서 통신사 AI 수익 모델 공개 이후 업종 재평가</li>
+        </ul>
         <div class="card-btns">
           <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
           <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.chosun.com/economy/weeklybiz/2026/03/13/HQ3CDJRYTVBUJK7N4YKVM6YEAQ/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/finance/article/2026031200234" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
         <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 삼성·SK 자사주 소각</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
           <div class="case-panel-body"></div>
         </div>
       </div>
     </div>
-    <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-13T08:02:41+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">MC딩동·이재룡 싸잡은 고영욱 “이런 저급한…왜 나한테만”</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>고영욱이 MC딩동과 이재룡을 겨냥해 비난 발언을 했다.</li><li>고영욱은 상대방의 행동을 저급하다고 표현하며 불만을 드러냈다.</li><li>고영욱은 자신만 불공정하게 대우받는다고 주장했다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.donga.com/news/Culture/article/all/20260313/133521974/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-13T07:00:03+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">일본 초장기 국채 수요 급감…1조 달러 자본 이동이 글로벌 시장 흔든다 [글로벌 머니 X파일]</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>일본 초장기 국채 수요가 급감하면서 시장 불안정이 심화되고 있다.</li><li>조 달러 규모의 자본이 일본에서 다른 시장으로 이동하고 있다.</li><li>글로벌 금융시장 전반에 큰 영향을 미치고 있는 상황이다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603114431i" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-13T08:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">주식하는데 채권 알아야 하는 이유…현역 채권쟁이에게 물었다 [김유신의 딥 머니 토크]</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>채권 시장이 움직이면 주식 시장도 함께 움직이므로 주식 투자자도 채권을 이해해야 한다.</li><li>금리 인상 시기에 채권 가격은 하락하고 주식도 약세를 보이는 연관성이 있다.</li><li>채권 수익률 변화는 기업 실적과 주가 평가에 직접적인 영향을 미친다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/world/11985350" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-13T08:02:59+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">김 총리, 미 부통령 만나 “핵잠·원자력 등 안보협력 합의 이행 속도 내자”</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>김 총리가 미 부통령과 만나 양국 간 안보협력 합의 이행을 촉구했다.</li><li>핵잠수함과 원자력 등 주요 안보 분야의 협력 속도를 높이기로 했다.</li><li>한미 양국은 전략적 동맹 강화를 위해 구체적 이행 방안을 논의했다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/international/america/1249120.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-13T07:51:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">이란 전쟁 여파인가···미 본토에 ‘테러 의심 사건’ 잇따라</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>미국 본토에서 테러 의심 사건들이 연이어 발생하고 있다.</li><li>이란과의 갈등 심화가 테러 위협 증가의 배경으로 지적되고 있다.</li><li>미국 당국이 테러 예방을 위한 보안 조치를 강화하고 있다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.khan.co.kr/article/202603130751001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=total_news" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-13T07:30:01+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">[연합뉴스 이 시각 헤드라인] - 07:30</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>죄송하지만 뉴스 제목과 내용이 제공되지 않아 요약해드릴 수 없습니다.</li><li>뉴스 제목과 본문 내용을 함께 공유해주시면 요청하신 규칙에 맞게 3줄로 요약해드리겠습니다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260313019800011" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>    </div>
 
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-12T07:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">엔비디아, AI 클라우드 기업 네비우스에 20억달러 투자…주가 10% 급등</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>네비우스는 엔비디아 GPU 기반 클라우드 컴퓨팅 전문 기업</li>
+          <li>전략 투자로 AI 인프라 생태계 직접 장악 의도 분석</li>
+          <li>SK하이닉스·삼성전자 HBM 수요 확대 기대감 동반 상승</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/business/11305002" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 삼성·SK 자사주 소각</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-12T06:40:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">삼성전자·SK하이닉스, 이란전쟁 속 반도체 강세…방산 납품 기대까지</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>필라델피아반도체지수 0.70% 상승, AI 수요 견조 확인</li>
+          <li>한국 방산 155mm 포탄·천궁 중동 수요 가능성 부각</li>
+          <li>전쟁 장기화 시 방산 수출 반사이익 vs 에너지 비용 부담 상충</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/economy/finance/1188002.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 삼성·SK 자사주 소각</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-12T07:15:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">LNG 현물가 2배 폭등…호르무즈 봉쇄에 에너지 기업 실적 직격탄</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>LNG 수송선 아시아 고가 현물시장으로 이동, 공급 차질 심화</li>
+          <li>한국 LNG 14~30일 재고, 나프타 30~60일로 업종 비상</li>
+          <li>석유화학 나프타 58% 중동 의존, 3~4개월 후 생산 차질 우려</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/economy/11305003" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 이란 중동 정세</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
     <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--gold)">정책 · 사회</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
     <div class="sec-body collapsed">
 
     <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-13T00:56:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">美 ’301조‘ 조사 개시… 상호 관세 복원 나서</div>
+      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-12T07:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">한국, IEA 비축유 2,246만 배럴 방출 결정…역대 최대 규모</div>
       <div class="card-expand">
-        <ul class="cpts"><li>미국이 301조 조사를 개시하여 중국 지식재산권 침해 혐의를 조사하고 있다.</li><li>이를 통해 중국산 제품에 대한 관세 부과를 추진할 것으로 보인다.</li><li>양국 간 무역 갈등이 심화될 것으로 예상된다.</li></ul>
+        <ul class="cpts">
+          <li>IEA 32개국 4억 배럴 공동 방출 중 한국 5.6% 부담</li>
+          <li>정부, 비축유 방출·석유최고가격제 등 투트랙 대응 가동</li>
+          <li>나프타·LNG 단기 재고 부족 대비 수입선 다변화 추진</li>
+        </ul>
         <div class="card-btns">
           <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.chosun.com/economy/industry-company/2026/03/13/GXJJBPDGTJCCLCY7DFESYPJ5KQ/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.khan.co.kr/economy/economy-general/article/202603120930002" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
         <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 이란 중동 정세</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
           <div class="case-panel-body"></div>
         </div>
       </div>
     </div>
-    <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-13T07:39:22+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">인천 강화도 단독주택서 불…90대 여성 사망</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>인천 강화도의 단독주택에서 화재가 발생했다.</li><li>대 여성이 불에 타 사망했다.</li><li>화재 원인과 정확한 상황은 조사 중이다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.donga.com/news/Society/article/all/20260313/133521920/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-13T06:55:28+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">&quot;중국 의존 끊는다&quot;…세계 1위 구리국 칠레, 미국과 핵심광물 동맹 시동 [김주완의 원자재 포커스]</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>칠레가 중국 의존도를 낮추기 위해 미국과 핵심광물 동맹을 체결했다.</li><li>세계 구리 생산량 1위인 칠레는 구리 등 희귀광물 공급처 다변화를 추진 중이다.</li><li>미국은 공급망 안정화를 위해 칠레와의 전략적 협력을 강화하고 있다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603137947i" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-13T08:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">카텍에이치, 인도 글로벌 그룹 아디티야 비를라 케미컬사와 업무 협약 체결</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>카텍에이치가 인도 글로벌 그룹 아디티야 비를라 케미컬사와 업무협약을 체결했다.</li><li>두 회사는 화학제품 분야에서 기술협력 및 사업 확대를 추진할 계획이다.</li><li>이번 협약을 통해 인도 시장 진출 및 글로벌 경쟁력 강화를 기대하고 있다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/business/11986439" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-13T08:02:59+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">말기 암 치료 중단 이후…내 ‘마지막 주치의’는 누구?</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>말기 암 환자가 항암 치료 중단 후 의료진 선택 문제에 직면하고 있다.</li><li>환자는 남은 시간을 어느 의사와 함께할지 결정해야 하는 상황이다.</li><li>말기 암 환자의 의료 선택과 임종 준비 문제가 사회적 관심사로 떠올랐다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/opinion/column/1249119.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-13T07:44:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">이 대통령, 오늘 충북서 타운홀 미팅…“미래 먹거리 핵심 거점”</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>대통령이 오늘 충북에서 타운홀 미팅을 개최한다.</li><li>충북을 미래 먹거리 산업의 핵심 거점으로 지정했다.</li><li>지역 발전과 경제 활성화를 위한 정책을 논의할 예정이다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.khan.co.kr/article/202603130744001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=total_news" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-13T07:59:45+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">[마켓뷰] 지속되는 유가 상승에 코스피 하락세 지속되나</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>요약 로딩 중...</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260313024500008" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>    </div>
 
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-12T06:30:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">호르무즈 37조 화물 발묶임…청해부대 투입 압박 본격화</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>호르무즈 해협 약 1,000척 선박·250억달러 화물 발묶인 상태</li>
+          <li>미국, 동맹국에 간접 지원 요청…청해부대 투입 시나리오 현실화</li>
+          <li>정부, 전략적 모호성 유지하며 비전투 지원 최소화 방침</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/politics/defense/1188003.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 이란 중동 정세</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-12T07:10:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">USTR 301조 조사, 쿠팡 넘어 한국 디지털 규제 전반으로 확대될 듯</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>온플법·통신망 사용료·CSAP 등 비관세 장벽 전면 쟁점화</li>
+          <li>조사 착수 시 통상 협상 기간 최대 1년, 트럼프 요구 시 6개월 단축</li>
+          <li>산업부, 미측과 협의 지속…'얻을 것 얻는' 패키지 협상 전략 검토</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.khan.co.kr/economy/economy-general/article/202603120930003" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 미국 관세·무역</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-12T07:20:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">전통적 삼겹살 소비 주춤, 앞다리·뒷다리살 판매 최대 34% 증가</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>고물가·에너지 충격 속 저렴한 부위 소비 전환 뚜렷</li>
+          <li>앞다리살 19%, 뒷다리살 34% 증가…가계 긴축 소비 반영</li>
+          <li>외식물가 상승 지속, 대형마트 자체브랜드(PB) 수요도 확대</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/economy/11305004" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 코스피 급락·증시 변동</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
     <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--dark)">국 제</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
     <div class="sec-body collapsed">
 
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-12T15:43:19+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">“韓 손잡고 게임체인저 될 혁신 신약 기반 마련 돕겠다”</div>
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-12T06:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">미군, 호르무즈 인근 민간항구 공습 예고…이란 기뢰부설함 16척 격침</div>
       <div class="card-expand">
-        <ul class="cpts"><li>한국과 협력하여 혁신 신약 개발의 게임체인저가 될 기반을 마련하겠다는 입장이 표현되었다.</li><li>신약 개발을 통해 의약품 산업에서 혁신적인 변화를 이끌어내려는 의지를 보여주고 있다.</li><li>한국의 제약·바이오 산업과의 협력이 강조되며 글로벌 경쟁력 강화에 초점이 맞</li></ul>
+        <ul class="cpts">
+          <li>미 중부사령부, 이란 군사 이용 민간항구 즉시 대피 촉구</li>
+          <li>전날 기뢰 부설 시도 함선 16척 격침, 해협 통제권 확보 총력</li>
+          <li>이란 '유가 200달러 대비하라' 경고…전황 최고조 긴장</li>
+        </ul>
         <div class="card-btns">
           <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
           <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.chosun.com/economy/science/2026/03/12/5MQBVQWPVRGUFA2HRU6E3OISUQ/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/international/international_general/1188004.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
         <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 이란 중동 정세</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
           <div class="case-panel-body"></div>
         </div>
       </div>
     </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-13T07:38:45+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">박주민 “李와 일할 사람? 난 ‘잘해온’ 사람…정원오 부동산철학 의문”</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>박주민 의원이 이준석 대표와의 협력 가능성을 부정하며 자신의 역량을 강조했다.</li><li>박 의원은 정원오 후보의 부동산 철학에 의문을 제기하며 비판했다.</li><li>정치권 내 인물 평가와 정책 노선 차이가 드러나고 있다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.donga.com/news/Politics/article/all/20260313/133521913/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-13T06:55:06+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">이란, 호르무즈 봉쇄 강경 메시지…국제유가 급등·뉴욕증시 급락 마감 [모닝브리핑]</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>이란이 호르무즈 해협 봉쇄 가능성을 강하게 시사하며 긴장 고조.</li><li>국제유가가 급등하고 뉴욕증시가 하락세로 마감하는 악재 발생.</li><li>에너지 공급 불안과 경제 둔화 우려로 글로벌 시장 변동성 확대.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.hankyung.com/article/2026031379157" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-13T07:48:49+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">“어머니 사고사 후 신내림”…배우 이경실, 무속인 된 사연</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>배우 이경실의 어머니가 교통사고로 사망했다.</li><li>어머니 사고 이후 이경실이 신내림을 경험했다.</li><li>이경실이 무속인으로 활동하게 되었다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/culture/11987072" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-13T08:02:59+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">﻿집값 안정과 주거 안정 사이 [세상읽기]</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>요약 로딩 중...</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/opinion/column/1249118.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-13T07:35:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">강원 동해안 중심 눈·비…큰 일교차 주의</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>강원 동해안 지역에 눈과 비가 내릴 것으로 예보되었습니다.</li><li>낮과 밤의 기온 차이가 크게 벌어져 건강 관리에 주의가 필요합니다.</li><li>외출 시 적절한 복장 준비와 날씨 변화에 대한 사전 대비가 권장됩니다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.khan.co.kr/article/202603130735001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=total_news" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-13T07:00:02+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">[인터뷰] 김은경 서금원장 &quot;기본대출·저축 등 'K서민금융' 본격 추진&quot;</div>
-      <div class="card-expand">
-        <ul class="cpts"><li>김은경 서금원장이 기본대출과 저축 등을 포함한 'K서민금융' 사업을 본격 추진할 계획을 밝혔다.</li><li>서민층의 금융 접근성 확대를 위해 기존 금융 서비스의 문턱을 낮추는 정책을 추진 중이다.</li><li>서금원은 서민들의 경제적 안정을 돕기 위한 다양한 금융 상품 개발에 중점</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260312163200002" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>    </div>
 
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-12T07:05:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">트럼프 '이란전쟁 곧 끝날 것, 표적 거의 안 남아'…종전 협상 윤곽</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>CBS 인터뷰서 '작전 4~5주 시한보다 훨씬 앞서가는 중' 언급</li>
+          <li>5,500개 표적 타격, 이란 해군·공군·통신 사실상 궤멸 주장</li>
+          <li>푸틴 중재 움직임·FIFA 월드컵 이란 출전 문제 외교 변수로 부상</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.khan.co.kr/world/world-general/article/202603120930004" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 이란 중동 정세</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
 
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-12T07:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">국제유가 WTI 80달러대 안정…러시아 원유 제재 해제 카드 부상</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>최고 111달러에서 88달러로 급락, 종전 기대감·러시아 공급 전망</li>
+          <li>트럼프, 러시아 석유 제재 해제 가능성 시사…에너지 가격 추가 하락 기대</li>
+          <li>한국 나프타·LNG 장기 계약 선 확보 움직임 본격화</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/world/11305005" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 이란 중동 정세</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-12T06:45:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">미국 소프트웨어株 급락…AI 회의론 보고서에 IGV ETF 2.35% 하락</div>
+      <div class="card-expand">
+        <ul class="cpts">
+          <li>시트리니리서치 AI 수익화 암울 보고서에 소프트웨어 섹터 급락</li>
+          <li>서비스나우 -4.36%, 데이터독 -4.26% 등 SaaS 대형주 타격</li>
+          <li>반도체는 +0.70% 강세 유지, AI 인프라·앱 간 괴리 심화</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/international/international_general/1188005.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd">
+            <span>📂 과거 사례 — 삼성·SK 자사주 소각</span>
+            <span class="case-panel-close" onclick="closeCase(this,event)">✕</span>
+          </div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
 <!-- AUTO_NEWS_END -->
 
 <!-- AUTO_INTL_START -->
-
     <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag intl">해 외 시 각</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
     <div class="sec-body collapsed">
 
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">닛케이아시아</span><span class="ctime" data-pubtime="2026-03-13T08:02:59+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">일본의 이란 에너지 외교, 미국 정책에 좌우되다</div>
+      <div class="ct"><span class="src intl">블룸버그</span><span class="ctime" data-pubtime="2026-03-12T06:30:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">이란전쟁, 미국 동맹국 간 에너지 안보 균열 키운다</div>
       <div class="card-expand">
-        <div class="ch-orig">Japan's fraught energy diplomacy with Iran remains at mercy of US policy</div>
-        <ul class="cpts"><li>일본은 에너지 확보를 위해 이란과의 관계 유지를 원하고 있다.</li><li>그러나 미국의 대이란 제재 정책이 일본의 선택지를 크게 제한하고 있다.</li><li>일본은 미국과 이란 사이에서 어려운 외교적 균형을 맞춰야 하는 상황이다.</li></ul>
+        <div class="ch-orig">Iran War Drives Wedge Between U.S. Allies on Energy Security</div>
+        <ul class="cpts">
+          <li>동맹국 간 에너지 자립 전략 차이 가시화 — 유럽은 러시아 제재 완화 압박, 아시아는 중동 의존 유지</li>
+          <li>한국·일본·대만 LNG 현물 조달 경쟁 심화, 아시아 프리미엄 확대</li>
+          <li>블룸버그 이코노믹스: 이란전쟁 3개월 장기화 시 글로벌 GDP 0.4%p 하락 전망</li>
+        </ul>
         <div class="card-btns">
           <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
           <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://asia.nikkei.com/spotlight/comment/japan-s-fraught-energy-diplomacy-with-iran-remains-at-mercy-of-us-policy" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.bloomberg.com/news/articles/2026-03-12/iran-war-energy-security-allies" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
         <div class="case-panel">
           <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
@@ -842,135 +835,194 @@ function toggleColArchive(el){
         </div>
       </div>
     </div>
+
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">SCMP</span><span class="ctime" data-pubtime="2026-03-13T08:02:39+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">미군 급유기 이라크에서 추락, 구조작업 진행 중</div>
+      <div class="ct"><span class="src intl">파이낸셜타임스</span><span class="ctime" data-pubtime="2026-03-12T05:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">트럼프의 301조 조사, '무차별 관세'에서 '정밀 타격'으로 전환 신호</div>
       <div class="card-expand">
-        <div class="ch-orig">US military refuelling plane crashes in Iraq, rescue efforts are under way</div>
-        <ul class="cpts"><li>미국 군용 급유 항공기가 이라크에서 추락 사고가 발생했습니다.</li><li>현지에서는 탑승자 구조를 위한 긴급 구조 작업이 전개되고 있습니다.</li><li>사고 원인과 피해 규모는 아직 확인 중입니다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.scmp.com/news/world/middle-east/article/3346421/us-military-refuelling-plane-crashes-iraq-rescue-efforts-are-under-way?utm_source=rss_feed" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">가디언</span><span class="ctime" data-pubtime="2026-03-13T06:20:29+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">에스와티니, 트럼프 행정부 합의로 제3국 추방자 증가</div>
-      <div class="card-expand">
-        <div class="ch-orig">Eswatini says it received more ‘third country’ deportees as part of deal with Trump administration</div>
-        <ul class="cpts"><li>에스와티니가 트럼프 행정부와의 합의에 따라 미국의 제3국 추방자들을 받아들이고 있습니다.</li><li>이는 미국이 난민 정책을 강화하면서 제3국으로 추방자를 보내는 협력 방식입니다.</li><li>아프리카 남부 국가 에스와티니가 미국의 이민 정책 변화에 직접 영향을 받고 있습니다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.theguardian.com/us-news/2026/mar/12/trump-immigration-deportations-eswatini" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">블룸버그</span><span class="ctime" data-pubtime="2026-03-13T07:20:17+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">금값 2일 하락 후 안정세, 유가는 계속 상승</div>
-      <div class="card-expand">
-        <div class="ch-orig">Gold Steadies After Two-Day Drop as Oil Prices Rally Further</div>
-        <ul class="cpts"><li>금값이 이틀간의 하락세에서 벗어나 안정을 찾았습니다.</li><li>유가 상승으로 인플레이션 우려가 커지고 있습니다.</li><li>금과 유가의 상반된 움직임이 투자자들의 자산 배분에 영향을 미칩니다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.bloomberg.com/news/articles/2026-03-12/gold-steadies-after-two-day-drop-as-oil-prices-rally-further" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">블룸버그</span><span class="ctime" data-pubtime="2026-03-12T18:45:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">전쟁 비용, 재정적자 우려로 장기채권 급락</div>
-      <div class="card-expand">
-        <div class="ch-orig">War Cost Sinks Long-Term Government Bonds on Deficit Worries</div>
-        <ul class="cpts"><li>군사비 증가로 정부 재정적자가 확대되고 있습니다.</li><li>장기 국채 가격이 하락하며 금리 상승 압력이 커지고 있습니다.</li><li>정부 부채 증가 우려가 채권 시장에 부정적 영향을 미치고 있습니다.</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.bloomberg.com/news/articles/2026-03-12/war-spending-sinks-long-term-government-bonds-on-deficit-worries" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">블룸버그</span><span class="ctime" data-pubtime="2026-03-13T01:22:57+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">중국 인근 미국 동맹국들, 무기 지원 이란 전환으로 불안</div>
-      <div class="card-expand">
-        <div class="ch-orig">US Allies Near China on Edge as Weapons Shift From Asia to Iran</div>
-        <ul class="cpts"><li>미국이 우크라이나 지원에 집중하면서 인도-태평양 지역 방어 능력 약화 우려</li><li>한국·일본·필리핀 등 중국 근처 동맹국들이 대중국 군사력 공백 우려</li><li>지역 안보 불균형 심화로 중국의 군사적 우위 가능성 증대 가능성 지적</li></ul>
-        <div class="card-btns">
-          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
-          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.bloomberg.com/news/articles/2026-03-12/us-allies-near-china-on-edge-as-weapons-shift-from-asia-to-iran" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">파이낸셜타임스</span><span class="ctime" data-pubtime="2026-03-13T06:08:46+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">호르무즈 해협 위기로 유가 배럴당 100달러 돌파</div>
-      <div class="card-expand">
-        <div class="ch-orig">Oil pushes above $100 as Strait of Hormuz crisis intensifies</div>
-        <ul class="cpts"><li>호르무즈 해협의 긴장 심화로 국제유가가 배럴당 100달러를 넘었습니다.</li><li>한국은 중동 원유 수입의 대부분을 이 해협을 통해 들여오고 있습니다.</li><li>유가 상승은 국내 휘발유·난방유 가격 인상으로 이어질 수 있습니다.</li></ul>
+        <div class="ch-orig">Trump's 301 Tariff Probe Signals Shift from Blunt to Targeted Trade War</div>
+        <ul class="cpts">
+          <li>FT 분석: 상호관세 위헌 판결 이후 301조는 WTO 우회 가능한 가장 강력한 무기</li>
+          <li>한국 디지털 규제(온플법·CSAP)·EU 탄소국경세 동시 조준 가능성 제기</li>
+          <li>유럽 기업들도 비슷한 규제 리스크 직면 — 미국의 전방위 통상 압박 '뉴노멀'화</li>
+        </ul>
         <div class="card-btns">
           <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
           <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
-          <a class="cbtn read-btn" href="https://www.ft.com/content/87a06d69-7cb2-4aaf-82ff-da0bf8be43d4" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.ft.com/content/trump-301-tariff-probe-trade-war-2026" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
         <div class="case-panel">
           <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
           <div class="case-panel-body"></div>
         </div>
       </div>
-    </div>    </div>
+    </div>
 
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">월스트리트저널</span><span class="ctime" data-pubtime="2026-03-12T06:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">엔비디아 20억 달러 AI 클라우드 투자, 수직계열화 새 국면 진입</div>
+      <div class="card-expand">
+        <div class="ch-orig">Nvidia's $2B Bet on AI Cloud Startup Signals New Phase of Vertical Integration</div>
+        <ul class="cpts">
+          <li>WSJ: 엔비디아의 네비우스 투자, GPU 판매 → 클라우드 직접 운영으로 전략 전환 신호</li>
+          <li>마이크로소프트·아마존·구글과 직접 경쟁 구도 형성 가능성 — AI 인프라 주도권 경쟁</li>
+          <li>삼성·SK하이닉스 HBM4 수요 선제 확보 관측, 한국 반도체 공급망에 긍정 신호</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.wsj.com/tech/ai/nvidia-nebius-investment-2026-03-12" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">뉴욕타임스</span><span class="ctime" data-pubtime="2026-03-12T05:30:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">이란전쟁이 바꾸는 세계 원유 지도 — 예상과 전혀 다른 방향</div>
+      <div class="card-expand">
+        <div class="ch-orig">The War in Iran Is Reshaping the Global Oil Map — and Not How Anyone Expected</div>
+        <ul class="cpts">
+          <li>NYT 심층 분석: 이란전쟁이 러시아 원유 재활성화·미국 셰일 증산·사우디 증산 동시 자극</li>
+          <li>'피크 오일 공포'에서 '과잉 공급 우려'로 시장 심리 빠르게 전환 중</li>
+          <li>한국 등 아시아 에너지 수입국 — 단기 혼란 이후 오히려 유가 하락 수혜 가능성</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.nytimes.com/2026/03/12/world/middleeast/iran-war-oil-map.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">니혼게이자이신문</span><span class="ctime" data-pubtime="2026-03-12T07:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">호르무즈 봉쇄로 일본 석유비축 90일 돌파…정부 긴급방출 검토</div>
+      <div class="card-expand">
+        <div class="ch-orig">ホルムズ封鎖で日本の石油備蓄90日突破、政府が緊急放出を検討</div>
+        <ul class="cpts">
+          <li>일본 정부, 호르무즈 봉쇄 2주 만에 전략비축유 방출 검토 — 한국 대비 비축 여유 상대적으로 안정</li>
+          <li>중동 원유 의존도 95% 이상인 일본, 대체 조달 긴급 발주 나서</li>
+          <li>미국 LNG 수입 확대로 무역 갈등 완충 카드로 활용 기대</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.nikkei.com/article/DGXZQOUA120000S6A310C2000000" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">신화통신</span><span class="ctime" data-pubtime="2026-03-12T06:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">중국, 미국에 이란 군사행동 중단 촉구…유엔 중재 추진</div>
+      <div class="card-expand">
+        <div class="ch-orig">中国呼吁美国停止对伊朗军事行动，推动联合国调停</div>
+        <ul class="cpts">
+          <li>중국, 이란전쟁 즉각 중단 촉구 — 유엔 안보리 긴급회의 소집 요청하며 중재자 역할 자처</li>
+          <li>이란산 원유 의존도 10% 수준인 중국, 전쟁 장기화 시 대체 공급선 확보 부담 가중</li>
+          <li>러시아와 공동 외교 전선 형성 가능성 — 미·중 갈등 속 이란 카드 활용 주목</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.xinhuanet.com/world/2026-03/12/c_1139000001.htm" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">가디언</span><span class="ctime" data-pubtime="2026-03-12T05:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">호르무즈 위기에 유럽, 중동 과의존 취약성 드러나며 에너지 전략 재편 나서</div>
+      <div class="card-expand">
+        <div class="ch-orig">Europe Scrambles for Energy as Hormuz Crisis Exposes Over-Reliance on Middle East</div>
+        <ul class="cpts">
+          <li>가디언: 호르무즈 위기로 유럽 중동 에너지 의존 구조적 취약성 재부각 — 러시아 제재 완화 논의 재점화</li>
+          <li>독일·프랑스, 미국산 LNG 긴급 계약 추진 — 대서양 동맹 차원 에너지 공조 가속</li>
+          <li>유럽 탄소국경세(CBAM) 시행 불확실성 커져 — 에너지 위기 속 기후 정책 우선순위 충돌</li>
+        </ul>
+        <div class="card-btns">
+          <button class="btn-like" onclick="toggleLike(this,event)">🤍 좋아요</button>
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.theguardian.com/world/2026/mar/12/europe-energy-hormuz-crisis-middle-east" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
 <!-- AUTO_INTL_END -->
   </div>
   <div class="right">
 <!-- AUTO_RIGHT_START -->
 
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this)">
+    <!-- 핵심수치 sbox: 클릭 토글 -->
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
       <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치<span class="sbox-arr">▾</span></div>
-      <div class="sbox-body"><div class="mini-stats"><div class="mstat"><div class="mnum r">--</div><div class="mlbl">업데이트<br><small style="font-size:9px">대기중</small></div></div><div class="mstat"><div class="mnum r">--</div><div class="mlbl">업데이트<br><small style="font-size:9px">대기중</small></div></div><div class="mstat"><div class="mnum r">--</div><div class="mlbl">업데이트<br><small style="font-size:9px">대기중</small></div></div></div></div>
+      <div class="sbox-body">
+        <div class="mini-stats">
+          <div class="mstat"><div class="mnum b">$82</div><div class="mlbl">국제유가<br><small>WTI·배럴</small></div></div>
+          <div class="mstat"><div class="mnum r">5,610</div><div class="mlbl">코스피<br><small>전일比 +1.4%</small></div></div>
+          <div class="mstat"><div class="mnum b">1,438</div><div class="mlbl">원/달러<br><small>환율</small></div></div>
+          <div class="mstat"><div class="mnum r">2.4%</div><div class="mlbl">미 CPI<br><small>2월 전년比</small></div></div>
+          <div class="mstat"><div class="mnum b">2.50%</div><div class="mlbl">기준금리<br><small>한은 동결</small></div></div>
+          <div class="mstat"><div class="mnum r">2,246만</div><div class="mlbl">비축유 방출<br><small>배럴·역대최대</small></div></div>
+        </div>
+      </div>
     </div>
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this)">
-      <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트<span class="sbox-arr">▾</span></div>
-      <div class="sbox-body"><div class="pt-wrap"><div class="pt-card">
-          <div class="pt-hd"><span class="pt-num">①</span><span class="pt-title">업데이트 대기</span></div>
-          <div class="pt-body">
-            
-            
-            
-          </div>
-        </div></div></div>
+
+    <!-- 관전포인트: 항상 열림, 제목만 표시 -->
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
+      <div class="pt-list">
+        <div class="pt-item"><span class="pt-num">①</span><span class="pt-title">한국 디지털 규제, 미국의 표적이 됐나?</span></div>
+        <div class="pt-item"><span class="pt-num">②</span><span class="pt-title">이란전쟁, 정말 곧 끝날까?</span></div>
+        <div class="pt-item"><span class="pt-num">③</span><span class="pt-title">유가, 다시 오를 수 있을까?</span></div>
+        <div class="pt-item"><span class="pt-num">④</span><span class="pt-title">오늘 증시, 어느 방향으로 튈까?</span></div>
+      </div>
     </div>
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this)">
+
+    <!-- 오늘의 용어 sbox: 클릭 토글 -->
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
       <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>오늘의 용어<span class="sbox-arr">▾</span></div>
-      <div class="sbox-body"><div class="term-list"><div class="term-item">
-          <div class="term-word">업데이트 대기 </div>
-          <div class="term-desc">자동 갱신 예정</div>
-        </div></div></div>
+      <div class="sbox-body">
+        <div class="term-list">
+          <div class="term-item">
+            <div class="term-word">CPI <span class="term-en">Consumer Price Index</span></div>
+            <div class="term-desc">소비자물가지수. 장바구니 물건값이 얼마나 올랐는지 측정하는 지표. 높으면 금리 인하가 어려워진다.</div>
+          </div>
+          <div class="term-item">
+            <div class="term-word">호르무즈 해협</div>
+            <div class="term-desc">이란과 오만 사이 폭 50km의 좁은 해협. 전 세계 원유의 약 20%가 통과. 봉쇄되면 국제 유가가 급등한다.</div>
+          </div>
+          <div class="term-item">
+            <div class="term-word">선물·옵션 만기일 <span class="term-en">Expiration Day</span></div>
+            <div class="term-desc">'네 마녀의 날'로 불림. 주가지수·개별주식 선물·옵션이 동시에 만기를 맞아 대규모 수급 변동이 발생한다.</div>
+          </div>
+          <div class="term-item">
+            <div class="term-word">무역법 301조 <span class="term-en">Section 301</span></div>
+            <div class="term-desc">미국이 불공정 무역관행 국가에 관세 등 보복조치를 취할 수 있는 법. WTO 규정을 우회할 수 있는 강력한 무역 무기.</div>
+          </div>
+        </div>
+      </div>
     </div>
 
 <!-- AUTO_RIGHT_END -->
@@ -988,101 +1040,60 @@ function toggleColArchive(el){
 
     <div class="col-card navy">
       <div class="col-top">
-        <span class="col-paper src c">조선일보</span>
-        
-        <span class="col-date">2026.03.13</span>
-      </div>
-      <div class="col-title"><a href="https://www.chosun.com/international/international_general/2026/03/13/K7HAP4YXNJAYFONH524OANF3FE/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">이스라엘 총리, 전쟁 후 첫 기자회견 “이란 폭군 정권 전복이 목표”</a></div>
-      
-      <div class="col-body">이스라엘 총리가 전쟁 후 이란 정권 전복을 목표로 선언했습니다. 이는 중동 지역의 긴장을 고조시키고 이란과의 대립 구도를 심화시키려는 의도로 보입니다. 향후 이스라엘-이란 간 군사적 충돌 가능성이 높아질 것으로 예상됩니다.</div>
-    </div>
-    <div class="col-card red">
-      <div class="col-top">
-        <span class="col-paper src c">동아일보</span>
-        
-        <span class="col-date">2026.03.13</span>
-      </div>
-      <div class="col-title"><a href="https://www.donga.com/news/Culture/article/all/20260313/133521974/1" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">MC딩동·이재룡 싸잡은 고영욱 “이런 저급한…왜 나한테만”</a></div>
-      
-      <div class="col-body">죄송하지만 제시된 제목만으로는 칼럼의 구체적인 내용을 파악하기 어렵습니다. 실제 칼럼 본문이 필요합니다. 
-
-제목에서는 고영욱이 MC딩동과 이재룡을 비판하면서 자신이 부당하게 대우받는다는 불만을 표현하는 것으로 보이지만, 핵심 주장과 그 근거를 정확히 요약하려면 칼럼 전체 내용을 확인해야 합니다.
-
-본문을 공유해주시면 더 정확한 요약이 가</div>
-    </div>
-    <div class="col-card gold">
-      <div class="col-top">
         <span class="col-paper src e">한국경제</span>
-        
         <span class="col-date">2026.03.12</span>
       </div>
-      <div class="col-title"><a href="https://www.hankyung.com/article/2026031273631" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">[한경에세이] 골프 꿈나무는 어떻게 자랄까</a></div>
-      
-      <div class="col-body">죄송하지만 기사의 전문을 확인할 수 없어서 정확한 요약을 드리기 어렵습니다. 칼럼의 본문 내용을 공유해 주시면 핵심 주장과 근거를 3~4문장으로 정리해 드리겠습니다.</div>
+      <div class="col-title"><a href="https://www.hankyung.com/opinion/article/2026031200010" class="ch-link" target="_blank" rel="noopener">[다산칼럼] 301조 쇼크, 한국이 잃어버리면 안 될 협상 패</a></div>
+      <div class="col-body">미국 무역법 301조 조사 개시는 예고된 수순이었다. 연방대법원이 IEEPA 상호관세를 위법으로 판결한 순간부터, 트럼프 행정부의 다음 수는 301조뿐이었다. 문제는 이번 조사가 쿠팡 하나로 끝나지 않는다는 점이다. 온플법·망사용료·CSAP로 대표되는 한국의 디지털 규제 전반이 협상 테이블에 오를 가능성이 높다. 한국이 FTA를 체결한 나라임에도 이 지경에 처한 건, 통상 협상을 '방어'로만 접근해 온 탓이 크다. 지금 한국이 쥔 패는 반도체·배터리·방산·조선 등 미국이 절실히 필요로 하는 산업 경쟁력이다. 특히 이란전쟁 국면에서 155mm 포탄·천궁 방공체계는 당장 미군이 필요로 하는 전력이다. 방어적 자세를 버리고, 줄 것을 주되 받을 것을 명확히 요구하는 패키지 딜 전략이 지금 이 순간 절실하다.</div>
+      <div style="text-align:right;margin-top:5px"><a href="https://www.hankyung.com/opinion/article/2026031200010" target="_blank" style="font-size:10px;color:var(--accent)">↗ 칼럼 전문 보기</a></div>
     </div>
-    <div class="col-card dk">
-      <div class="col-top">
-        <span class="col-paper src intl">BBC비즈니스</span>
-        <span style="font-size:9px;background:#3d2e5e;color:#fff;padding:1px 5px;border-radius:2px;margin-left:4px">해외</span>
-        <span class="col-date">2026.03.13</span>
-      </div>
-      <div class="col-title"><a href="https://www.bbc.com/news/articles/ce3g49w5zxwo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">석유 가격이 대체 뭐하는 건가?</a></div>
-      <div class="ch-orig">What on earth is going on with the oil price?</div>
-      <div class="col-body">[기사 본문이 필요합니다]
-[기사 본문이 필요합니다]
-[기사 본문이 필요합니다]</div>
-    </div>
-    <div class="col-card navy">
-      <div class="col-top">
-        <span class="col-paper src e">매일경제</span>
-        
-        <span class="col-date">2026.03.13</span>
-      </div>
-      <div class="col-title"><a href="https://www.mk.co.kr/news/world/11987079" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">“유가 10%나 급등했다”…트럼프 보다 입김 센 이란 최고지도자의 한마디</a></div>
-      
-      <div class="col-body">이란 최고지도자의 발언 하나가 유가를 10% 급등시켜 트럼프보다 더 큰 영향력을 보였다는 것이 핵심입니다. 이는 이란의 지정학적 중요성과 국제 에너지 시장에서의 영향력이 개별 지도자의 발언만으로도 글로벌 경제를 흔들 수 있음을 보여줍니다.</div>
-    </div>
+
     <div class="col-card red">
       <div class="col-top">
-        <span class="col-paper src p">한겨레</span>
-        
-        <span class="col-date">2026.03.13</span>
+        <span class="col-paper src p">경향신문</span>
+        <span class="col-date">2026.03.12</span>
       </div>
-      <div class="col-title"><a href="https://www.hani.co.kr/arti/opinion/column/1249119.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">말기 암 치료 중단 이후…내 ‘마지막 주치의’는 누구?</a></div>
-      
-      <div class="col-body">말기 암 환자가 치료를 중단한 후 호스피스 케어를 받을 때 전담의사의 부재로 인한 의료 공백 문제를 지적하고 있습니다. 현재 의료 체계에서는 주치의가 치료 포기 후 책임을 외면하는 경향이 있어 환자가 방치되기 쉽다고 비판합니다. 말기 환자도 존엄한 죽음을 맞이하기 위해 책임 있는 의료진의 지속적 관리가 필수적임을 강조합니다.</div>
+      <div class="col-title"><a href="https://www.khan.co.kr/opinion/column/article/202603120930010" class="ch-link" target="_blank" rel="noopener">[시론] 호르무즈 2주, 에너지 안보의 민낯이 드러났다</a></div>
+      <div class="col-body">미국·이스라엘의 이란 공습이 2주째 이어지면서 한국 에너지 안보의 구조적 취약성이 적나라하게 드러나고 있다. 원유의 70%를 중동에서 수입하고, 그 95%가 호르무즈를 통과하는 한국 경제는 사실상 중동 평화를 담보로 굴러가고 있었다. 유가가 한때 배럴당 111달러를 돌파하고 LNG 현물가가 2배 폭등하는 상황에서도 우리 정부의 대응은 비축유 방출과 가격 상한제 수준에 그쳤다. 근본적인 에너지 다변화 없이는 이런 위기가 반복될 수밖에 없다. 호르무즈 위기는 탈탄소·수소·SMR 등 에너지 전환 투자를 더 이상 늦출 수 없다는 신호다. 단기 비축유 대응을 넘어, 중장기 에너지 포트폴리오 전략을 지금 당장 다시 짜야 한다.</div>
+      <div style="text-align:right;margin-top:5px"><a href="https://www.khan.co.kr/opinion/column/article/202603120930010" target="_blank" style="font-size:10px;color:var(--accent)">↗ 칼럼 전문 보기</a></div>
     </div>
+
     <div class="col-card gold">
       <div class="col-top">
-        <span class="col-paper src intl">뉴욕타임스</span>
-        <span style="font-size:9px;background:#3d2e5e;color:#fff;padding:1px 5px;border-radius:2px;margin-left:4px">해외</span>
-        <span class="col-date">2026.03.13</span>
+        <span class="col-paper src p">한겨레</span>
+        <span class="col-date">2026.03.11</span>
       </div>
-      <div class="col-title"><a href="https://www.nytimes.com/2026/03/12/us/politics/trump-lawsuits-settlements.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">논란의 법적 수단으로 입법 없이 정책 추진하는 트럼프</a></div>
-      <div class="ch-orig">With Disputed Legal Maneuver, Trump Tries to Set Policy Without Legislation</div>
-      <div class="col-body">트럼프 대통령이 의회 입법 절차를 거치지 않고 행정명령으로 정책을 시행하고 있습니다.
-이러한 방식은 헌법적 권한 문제로 법조인들 사이에서 논쟁이 일고 있습니다.
-행정부의 강화된 권한이 민주주의적 절차를 우회하는 것 아니냐는 비판이 제기됩니다.</div>
+      <div class="col-title"><a href="https://www.hani.co.kr/arti/opinion/column/1188010.html" class="ch-link" target="_blank" rel="noopener">[세상읽기] 트럼프의 전쟁 출구전략과 한국의 줄타기</a></div>
+      <div class="col-body">트럼프가 "이란전쟁이 곧 끝날 것"이라고 말한다. 그러나 헤그세스 국방장관은 같은 날 "오늘이 가장 격렬한 공습의 날"이라고 했다. 이 모순된 메시지는 트럼프의 전형적인 협상 전술이다. 종전 협상을 위한 최대 압박을 가하면서 동시에 출구를 열어두는 것이다. 한국은 이 구도에서 가장 어려운 위치에 있다. 미국의 동맹으로서 군사 지원 압박을 받으면서, 동시에 에너지 안보를 위해 이란과의 충돌을 최소화해야 한다. 청해부대 투입 여부는 단순한 군사 결정이 아니라, 한미동맹의 미래와 에너지 안보 사이의 균형을 가늠하는 시험대다. 전략적 모호성이 허용되는 시간이 얼마 남지 않았다.</div>
+      <div style="text-align:right;margin-top:5px"><a href="https://www.hani.co.kr/arti/opinion/column/1188010.html" target="_blank" style="font-size:10px;color:var(--accent)">↗ 칼럼 전문 보기</a></div>
     </div>
+
     <div class="col-card dk">
       <div class="col-top">
-        <span class="col-paper src w">연합뉴스</span>
-        
-        <span class="col-date">2026.03.13</span>
+        <span class="col-paper src e">매일경제</span>
+        <span class="col-date">2026.03.12</span>
       </div>
-      <div class="col-title"><a href="https://www.yna.co.kr/view/AKR20260312136700005" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">[베스트셀러] 소설 강세…'단종애사' 한국소설 17위 진입</a></div>
-      
-      <div class="col-body">이 칼럼의 핵심은 최근 베스트셀러 시장에서 소설의 강세가 두드러진다는 것입니다. 역사소설인 '단종애사'가 한국소설 카테고리에서 17위까지 진입한 것이 그 증거입니다. 이는 독자들이 문학작품을 찾고 있으며 특히 역사소설에 대한 관심이 증가하고 있음을 보여줍니다.</div>
+      <div class="col-title"><a href="https://www.mk.co.kr/opinion/columnists/11305010" class="ch-link" target="_blank" rel="noopener">[천자칼럼] 삼겹살 대신 앞다리살…소비의 진실</a></div>
+      <div class="col-body">올해 앞다리살 판매량이 19%, 뒷다리살이 34% 늘었다. 한국인의 삼겹살 사랑이 식은 게 아니다. 고물가와 에너지 충격이 식탁까지 바꿔놓은 것이다. 소비는 거짓말을 하지 않는다. 물가 지표가 아무리 안정세를 보여도, 실제 가계 살림이 팍팍해지면 소비 패턴에서 먼저 신호가 온다. 지금 한국 가계는 이란전쟁발 에너지 충격, 미국 관세 압박, 고금리 여파를 동시에 감당하고 있다. 정부가 비축유를 풀고 가격 상한선을 그어봤자 근본 해결이 되지 않는다는 걸, 앞다리살 판매량 통계가 말해주고 있다. 서민 경제의 온도는 CPI 지표가 아니라 마트 정육코너에서 읽어야 한다.</div>
+      <div style="text-align:right;margin-top:5px"><a href="https://www.mk.co.kr/opinion/columnists/11305010" target="_blank" style="font-size:10px;color:var(--accent)">↗ 칼럼 전문 보기</a></div>
     </div>
 
 <!-- AUTO_COLUMN_END -->
   </div>
   <div class="right">
 <!-- AUTO_COL_RIGHT_START -->
-
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
-      <div class="issue-list"><div class="issue-item" style="line-height:1.6">업데이트 대기 중</div></div>
+      <div class="issue-list"><div class="issue-item" style="line-height:1.65;font-size:11px">301조 쇼크와 호르무즈 위기의 이중 압박 속, 한국은 에너지·통상 양면에서 구조적 전략을 재정립해야 할 변곡점에 서 있다.</div></div>
+    </div>
+
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>지난 칼럼</div>
+<!-- AUTO_COL_ARCHIVE_START -->
+      <div class="col-archive-list">
+        <div style="padding:10px 12px;font-size:11px;color:var(--ink3)">칼럼이 쌓이면 날짜별로 표시됩니다</div>
+      </div>
+<!-- AUTO_COL_ARCHIVE_END -->
     </div>
 
 <!-- AUTO_COL_RIGHT_END -->
@@ -1096,92 +1107,49 @@ function toggleColArchive(el){
   <div class="left" style="max-width:740px">
 <!-- AUTO_ARCHIVE_START -->
 <div class="arch-list">
-
   <div>
-    <div class="arch-row" onclick="tog('d13_08')">
-      <div class="aday"><div class="adaynum">13</div><div class="adaysub">3월 · 목</div></div>
-      <div class="acnt">▾ 28건</div>
+    <div class="arch-row" onclick="tog('d12_07')">
+      <div class="aday"><div class="adaynum">12</div><div class="adaysub">3월 · 목</div></div>
+      <div class="ainfo">
+        <div class="atitle">미국 USTR, 한·중 · 미 2월 CPI 전년比 · 코스피, 이란전쟁 2주</div>
+        <div class="aprev">3월12일 오전 7:30 업데이트 · 총 17건</div>
+      </div>
+      <div class="acnt">17건 ▾</div>
     </div>
-    <div class="arch-detail open" id="d13_08"><div class="card red" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/international/international_general/2026/03/13/K7HAP4YXNJAYFONH524OANF3FE/" class="ch-link" target="_blank" style="color:inherit">이스라엘 총리, 전쟁 후 첫 기자회견 “이란 폭군 정권 전복이 목표”</a></div>
-            </div><div class="card red" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Culture/article/all/20260312/133514741/1" class="ch-link" target="_blank" style="color:inherit">국내 공연시장 1.7조원 시대 열렸다…티켓 예매 2400만매 기록</a></div>
-            </div><div class="card red" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src e" style="margin-left:4px">한국경제</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.hankyung.com/article/202603127822i" class="ch-link" target="_blank" style="color:inherit">페라리 오픈카 '아말피 스파이더' 공개…640마력 V8 엔진 장착</a></div>
-            </div><div class="card navy" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/economy/weeklybiz/2026/03/13/HQ3CDJRYTVBUJK7N4YKVM6YEAQ/" class="ch-link" target="_blank" style="color:inherit">[WEEKLY BIZ LETTER] 작년 관광객 15억명 신기록…전 세계가 ‘오버투어리즘’ 몸살 앓는다</a></div>
-            </div><div class="card navy" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Culture/article/all/20260313/133521974/1" class="ch-link" target="_blank" style="color:inherit">MC딩동·이재룡 싸잡은 고영욱 “이런 저급한…왜 나한테만”</a></div>
-            </div><div class="card navy" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src e" style="margin-left:4px">한국경제</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.hankyung.com/article/202603114431i" class="ch-link" target="_blank" style="color:inherit">일본 초장기 국채 수요 급감…1조 달러 자본 이동이 글로벌 시장 흔든다 [글로벌 머니 X파일]</a></div>
-            </div><div class="card gold" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/economy/industry-company/2026/03/13/GXJJBPDGTJCCLCY7DFESYPJ5KQ/" class="ch-link" target="_blank" style="color:inherit">美 ’301조‘ 조사 개시… 상호 관세 복원 나서</a></div>
-            </div><div class="card gold" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Society/article/all/20260313/133521920/1" class="ch-link" target="_blank" style="color:inherit">인천 강화도 단독주택서 불…90대 여성 사망</a></div>
-            </div><div class="card gold" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src e" style="margin-left:4px">한국경제</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.hankyung.com/article/202603137947i" class="ch-link" target="_blank" style="color:inherit">&quot;중국 의존 끊는다&quot;…세계 1위 구리국 칠레, 미국과 핵심광물 동맹 시동 [김주완의 원자재 포커스]</a></div>
-            </div><div class="card dk" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/economy/science/2026/03/12/5MQBVQWPVRGUFA2HRU6E3OISUQ/" class="ch-link" target="_blank" style="color:inherit">“韓 손잡고 게임체인저 될 혁신 신약 기반 마련 돕겠다”</a></div>
-            </div><div class="card dk" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Politics/article/all/20260313/133521913/1" class="ch-link" target="_blank" style="color:inherit">박주민 “李와 일할 사람? 난 ‘잘해온’ 사람…정원오 부동산철학 의문”</a></div>
-            </div><div class="card dk" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src e" style="margin-left:4px">한국경제</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.hankyung.com/article/2026031379157" class="ch-link" target="_blank" style="color:inherit">이란, 호르무즈 봉쇄 강경 메시지…국제유가 급등·뉴욕증시 급락 마감 [모닝브리핑]</a></div>
-            </div></div>
-  </div>
-<div>
-    <div class="arch-row" onclick="tog('d12_19')">
-      <div class="aday"><div class="adaynum">12</div><div class="adaysub">3월 · 수</div></div>
-      <div class="acnt">▾ 28건</div>
+    <div class="arch-detail" id="d12_07">
+      <div class="card red" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--red);font-size:8px;padding:2px 6px">경제 · 금융</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.hankyung.com/economy/article/2026031200001" class="ch-link" target="_blank">미국 USTR, 한·중·일 포함 16개국 무역법 301조 조사 공식 개시</a></div>
+      </div>
+      <div class="card red" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--red);font-size:8px;padding:2px 6px">경제 · 금융</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.mk.co.kr/news/economy/11305001" class="ch-link" target="_blank">미 2월 CPI 전년比 2.4%…이란전쟁 전 데이터, 3월 물가충격 예고</a></div>
+      </div>
+      <div class="card navy" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--navy);font-size:8px;padding:2px 6px">기 업</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.hankyung.com/finance/article/2026031200234" class="ch-link" target="_blank">통신장비株, AI·로보틱스 인프라 수혜로 코스닥 줄줄이 상한가</a></div>
+      </div>
+      <div class="card navy" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--navy);font-size:8px;padding:2px 6px">기 업</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.mk.co.kr/news/business/11305002" class="ch-link" target="_blank">엔비디아, AI 클라우드 기업 네비우스에 20억달러 투자…주가 10% 급등</a></div>
+      </div>
+      <div class="card gold" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--gold);font-size:8px;padding:2px 6px">정책 · 사회</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.khan.co.kr/economy/economy-general/article/202603120930002" class="ch-link" target="_blank">한국, IEA 비축유 2,246만 배럴 방출 결정…역대 최대 규모</a></div>
+      </div>
+      <div class="card gold" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--gold);font-size:8px;padding:2px 6px">정책 · 사회</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.hani.co.kr/arti/politics/defense/1188003.html" class="ch-link" target="_blank">호르무즈 37조 화물 발묶임…청해부대 투입 압박 본격화</a></div>
+      </div>
+      <div class="card dk" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--dark);font-size:8px;padding:2px 6px">국 제</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.hani.co.kr/arti/international/international_general/1188004.html" class="ch-link" target="_blank">미군, 호르무즈 인근 민간항구 공습 예고…이란 기뢰부설함 16척 격침</a></div>
+      </div>
+      <div class="card dk" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--dark);font-size:8px;padding:2px 6px">국 제</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.khan.co.kr/world/world-general/article/202603120930004" class="ch-link" target="_blank">트럼프 '이란전쟁 곧 끝날 것, 표적 거의 안 남아'…종전 협상 윤곽</a></div>
+      </div>
     </div>
-    <div class="arch-detail open" id="d12_19"><div class="card red" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/economy/economy_general/2026/03/12/MGO7XMF7HNEEJH4NCM6VCAVMPM/" class="ch-link" target="_blank" style="color:inherit">석유 최고가격제, 내일부터 시행... “현장서는 혼란 예상”</a></div>
-            </div><div class="card red" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/It/article/all/20260312/133520421/1" class="ch-link" target="_blank" style="color:inherit">인천대 창업지원단 “예비창업패키지 내실 강화해 창업의 바람 전파”</a></div>
-            </div><div class="card red" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src e" style="margin-left:4px">한국경제</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.hankyung.com/article/2026031275121" class="ch-link" target="_blank" style="color:inherit">'석유 최고가격제' 13일 시행…주유소 휘발유값 1900원대 예상</a></div>
-            </div><div class="card navy" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/sports/sports_photo/2026/03/12/GFSTCMLFMI4TKMRSMY4WCNZRMQ/" class="ch-link" target="_blank" style="color:inherit">[사진]알바노, 날렵한 레이업슛</a></div>
-            </div><div class="card navy" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Inter/article/all/20260312/133516860/1" class="ch-link" target="_blank" style="color:inherit">이란, 호르무즈 800km 밖 이라크 영해 유조선 2척 공격</a></div>
-            </div><div class="card navy" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src e" style="margin-left:4px">한국경제</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.hankyung.com/article/2026031275101" class="ch-link" target="_blank" style="color:inherit">'최고가격제' 13일 시행…휘발유 도매가 1800원대</a></div>
-            </div><div class="card gold" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/sports/sports_photo/2026/03/12/GFSDINZUHEYDQZLCGZSTEOLBMU/" class="ch-link" target="_blank" style="color:inherit">[사진]공격 리바운드 성공하는 엘런슨</a></div>
-            </div><div class="card gold" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Inter/article/all/20260312/133520403/2" class="ch-link" target="_blank" style="color:inherit">엡스타인 뒤에서 안은 트럼프…美의회 앞 ‘타이타닉’ 패러디 동상</a></div>
-            </div><div class="card gold" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src e" style="margin-left:4px">한국경제</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.hankyung.com/article/2026031274051" class="ch-link" target="_blank" style="color:inherit">편의점, 성수동서 '디저트 대전'</a></div>
-            </div><div class="card dk" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/sports/sports_photo/2026/03/12/MVSTQMRSMEZTEYZVGA3GGZDBMM/" class="ch-link" target="_blank" style="color:inherit">[사진]역전 3점슛 성공시키는 엘런슨</a></div>
-            </div><div class="card dk" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Economy/article/all/20260312/133520387/1" class="ch-link" target="_blank" style="color:inherit">연세유업 X EBS, 이색적인 협업… ‘국영수 빵’ 사면 교재구독권 제공</a></div>
-            </div><div class="card dk" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src e" style="margin-left:4px">한국경제</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.hankyung.com/article/2026031274101" class="ch-link" target="_blank" style="color:inherit">[포토] 호주에 뜬 진로포차</a></div>
-            </div></div>
   </div>
 </div>
 <!-- AUTO_ARCHIVE_END -->
