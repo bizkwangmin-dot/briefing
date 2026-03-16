@@ -1,0 +1,59 @@
+name: Claude 코드 수정 자동 반영
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  claude-edit:
+    # 이슈 제목이 "[수정]"으로 시작할 때만 실행
+    if: startsWith(github.event.issue.title, '[수정]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: 레포 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Python 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 패키지 설치
+        run: pip install requests anthropic
+
+      - name: Claude가 이슈 내용 읽고 파일 수정
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: python .github/scripts/apply_edit.py
+
+      - name: 커밋 & 푸시
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "claude-edit: 이슈 #${{ github.event.issue.number }} 반영"
+          git push
+
+      - name: 이슈에 결과 댓글
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ 수정이 반영됐습니다. 사이트를 확인해보세요: https://bizkwangmin-dot.github.io/briefing/'
+            })
+            github.rest.issues.update({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed'
+            })
