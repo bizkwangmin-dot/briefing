@@ -807,19 +807,16 @@ if not sidebar_data:
 else:
     print("  ✅ 사이드바 생성 완료")
 
+
 # ════════════════════════════════════════════════════════════
-# 파급 체인 HTML 생성 (오전 뉴스 기준 → 오전 7:25 실행 시 적용)
+# 파급 체인 HTML (오전 핵심 뉴스 → 연쇄 분석 → 의외의 수혜주)
 # ════════════════════════════════════════════════════════════
 print("\n🔗 파급 체인 빌드...")
-
-# 오전 실행(7:25 KST)일 때만 파급체인 갱신, 오후엔 기존 유지
 is_morning = now_kst.hour < 12
-
 chain_seed = None
 for sec in NEWS_SECTIONS:
     if section_news.get(sec):
-        chain_seed = section_news[sec][0]
-        break
+        chain_seed = section_news[sec][0]; break
 if not chain_seed and intl_news:
     chain_seed = intl_news[0]
 
@@ -832,170 +829,115 @@ if chain_seed:
 
     chain_data = claude_json(
         f"오늘의 핵심 뉴스: '{seed_title}'\n"
-        "이 뉴스의 파급효과를 체인 형태로 분석. JSON만 출력:\n"
+        "\n"
+        "전문 애널리스트처럼 이 뉴스의 파급 체인을 분석해줘.\n"
+        "중요: 삼성전자·현대차·NVDA·TSLA 같은 메가캡 제외. 2~3단계 연쇄 추론으로 중소형 수혜주 찾기.\n"
+        "예: 이란전쟁→호르무즈봉쇄→LNG수급차질→국내LNG저장인프라수요→한국가스공사\n"
+        "\n"
+        "JSON만 출력:\n"
         "{\n"
         '  "chain": [\n'
-        '    {"step":1,"tag":"직접 영향","text":"직접적 변화 30자이내","sub":"수치나 사실 30자이내"},\n'
-        '    {"step":2,"tag":"산업 파급","text":"영향받는 산업 30자이내","sub":"이유 30자이내"},\n'
-        '    {"step":3,"tag":"기업 영향","text":"영향받는 대표기업 30자이내","sub":"긍정/부정 30자이내"},\n'
-        '    {"step":4,"tag":"투자 시사점","text":"주목 포인트 30자이내","sub":"단기/중기 관점 30자이내"}\n'
+        '    {"step":1,"tag":"직접 영향","text":"이 뉴스로 바로 나타나는 변화 30자이내","sub":"구체적 수치나 사실"},\n'
+        '    {"step":2,"tag":"2차 파급","text":"직접영향이 만드는 산업 변화 30자이내","sub":"연결 이유"},\n'
+        '    {"step":3,"tag":"의외의 수혜","text":"2단계 추론 후 수혜 영역 30자이내","sub":"일반인이 놓치는 포인트"},\n'
+        '    {"step":4,"tag":"투자 타이밍","text":"언제 어떻게 접근할지 30자이내","sub":"단기/중기 시나리오"}\n'
         '  ],\n'
         '  "stock": {\n'
-        '    "name": "종목명(국내회사명 또는 미국TICKER)",\n'
+        '    "name": "메가캡 제외 중소형 수혜 종목명(국내:회사명, 미국:TICKER)",\n'
         '    "market": "KR 또는 US",\n'
-        '    "current_context": "주목 이유 40자이내",\n'
-        '    "upside": "상승 시나리오 30자이내",\n'
-        '    "probability": 65\n'
+        '    "logic": "A→B→C 형태 추론 과정 50자이내",\n'
+        '    "current_context": "지금 주목해야 하는 이유 40자이내",\n'
+        '    "upside": "수치 포함 구체적 상승 근거 30자이내",\n'
+        '    "probability": 70\n'
         '  }\n'
         '}',
-        max_tokens=600
+        max_tokens=700
     )
 
     arr = "&#8595;"
     if chain_data and chain_data.get("chain"):
-        steps   = chain_data["chain"]
-        stock   = chain_data.get("stock", {})
-        num_cls = ["n1","n2","n3","n4"]
-
+        steps = chain_data["chain"]; stock = chain_data.get("stock", {}); num_cls = ["n1","n2","n3","n4"]
+        tl = "오전" if is_morning else "오후"
         chain_html += (
-            '\n<div class="chain-block">\n'
+            f'<div class="chain-block">\n'
             f'  <div class="chain-news-card">\n'
-            f'    <div class="chain-news-label">{"오전" if is_morning else "오후"} 핵심 뉴스</div>\n'
-            f'    <div class="chain-news-title">'
-            f'<a href="{seed_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">'
-            f'{esc(seed_title)}</a></div>\n'
-            f'    <div class="chain-news-src">'
-            f'<span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span></div>\n'
-            f'  </div>\n'
-            f'  <div class="chain-node">\n'
+            f'    <div class="chain-news-label">{tl} 핵심 뉴스</div>\n'
+            f'    <div class="chain-news-title"><a href="{seed_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">{esc(seed_title)}</a></div>\n'
+            f'    <div class="chain-news-src"><span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span></div>\n'
+            f'  </div>\n  <div class="chain-node">\n'
         )
         for sd in steps[:4]:
-            n       = sd.get("step", 1)
-            tag     = esc(sd.get("tag", ""))
-            txt     = esc(sd.get("text", ""))
-            sub     = esc(sd.get("sub", ""))
-            nc      = num_cls[n-1] if n-1 < len(num_cls) else "n4"
-            sub_h   = f'<div class="chain-step-sub">{sub}</div>' if sub else ""
+            n=sd.get("step",1); tag=esc(sd.get("tag","")); txt=esc(sd.get("text","")); sub=esc(sd.get("sub",""))
+            nc=num_cls[n-1] if n-1<len(num_cls) else "n4"; sub_h=f'<div class="chain-step-sub">{sub}</div>' if sub else ""
             chain_html += (
                 f'    <div class="chain-arrow">{arr}</div>\n'
-                f'    <div class="chain-step">\n'
-                f'      <div class="chain-step-num {nc}">{n}</div>\n'
-                f'      <div class="chain-step-body">\n'
-                f'        <div class="chain-step-tag">{tag}</div>\n'
-                f'        <div class="chain-step-text">{txt}</div>\n'
-                f'        {sub_h}\n'
-                f'      </div>\n'
-                f'    </div>\n'
+                f'    <div class="chain-step"><div class="chain-step-num {nc}">{n}</div>\n'
+                f'      <div class="chain-step-body"><div class="chain-step-tag">{tag}</div>\n'
+                f'        <div class="chain-step-text">{txt}</div>{sub_h}</div></div>\n'
             )
         chain_html += "  </div>\n"
-
         if stock and stock.get("name"):
-            nm   = esc(stock["name"])
-            mk   = stock.get("market", "KR")
-            ctx  = esc(stock.get("current_context", ""))
-            up   = esc(stock.get("upside", ""))
-            try:
-                prob = min(max(int(stock.get("probability", 60)), 0), 100)
-            except Exception:
-                prob = 60
-            up_h = (f'<div class="chain-stock-reason" style="color:var(--green)">'
-                    f'&#9650; {up}</div>') if up else ""
+            nm=esc(stock["name"]); mk=stock.get("market","KR"); logic=esc(stock.get("logic",""))
+            ctx=esc(stock.get("current_context","")); up=esc(stock.get("upside",""))
+            try: prob=min(max(int(stock.get("probability",70)),0),100)
+            except: prob=70
             chain_html += (
                 f'  <div class="chain-arrow">{arr}</div>\n'
-                f'  <div class="chain-stock-wrap">\n'
-                f'    <div class="chain-stock-card">\n'
-                f'      <div class="chain-stock-top">\n'
-                f'        <span class="chain-stock-name">{nm}</span>\n'
-                f'        <span class="chain-stock-market {mk.lower()}">{mk}</span>\n'
-                f'      </div>\n'
-                f'      <div class="chain-stock-reason">{ctx}</div>\n'
-                f'      {up_h}\n'
-                f'      <div class="chain-stock-prob">\n'
-                f'        <span class="chain-prob-label">상승 가능성</span>\n'
-                f'        <div class="chain-prob-bar-wrap">'
-                f'<div class="chain-prob-bar" style="width:{prob}%"></div></div>\n'
-                f'        <span class="chain-prob-pct">{prob}%</span>\n'
-                f'      </div>\n'
-                f'    </div>\n'
-                f'    <div class="chain-disclaimer">'
-                f'&#9888;&#65039; AI 분석 참고 정보 — 실제 투자 결정은 전문가 상담 후 본인 판단으로 하세요.</div>\n'
-                f'  </div>\n'
+                f'  <div class="chain-stock-wrap"><div class="chain-stock-card">\n'
+                f'    <div class="chain-stock-top"><span class="chain-stock-name">{nm}</span><span class="chain-stock-market {mk.lower()}">{mk}</span></div>\n'
+                f'    {"<div class=\"chain-stock-logic\">&#128270; " + logic + "</div>" if logic else ""}\n'
+                f'    <div class="chain-stock-reason">{ctx}</div>\n'
+                f'    {"<div class=\"chain-stock-reason\" style=\"color:var(--green)\">&#9650; " + up + "</div>" if up else ""}\n'
+                f'    <div class="chain-stock-prob"><span class="chain-prob-label">상승 가능성</span>\n'
+                f'      <div class="chain-prob-bar-wrap"><div class="chain-prob-bar" style="width:{prob}%"></div></div>\n'
+                f'      <span class="chain-prob-pct">{prob}%</span></div>\n'
+                f'  </div><div class="chain-disclaimer">&#9888;&#65039; AI 분석 참고 — 투자는 전문가 상담 후 본인 판단으로 하세요.</div></div>\n'
             )
         chain_html += "</div>\n"
         print(f"  ✅ 파급 체인: {seed_title[:35]}...")
     else:
-        chain_html = '<div class="chain-intro"><div class="chain-intro-title">&#128279; 파급 체인</div><div class="chain-intro-sub">분석 데이터를 생성하지 못했습니다</div></div>\n'
+        chain_html = '<div class="chain-intro"><div class="chain-intro-title">파급 체인</div><div class="chain-intro-sub">분석 생성 실패</div></div>\n'
         print("  ⚠️  체인 생성 실패")
 else:
     chain_html = '<div class="chain-intro"><div class="chain-intro-title">&#128279; 파급 체인</div><div class="chain-intro-sub">뉴스 수집 후 채워집니다</div></div>\n'
 
 # ════════════════════════════════════════════════════════════
-# 오늘의 이슈 HTML 생성
+# 오늘의 이슈 HTML
 # ════════════════════════════════════════════════════════════
 print("\n💡 오늘의 이슈 빌드...")
-pts      = sidebar_data.get("관전포인트", [])
-icons_pt = ["①","②","③","④"]
-issue_html = "\n"
-all_news_flat = [it for sl in section_news.values() for it in sl] + intl_news
-
-for i, pt in enumerate(pts[:4]):
-    pt_title = pt.get("title", "")
-    icon     = icons_pt[i]
-    pt_kws   = [w for w in re.sub(r"[?？,.，·]", "", pt_title).split() if len(w) >= 2][:4]
-
-    related   = []
-    seen_rel  = set()
+pts=sidebar_data.get("관전포인트",[]); icons_pt=["①","②","③","④"]
+issue_html="\n"; all_news_flat=[it for sl in section_news.values() for it in sl]+intl_news
+for i,pt in enumerate(pts[:4]):
+    pt_title=pt.get("title",""); icon=icons_pt[i]
+    pt_kws=[w for w in re.sub(r"[?？,.，·]","",pt_title).split() if len(w)>=2][:4]
+    related=[]; seen_rel=set()
     for kw in pt_kws:
         for it in all_news_flat:
-            ttl = it.get("ko_title", it.get("title", ""))
-            dk  = dedup_key(ttl)
-            if kw in ttl and dk not in seen_rel:
-                seen_rel.add(dk)
-                related.append(it)
-    related = related[:3]
-
-    rel_html = ""
-    for it in related:
-        ttl = esc(it.get("ko_title", it.get("title", "")))
-        u   = it.get("url", "#")
-        s   = esc(it.get("source", ""))
-        sc  = it.get("src_class", "")
-        rel_html += (
-            f'<div class="issue-rel-item">'
-            f'<span class="src {sc}" style="font-size:9px">{s}</span> '
-            f'<a href="{u}" target="_blank" rel="noopener">{ttl}</a></div>'
-        )
-    if not rel_html:
-        rel_html = '<div class="issue-rel-item" style="color:var(--ink3)">관련 기사를 찾는 중...</div>'
-
-    stock_html = ""
+            ttl=it.get("ko_title",it.get("title","")); dk=dedup_key(ttl)
+            if kw in ttl and dk not in seen_rel: seen_rel.add(dk); related.append(it)
+    related=related[:3]
+    rel_html="".join(
+        f'<div class="issue-rel-item"><span class="src {it.get("src_class","")}" style="font-size:9px">{esc(it.get("source",""))}</span> '
+        f'<a href="{it.get("url","#")}" target="_blank" rel="noopener">{esc(it.get("ko_title",it.get("title","")))}</a></div>'
+        for it in related
+    ) or '<div class="issue-rel-item" style="color:var(--ink3)">관련 기사 검색 중...</div>'
+    stock_html=""
     if related:
-        first_t = related[0].get("ko_title", related[0].get("title",""))
-        sd = claude_json(
+        first_t=related[0].get("ko_title",related[0].get("title",""))
+        sd=claude_json(
             f"뉴스 이슈: '{pt_title}'\n관련 기사: '{first_t}'\n"
-            "투자 종목 1개 JSON만 출력:\n"
-            '{"name":"종목명","reason":"15자이내 이유","market":"KR또는US"}',
-            max_tokens=80
+            "이 이슈 연쇄 추론 수혜 종목 1개. 뻔한 대형주 제외. JSON만:\n"
+            '{"name":"종목명","reason":"추론과정포함 25자이내","market":"KR또는US"}',
+            max_tokens=120
         )
         if sd and sd.get("name"):
-            nm = esc(sd["name"]); rs = esc(sd.get("reason","")); mk = sd.get("market","")
-            mk_b = f'<span class="market-badge {mk.lower()}">{mk}</span>' if mk else ""
-            stock_html = (
-                f'<div class="issue-stock">'
-                f'<span class="stock-label">관련종목</span>{mk_b}'
-                f'<span class="stock-name">{nm}</span>'
-                f'<span class="stock-reason">{rs}</span></div>'
-            )
-
-    issue_html += (
-        f'\n<div class="issue-block">\n'
-        f'  <div class="issue-title"><span class="issue-num">{icon}</span>{esc(pt_title)}</div>\n'
-        f'  <div class="issue-news">{rel_html}</div>\n'
-        f'  {stock_html}\n'
-        f'</div>\n'
-    )
-
-issue_html += "\n"
+            nm=esc(sd["name"]); rs=esc(sd.get("reason","")); mk=sd.get("market","")
+            mk_b=f'<span class="market-badge {mk.lower()}">{mk}</span>' if mk else ""
+            stock_html=(f'<div class="issue-stock"><span class="stock-label">연쇄 수혜</span>{mk_b}'+
+                        f'<span class="stock-name">{nm}</span><span class="stock-reason">{rs}</span></div>')
+    issue_html+=(f'\n<div class="issue-block">\n  <div class="issue-title"><span class="issue-num">{icon}</span>{esc(pt_title)}</div>\n'
+                 f'  <div class="issue-news">{rel_html}</div>\n  {stock_html}\n</div>\n')
+issue_html+="\n"
 print(f"  ✅ 이슈 블록 {len(pts[:4])}개 생성")
 
 # ════════════════════════════════════════════════════════════
