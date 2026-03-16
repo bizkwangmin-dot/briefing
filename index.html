@@ -13,7 +13,7 @@
   --bg:#eceae3; --surface:#f7f5f0; --ink:#1c1c1e; --ink2:#4a4a4c; --ink3:#8a8a8e;
   --border:#dbd7ce; --tagbg:#e5e2da;
   --red:#7a1f1f; --navy:#1a3050; --gold:#7a5800; --green:#1a4a2e; --dark:#2a2a35;
-  --accent:#2c4a6e; --warm:#b89650; --hh:40px;
+  --accent:#2c4a6e; --warm:#b89650; --hh:56px;
   /* 간소화 모드 Charcoal+Zinc */
   --s-bg:#2e3b3e; --s-surface:#364446; --s-ink:#d8e4e2; --s-ink2:#b0c4c2;
   --s-ink3:#7a9896; --s-border:#4a5e60; --s-tagbg:#3a4e50; --s-accent:#8ec6c0;
@@ -24,120 +24,72 @@ a{color:inherit;text-decoration:none}
 
 /* ── 헤더 ── */
 header{background:linear-gradient(135deg,#14243a 0%,#1a3050 60%,#1f3d66 100%);position:sticky;top:0;z-index:200;box-shadow:0 1px 8px rgba(0,0,0,.25)}
-.hdr-row{display:flex;align-items:center;height:var(--hh);padding:0 16px;gap:0}
-.logo{font-family:'Noto Serif KR',serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:-.02em;white-space:nowrap;flex-shrink:0}
+.hdr-row{display:flex;align-items:center;height:var(--hh);padding:0 20px;gap:16px}
+.logo{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:900;color:#fff;letter-spacing:-.02em;white-space:nowrap}
 .logo b{color:var(--warm)}
-.hdr-meta{display:flex;align-items:center;gap:5px;margin-left:10px;flex-shrink:0}
-.hdr-date{font-size:11px;color:rgba(255,255,255,.5);white-space:nowrap}
-.hdr-update{font-size:10px;color:rgba(255,255,255,.33);white-space:nowrap}
-.tabs{display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;margin-left:14px;flex:1}
+.hdr-meta{display:flex;flex-direction:column;gap:2px}
+.hdr-date{font-size:13px;color:rgba(255,255,255,.75);font-weight:500;line-height:1.2}
+.hdr-update{font-size:10px;color:rgba(255,255,255,.4);line-height:1.2}
+.tabs{display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1}
 .tabs::-webkit-scrollbar{display:none}
-.tab{background:none;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:12px;font-weight:400;font-family:'Noto Sans KR',sans-serif;padding:0 12px;height:var(--hh);cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.5);font-size:13px;font-weight:400;font-family:'Noto Sans KR',sans-serif;padding:0 14px;height:var(--hh);cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s}
 .tab.on{color:#fff;border-bottom-color:var(--warm);font-weight:500}
 .tab:hover:not(.on){color:rgba(255,255,255,.75)}
-.btn-simple{margin-left:auto;flex-shrink:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:10px;color:rgba(255,255,255,.55);font-size:10px;font-family:'Noto Sans KR',sans-serif;padding:3px 11px;cursor:pointer;transition:all .2s}
-.btn-simple:hover{background:rgba(255,255,255,.14);color:#fff}
+.btn-simple{margin-left:auto;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;color:rgba(255,255,255,.6);font-size:11px;font-family:'Noto Sans KR',sans-serif;padding:5px 13px;cursor:pointer;transition:all .2s}
+.btn-simple:hover{background:rgba(255,255,255,.15);color:#fff}
 
-/* hdr-top / hdr-bot — PC에선 한 줄, 모바일에선 두 줄 */
-.hdr-top{display:flex;align-items:center;flex-shrink:0}
-.hdr-bot{display:flex;align-items:center;flex:1;min-width:0}
-
-/* ── 모바일 헤더: 2행 구조 ── */
 @media(max-width:699px){
   header{box-shadow:0 1px 6px rgba(0,0,0,.3)}
-  .hdr-row{height:auto;flex-wrap:wrap;padding:0;align-items:stretch}
-  /* 1행: 로고 + 날짜 */
-  .hdr-top{display:flex;align-items:center;width:100%;height:40px;padding:0 16px;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-  .logo{font-size:15px}
-  .hdr-meta{margin-left:auto;gap:4px}
-  .hdr-date{font-size:10px}
+  .hdr-row{height:auto;flex-wrap:wrap;padding:10px 14px;gap:10px}
+  .logo{font-size:16px}
+  .hdr-meta{flex-direction:row;gap:6px;align-items:center}
+  .hdr-date{font-size:12px}
   .hdr-update{font-size:9px}
-  .btn-simple{display:none}
-  /* 2행: 탭 */
-  .hdr-bot{width:100%;margin-left:0;padding:0 10px}
-  .tabs{margin-left:0;width:100%}
-  .tab{font-size:11px;padding:0 10px;height:36px}
+  .tabs{width:100%;order:10;justify-content:flex-start;gap:0;margin-left:-4px}
+  .tab{font-size:12px;padding:0 10px;height:36px}
+  .btn-simple{font-size:10px;padding:4px 10px}
 }
 
-/* ── 컨테이너 ── */
-.container{max-width:780px;margin:0 auto;padding:20px 16px}
-@media(max-width:699px){.container{padding:16px 12px}}
-
-/* ── 탭 패널 ── */
-.pane{display:none}
-.pane.on{display:block}
-
-/* ── 섹션 ── */
-.section{margin-bottom:28px}
-.section:last-child{margin-bottom:0}
-.section-title{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--border)}
-
-/* ── 뉴스 카드 ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:box-shadow .2s,transform .2s}
-.card:hover{box-shadow:0 3px 8px rgba(0,0,0,.08);transform:translateY(-1px)}
-.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.card-meta{display:flex;align-items:center;gap:6px}
-.pub{font-size:11px;color:var(--ink2);font-weight:500}
-.time{font-size:10px;color:var(--ink3)}
-.card-title{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:8px}
-.card-summary{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:10px}
-.card-summary li{margin-left:14px;margin-bottom:4px}
-.card-summary li:last-child{margin-bottom:0}
-.card-link{display:inline-block;font-size:11px;color:var(--accent);font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
-.card-link:hover{border-bottom-color:var(--accent)}
-
-/* ── 태그 ── */
-.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.tag{background:var(--tagbg);color:var(--ink3);font-size:10px;padding:3px 8px;border-radius:10px;font-weight:500}
-
-/* ── 칼럼 카드 ── */
-.col-card{background:var(--surface);border-left:3px solid var(--accent);padding:14px;margin-bottom:12px;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.col-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.col-meta{display:flex;align-items:center;gap:6px}
-.col-pub{font-size:11px;color:var(--ink2);font-weight:500}
-.col-author{font-size:10px;color:var(--ink3)}
-.col-time{font-size:10px;color:var(--ink3)}
-.col-title{font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:6px}
-.col-summary{font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:8px}
-.col-link{display:inline-block;font-size:11px;color:var(--accent);font-weight:500;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
-.col-link:hover{border-bottom-color:var(--accent)}
-
-/* ── 통계 카드 (랭킹) ── */
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px}
-.stat-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:8px}
-.stat-list{list-style:none}
-.stat-list li{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
-.stat-list li:last-child{border-bottom:none}
-.stat-rank{font-size:12px;font-weight:700;color:var(--accent);width:24px;flex-shrink:0}
-.stat-name{font-size:12px;color:var(--ink);flex:1}
-.stat-val{font-size:11px;color:var(--ink3);text-align:right}
+/* ── 레이아웃 ── */
+main{max-width:1080px;margin:20px auto;padding:0 16px}
+.sec{margin-bottom:28px}
+.sec-title{font-family:'Noto Serif KR',serif;font-size:19px;font-weight:700;color:var(--ink);margin-bottom:14px;border-bottom:2px solid var(--border);padding-bottom:6px}
+.item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;transition:box-shadow .2s,transform .1s}
+.item:hover{box-shadow:0 2px 12px rgba(0,0,0,.08);transform:translateY(-1px)}
+.item-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.item-num{font-family:'Noto Serif KR',serif;font-size:16px;font-weight:700;color:var(--accent);flex-shrink:0}
+.item-title{font-size:15px;font-weight:700;color:var(--ink);line-height:1.5;flex:1}
+.item-title a{transition:color .15s}
+.item-title a:hover{color:var(--accent)}
+.item-summary{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:8px;padding-left:26px}
+.item-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink3);padding-left:26px;flex-wrap:wrap}
+.item-source{font-weight:500;color:var(--ink2)}
+.item-time{opacity:.7}
+.item-tags{display:flex;gap:5px;flex-wrap:wrap}
+.item-tag{background:var(--tagbg);border-radius:4px;padding:2px 7px;font-size:10px;color:var(--ink3)}
 
 /* ── 간소화 모드 ── */
 body.simple{background:var(--s-bg);color:var(--s-ink)}
-body.simple header{background:linear-gradient(135deg,#1a2b2e 0%,#2e3b3e 100%)}
-body.simple .logo b{color:var(--s-accent)}
-body.simple .tab.on{border-bottom-color:var(--s-accent)}
-body.simple .section-title{color:var(--s-ink);border-bottom-color:var(--s-border)}
-body.simple .card,body.simple .col-card,body.simple .stat-card{background:var(--s-surface);border-color:var(--s-border);box-shadow:0 1px 2px rgba(0,0,0,.2)}
-body.simple .card:hover{box-shadow:0 2px 6px rgba(0,0,0,.3)}
-body.simple .card-title,body.simple .col-title,body.simple .stat-title{color:var(--s-ink)}
-body.simple .card-summary,body.simple .col-summary{color:var(--s-ink2)}
-body.simple .pub,.col-pub{color:var(--s-ink2)}
-body.simple .time,.col-time,.col-author{color:var(--s-ink3)}
-body.simple .card-link,body.simple .col-link{color:var(--s-accent)}
-body.simple .card-link:hover,body.simple .col-link:hover{border-bottom-color:var(--s-accent)}
-body.simple .tag{background:var(--s-tagbg);color:var(--s-ink3)}
-body.simple .stat-list li{border-bottom-color:var(--s-border)}
-body.simple .stat-rank{color:var(--s-accent)}
-body.simple .stat-name{color:var(--s-ink)}
-body.simple .stat-val{color:var(--s-ink3)}
-body.simple .col-card{border-left-color:var(--s-accent)}
+body.simple .item{background:var(--s-surface);border-color:var(--s-border)}
+body.simple .item:hover{box-shadow:0 2px 10px rgba(0,0,0,.3)}
+body.simple .sec-title{color:var(--s-ink);border-bottom-color:var(--s-border)}
+body.simple .item-title{color:var(--s-ink)}
+body.simple .item-title a:hover{color:var(--s-accent)}
+body.simple .item-num{color:var(--s-accent)}
+body.simple .item-summary{color:var(--s-ink2)}
+body.simple .item-meta{color:var(--s-ink3)}
+body.simple .item-source{color:var(--s-ink2)}
+body.simple .item-tag{background:var(--s-tagbg);color:var(--s-ink3)}
 
-/* ── 반응형 ── */
 @media(max-width:699px){
-  .card-title,.col-title{font-size:14px}
-  .card-summary,.col-summary{font-size:12px}
-  .section-title{font-size:16px}
+  main{margin:16px auto;padding:0 12px}
+  .sec{margin-bottom:24px}
+  .sec-title{font-size:17px;margin-bottom:12px}
+  .item{padding:12px 14px;margin-bottom:10px}
+  .item-num{font-size:15px}
+  .item-title{font-size:14px}
+  .item-summary{font-size:12px;padding-left:24px}
+  .item-meta{font-size:10px;padding-left:24px}
 }
 </style>
 </head>
@@ -145,265 +97,71 @@ body.simple .col-card{border-left-color:var(--s-accent)}
 
 <header>
   <div class="hdr-row">
-    <div class="hdr-top">
-      <div class="logo">세줄<b>뉴스</b></div>
-      <div class="hdr-meta">
-        <span class="hdr-date" id="hdrDate">2026.3.16 (일)</span>
-        <span class="hdr-update" id="hdrUpdate">기사 기준 오후 4:18</span>
-      </div>
+    <a href="/" class="logo">세줄<b>뉴스</b></a>
+    <div class="hdr-meta">
+      <div class="hdr-date">2025.1.11 (토)</div>
+      <div class="hdr-update">기사 기준 오후 4:18</div>
     </div>
-    <div class="hdr-bot">
-      <div class="tabs" id="tabs">
-        <button class="tab on" data-tab="news">뉴스</button>
-        <button class="tab" data-tab="econ">경제 · 금융</button>
-        <button class="tab" data-tab="biz">기업 · 산업</button>
-        <button class="tab" data-tab="policy">정책 · 정치</button>
-        <button class="tab" data-tab="world">해외</button>
-        <button class="tab" data-tab="column">칼럼</button>
-      </div>
-      <button class="btn-simple" id="btnSimple">간소화</button>
+    <div class="tabs">
+      <button class="tab on" data-sec="all">전체</button>
+      <button class="tab" data-sec="경제 · 금융">경제·금융</button>
+      <button class="tab" data-sec="기업 · 산업">기업·산업</button>
+      <button class="tab" data-sec="정책 · 정치">정책·정치</button>
+      <button class="tab" data-sec="국제">국제</button>
+      <button class="tab" data-sec="사회 · 문화">사회·문화</button>
+      <button class="tab" data-sec="칼럼 · 사설">칼럼·사설</button>
     </div>
+    <button class="btn-simple" onclick="toggleSimple()">간소화</button>
   </div>
 </header>
 
-<div class="container">
-
-<!-- ═══ 뉴스 탭 ═══ -->
-<div class="pane on" id="pane-news">
-
-<div class="section">
-  <div class="section-title" style="color:#b89650;">🔥 주요 뉴스</div>
-  <div class="card">
-    <div class="card-top">
-      <div class="card-meta">
-        <span class="pub">조선일보</span>
-        <span class="time">오전 10:30</span>
+<main id="main">
+  <div class="sec" data-sec="경제 · 금융">
+    <h2 class="sec-title">경제 · 금융</h2>
+    <div class="item">
+      <div class="item-head">
+        <div class="item-num">1</div>
+        <div class="item-title"><a href="#" target="_blank">샘플 기사 제목입니다</a></div>
       </div>
-    </div>
-    <h3 class="card-title">국내 주요 뉴스 제목 예시</h3>
-    <ul class="card-summary">
-      <li>첫 번째 핵심 내용을 한 줄로 요약</li>
-      <li>두 번째 핵심 내용을 한 줄로 요약</li>
-      <li>세 번째 핵심 내용을 한 줄로 요약</li>
-    </ul>
-    <a href="#" class="card-link" target="_blank" rel="noopener">기사 원문 →</a>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">💼 경제 · 금융</div>
-  <div class="card">
-    <div class="card-top">
-      <div class="card-meta">
-        <span class="pub">한국경제</span>
-        <span class="time">오전 11:00</span>
-      </div>
-    </div>
-    <h3 class="card-title">경제 뉴스 제목 예시</h3>
-    <ul class="card-summary">
-      <li>경제 관련 첫 번째 핵심 내용</li>
-      <li>경제 관련 두 번째 핵심 내용</li>
-      <li>경제 관련 세 번째 핵심 내용</li>
-    </ul>
-    <a href="#" class="card-link" target="_blank" rel="noopener">기사 원문 →</a>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">🏢 기업 · 산업</div>
-  <div class="card">
-    <div class="card-top">
-      <div class="card-meta">
-        <span class="pub">매일경제</span>
-        <span class="time">오후 1:20</span>
-      </div>
-    </div>
-    <h3 class="card-title">기업 뉴스 제목 예시</h3>
-    <ul class="card-summary">
-      <li>기업 관련 첫 번째 핵심 내용</li>
-      <li>기업 관련 두 번째 핵심 내용</li>
-      <li>기업 관련 세 번째 핵심 내용</li>
-    </ul>
-    <a href="#" class="card-link" target="_blank" rel="noopener">기사 원문 →</a>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">🏛️ 정책 · 정치</div>
-  <div class="card">
-    <div class="card-top">
-      <div class="card-meta">
-        <span class="pub">중앙일보</span>
-        <span class="time">오후 2:45</span>
-      </div>
-    </div>
-    <h3 class="card-title">정책 뉴스 제목 예시</h3>
-    <ul class="card-summary">
-      <li>정책 관련 첫 번째 핵심 내용</li>
-      <li>정책 관련 두 번째 핵심 내용</li>
-      <li>정책 관련 세 번째 핵심 내용</li>
-    </ul>
-    <a href="#" class="card-link" target="_blank" rel="noopener">기사 원문 →</a>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">🌍 해외</div>
-  <div class="card">
-    <div class="card-top">
-      <div class="card-meta">
-        <span class="pub">🇺🇸 연합뉴스</span>
-        <span class="time">오후 3:10</span>
-      </div>
-    </div>
-    <h3 class="card-title">해외 뉴스 제목 예시</h3>
-    <ul class="card-summary">
-      <li>해외 관련 첫 번째 핵심 내용</li>
-      <li>해외 관련 두 번째 핵심 내용</li>
-      <li>해외 관련 세 번째 핵심 내용</li>
-    </ul>
-    <a href="#" class="card-link" target="_blank" rel="noopener">기사 원문 →</a>
-  </div>
-</div>
-
-</div>
-
-<!-- ═══ 경제·금융 탭 ═══ -->
-<div class="pane" id="pane-econ">
-  <div class="section">
-    <div class="section-title">💼 경제 · 금융</div>
-    <div class="card">
-      <div class="card-top">
-        <div class="card-meta">
-          <span class="pub">한국경제</span>
-          <span class="time">오전 9:00</span>
+      <div class="item-summary">이것은 샘플 요약 내용입니다. 실제 업데이트 시 AI가 생성한 3줄 요약이 표시됩니다.</div>
+      <div class="item-meta">
+        <span class="item-source">조선일보</span>
+        <span class="item-time">3시간 전</span>
+        <div class="item-tags">
+          <span class="item-tag">금융</span>
         </div>
       </div>
-      <h3 class="card-title">경제 탭 뉴스 예시</h3>
-      <ul class="card-summary">
-        <li>경제 섹션 첫 번째 요약</li>
-        <li>경제 섹션 두 번째 요약</li>
-        <li>경제 섹션 세 번째 요약</li>
-      </ul>
-      <a href="#" class="card-link" target="_blank" rel="noopener">기사 원문 →</a>
     </div>
   </div>
-</div>
-
-<!-- ═══ 기업·산업 탭 ═══ -->
-<div class="pane" id="pane-biz">
-  <div class="section">
-    <div class="section-title">🏢 기업 · 산업</div>
-    <div class="card">
-      <div class="card-top">
-        <div class="card-meta">
-          <span class="pub">매일경제</span>
-          <span class="time">오전 10:00</span>
-        </div>
-      </div>
-      <h3 class="card-title">기업 탭 뉴스 예시</h3>
-      <ul class="card-summary">
-        <li>기업 섹션 첫 번째 요약</li>
-        <li>기업 섹션 두 번째 요약</li>
-        <li>기업 섹션 세 번째 요약</li>
-      </ul>
-      <a href="#" class="card-link" target="_blank" rel="noopener">기사 원문 →</a>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ 정책·정치 탭 ═══ -->
-<div class="pane" id="pane-policy">
-  <div class="section">
-    <div class="section-title">🏛️ 정책 · 정치</div>
-    <div class="card">
-      <div class="card-top">
-        <div class="card-meta">
-          <span class="pub">중앙일보</span>
-          <span class="time">오전 11:00</span>
-        </div>
-      </div>
-      <h3 class="card-title">정책 탭 뉴스 예시</h3>
-      <ul class="card-summary">
-        <li>정책 섹션 첫 번째 요약</li>
-        <li>정책 섹션 두 번째 요약</li>
-        <li>정책 섹션 세 번째 요약</li>
-      </ul>
-      <a href="#" class="card-link" target="_blank" rel="noopener">기사 원문 →</a>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ 해외 탭 ═══ -->
-<div class="pane" id="pane-world">
-  <div class="section">
-    <div class="section-title">🌍 해외</div>
-    <div class="card">
-      <div class="card-top">
-        <div class="card-meta">
-          <span class="pub">🇺🇸 연합뉴스</span>
-          <span class="time">오후 12:00</span>
-        </div>
-      </div>
-      <h3 class="card-title">해외 탭 뉴스 예시</h3>
-      <ul class="card-summary">
-        <li>해외 섹션 첫 번째 요약</li>
-        <li>해외 섹션 두 번째 요약</li>
-        <li>해외 섹션 세 번째 요약</li>
-      </ul>
-      <a href="#" class="card-link" target="_blank" rel="noopener">기사 원문 →</a>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ 칼럼 탭 ═══ -->
-<div class="pane" id="pane-column">
-  <div class="section">
-    <div class="section-title">✍️ 칼럼</div>
-    <div class="col-card">
-      <div class="col-card-top">
-        <div class="col-meta">
-          <span class="col-pub">조선일보</span>
-          <span class="col-author">홍길동</span>
-        </div>
-        <span class="col-time">오전 8:00</span>
-      </div>
-      <h3 class="col-title">칼럼 제목 예시</h3>
-      <p class="col-summary">칼럼의 핵심 내용을 2~3줄로 요약한 텍스트입니다.</p>
-      <a href="#" class="col-link" target="_blank" rel="noopener">칼럼 원문 →</a>
-    </div>
-  </div>
-</div>
-
-</div>
+</main>
 
 <script>
 // ── 탭 전환 ──
 const tabs = document.querySelectorAll('.tab');
-const panes = document.querySelectorAll('.pane');
-tabs.forEach(t => {
-  t.addEventListener('click', () => {
-    const target = t.dataset.tab;
-    tabs.forEach(x => x.classList.remove('on'));
-    panes.forEach(x => x.classList.remove('on'));
-    t.classList.add('on');
-    document.getElementById('pane-' + target).classList.add('on');
+const secs = document.querySelectorAll('.sec');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.sec;
+    tabs.forEach(t => t.classList.remove('on'));
+    tab.classList.add('on');
+    if (target === 'all') {
+      secs.forEach(s => s.style.display = 'block');
+    } else {
+      secs.forEach(s => {
+        s.style.display = s.dataset.sec === target ? 'block' : 'none';
+      });
+    }
   });
 });
 
 // ── 간소화 모드 ──
-const btnSimple = document.getElementById('btnSimple');
-let isSimple = localStorage.getItem('simple') === 'true';
-if (isSimple) {
-  document.body.classList.add('simple');
-  btnSimple.textContent = '표준';
+function toggleSimple() {
+  document.body.classList.toggle('simple');
+  localStorage.setItem('simpleMode', document.body.classList.contains('simple'));
 }
-btnSimple.addEventListener('click', () => {
-  isSimple = !isSimple;
-  document.body.classList.toggle('simple', isSimple);
-  btnSimple.textContent = isSimple ? '표준' : '간소화';
-  localStorage.setItem('simple', isSimple);
-});
+if (localStorage.getItem('simpleMode') === 'true') {
+  document.body.classList.add('simple');
+}
 </script>
 
 </body>
