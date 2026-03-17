@@ -126,7 +126,7 @@ SECTION_RSS = {
         "한겨레":   ["https://www.hani.co.kr/rss/politics/",
                      "https://www.hani.co.kr/rss/society/"],
         "경향신문": ["https://khan.co.kr/rss/rssdata/kh_politics.xml"],
-        "연합뉴스": ["https://www.yna.co.kr/rss/politics.xml", "https://www.yna.co.kr/rss/news.xml"],
+        "연합뉴스": ["https://www.yna.co.kr/rss/politics.xml"],
     },
     "국 제": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/international/?outputType=xml",
@@ -141,7 +141,7 @@ SECTION_RSS = {
                      "https://www.mk.co.kr/rss/30000001/"],
         "한겨레":   ["https://www.hani.co.kr/rss/international/"],
         "경향신문": ["https://khan.co.kr/rss/rssdata/kh_world.xml"],
-        "연합뉴스": ["https://www.yna.co.kr/rss/international.xml", "https://www.yna.co.kr/rss/news.xml"],
+        "연합뉴스": ["https://www.yna.co.kr/rss/international.xml"],
     },
 }
 
@@ -382,10 +382,6 @@ def fetch_rss(source, src_class, url, max_items=15, today_only=True):
             extra["Accept"] = "application/rss+xml, application/xml, text/xml, */*"
         elif "donga.com" in url:
             extra["Referer"] = "https://www.donga.com/"
-            extra["Accept"]  = "application/rss+xml, application/xml, */*"
-        elif "news.google.com" in url:
-            extra["Accept"]  = "application/rss+xml, application/xml, */*"
-            extra["Referer"] = "https://news.google.com/"
         req_headers = {**HEADERS, **extra}
 
         r = requests.get(url, headers=req_headers, timeout=15)
@@ -469,17 +465,8 @@ def fetch_rss(source, src_class, url, max_items=15, today_only=True):
             if today_only and date_parsed and pub_date < cutoff_date:
                 continue
 
-            # Google News: <source>신문사명</source> 태그에서 실제 신문사 추출
-            actual_source = source
-            if "news.google.com" in url:
-                src_tag = item.find("source")
-                if src_tag:
-                    gs = src_tag.get_text(strip=True)
-                    if gs:
-                        actual_source = gs
-
             items.append({
-                "source":    actual_source,
+                "source":    source,
                 "src_class": src_class,
                 "title":     title,
                 "url":       link,
@@ -575,14 +562,14 @@ def collect_one(src_name, src_cls, url_list):
     """url_list 순서로 시도해 기사 1개 반환. 실패 시 None"""
     for url in url_list:
         for today_only in [True, False]:
-            items = fetch_rss(src_name, src_cls, url, max_items=30, today_only=today_only)
+            items = fetch_rss(src_name, src_cls, url, max_items=20, today_only=today_only)
             for item in items:
                 k = dedup_key(item["title"])
                 if k in global_title_seen:
                     continue
                 if is_hard_excluded(item["title"]):
                     continue
-                global_title_seen.add(k)
+                global_title_seen.add(k)   # 즉시 등록 → 신문사 독점 차단
                 return item
     return None
 
@@ -819,6 +806,151 @@ if not sidebar_data:
     print("  ⚠️  기본값 사용")
 else:
     print("  ✅ 사이드바 생성 완료")
+
+# ════════════════════════════════════════════════════════════
+# 파급 체인 HTML — 3-체인 심층 분석
+# ════════════════════════════════════════════════════════════
+print("\n🔗 파급 체인 빌드...")
+is_morning = now_kst.hour < 12
+
+# 임팩트 키워드 기반 오늘 핵심 기사 선정
+HIGH_IMPACT_KW = ["전쟁","제재","금리","관세","봉쇄","폭락","급등","위기","협상","붕괴",
+                  "파산","인상","인하","충격","급락","폭등","긴축","기준금리","FOMC","Fed"]
+def impact_score(t):
+    return sum(1 for kw in HIGH_IMPACT_KW if kw in t)
+
+all_flat = [it for sl in section_news.values() for it in sl] + intl_news
+all_flat.sort(key=lambda x: impact_score(x.get("ko_title", x.get("title",""))), reverse=True)
+chain_seed = all_flat[0] if all_flat else None
+
+chain_html = "\n"
+if chain_seed:
+    seed_title = chain_seed.get("ko_title", chain_seed["title"])
+    seed_src   = chain_seed["source"]
+    seed_url   = chain_seed["url"]
+    seed_sc    = chain_seed["src_class"]
+    seed_pub   = chain_seed["pubtime"]
+
+    chain_data = claude_json(
+        f"오늘의 핵심 뉴스: '{seed_title}'\n"
+        "\n"
+        "이 뉴스를 3가지 각도로 파급 체인 분석. JSON만 출력:\n"
+        "{\n"
+        '  "summary": "이 뉴스 한줄 임팩트 30자이내",\n'
+        '  "chain_main": {\n'
+        '    "label": "수혜 체인",\n'
+        '    "steps": [\n'
+        '      {"tag":"직접 영향","text":"30자이내","sub":"수치/사실"},\n'
+        '      {"tag":"산업 파급","text":"30자이내","sub":"이유"},\n'
+        '      {"tag":"의외의 수혜","text":"30자이내","sub":"일반인이 놓치는 포인트"}\n'
+        '    ],\n'
+        '    "stock": {"name":"메가캡제외 중소형종목","market":"KR또는US","logic":"A→B→C 50자이내","upside":"수치포함 30자이내","probability":72}\n'
+        '  },\n'
+        '  "chain_reverse": {\n'
+        '    "label": "역발상 체인",\n'
+        '    "steps": [\n'
+        '      {"tag":"통념","text":"대부분이 생각하는 영향 30자이내","sub":""},\n'
+        '      {"tag":"역발상","text":"반대로 생각해보면 30자이내","sub":"근거"},\n'
+        '      {"tag":"역발상 수혜","text":"역발상 수혜 30자이내","sub":""}\n'
+        '    ],\n'
+        '    "stock": {"name":"역발상 종목","market":"KR또는US","logic":"역발상 논리 50자이내","upside":"30자이내","probability":58}\n'
+        '  },\n'
+        '  "chain_risk": {\n'
+        '    "label": "리스크 체인",\n'
+        '    "steps": [\n'
+        '      {"tag":"리스크 경로","text":"악화 시나리오 30자이내","sub":"조건"},\n'
+        '      {"tag":"피해 산업","text":"가장 타격받는 곳 30자이내","sub":"이유"},\n'
+        '      {"tag":"회피 전략","text":"리스크 회피 방법 30자이내","sub":""}\n'
+        '    ],\n'
+        '    "stock": {"name":"방어용 종목","market":"KR또는US","logic":"방어 논리 50자이내","upside":"방어 근거 30자이내","probability":55}\n'
+        '  }\n'
+        '}',
+        max_tokens=900
+    )
+
+    arr = "&#8595;"
+    chain_cfg = {
+        "chain_main":    {"label_bg":"var(--red)",  "num_cls":["n1","n2","n3"], "border":"var(--red)"},
+        "chain_reverse": {"label_bg":"var(--navy)", "num_cls":["n3","n3","n4"], "border":"var(--navy)"},
+        "chain_risk":    {"label_bg":"var(--gold)", "num_cls":["n2","n2","n4"], "border":"var(--gold)"},
+    }
+
+    if chain_data:
+        summary = esc(chain_data.get("summary",""))
+        try:    t_str = datetime.fromisoformat(seed_pub).astimezone(KST).strftime("%H:%M")
+        except: t_str = ""
+        time_lbl = f'{"오전" if is_morning else "오후"} {t_str}' if t_str else ("오전" if is_morning else "오후")
+
+        chain_html += (
+            f'\n<div class="chain-header-card">\n'
+            f'  <div class="chain-time-badge">{time_lbl} 핵심 뉴스</div>\n'
+            f'  <div class="chain-seed-title"><a href="{seed_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">{esc(seed_title)}</a></div>\n'
+            f'  <div class="chain-seed-meta"><span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span>'
+            f'{(" &nbsp;·&nbsp; " + esc(summary)) if summary else ""}</div>\n'
+            f'</div>\n'
+        )
+
+        for ck in ["chain_main","chain_reverse","chain_risk"]:
+            cd   = chain_data.get(ck, {})
+            if not cd: continue
+            cfg  = chain_cfg[ck]
+            lbl  = esc(cd.get("label",""))
+            stps = cd.get("steps",[])
+            stk  = cd.get("stock",{})
+            bc   = cfg["border"]; lb_bg = cfg["label_bg"]; ncs = cfg["num_cls"]
+
+            chain_html += (
+                f'\n<div class="chain-block" style="border-left-color:{bc}">\n'
+                f'  <div class="chain-block-label" style="background:{lb_bg}">{lbl}</div>\n'
+                f'  <div class="chain-steps">\n'
+            )
+            for si, sd in enumerate(stps[:3]):
+                tag  = esc(sd.get("tag","")); txt = esc(sd.get("text","")); sub = esc(sd.get("sub",""))
+                nc   = ncs[si] if si < len(ncs) else "n4"
+                sub_h = f'<span class="chain-step-sub">{sub}</span>' if sub else ""
+                if si > 0:
+                    chain_html += f'    <div class="chain-arrow-sm">{arr}</div>\n'
+                chain_html += (
+                    f'    <div class="chain-step">\n'
+                    f'      <div class="chain-step-num {nc}">{si+1}</div>\n'
+                    f'      <div class="chain-step-body">'
+                    f'<span class="chain-step-tag">{tag}</span>'
+                    f'<span class="chain-step-text">{txt}</span>{sub_h}</div>\n'
+                    f'    </div>\n'
+                )
+            chain_html += '  </div>\n'
+
+            if stk and stk.get("name"):
+                nm   = esc(stk["name"]); mk = stk.get("market","KR")
+                logic= esc(stk.get("logic","")); up = esc(stk.get("upside",""))
+                try:    prob = min(max(int(stk.get("probability",65)),0),100)
+                except: prob = 65
+                pc = "var(--green)" if prob>=65 else ("var(--gold)" if prob>=50 else "var(--red)")
+                up_h = f'<div class="chain-upside-text">&#9650; {up}</div>' if up else ""
+                chain_html += (
+                    f'  <div class="chain-stock-row">'
+                    f'<div class="chain-arrow-sm">{arr}</div>\n'
+                    f'  <div class="chain-stock-card">\n'
+                    f'    <div class="chain-stock-left">'
+                    f'<span class="chain-stock-name">{nm}</span>'
+                    f'<span class="chain-stock-market {mk.lower()}">{mk}</span></div>\n'
+                    f'    <div class="chain-stock-right">'
+                    f'<div class="chain-logic-text">&#128270; {logic}</div>\n'
+                    f'    {up_h}\n'
+                    f'    <div class="chain-prob-row">'
+                    f'<div class="chain-prob-bar-wrap"><div class="chain-prob-bar" style="width:{prob}%;background:{pc}"></div></div>'
+                    f'<span class="chain-prob-pct" style="color:{pc}">{prob}%</span></div>'
+                    f'    </div>\n  </div></div>\n'
+                )
+            chain_html += '</div>\n'
+
+        chain_html += '<div class="chain-disclaimer">&#9888;&#65039; AI 분석 참고 정보 — 투자는 전문가 상담 후 본인 판단으로</div>\n'
+        print(f"  ✅ 파급 체인 3종 생성: {seed_title[:30]}...")
+    else:
+        chain_html = '<div class="chain-intro"><div class="chain-intro-title">파급 체인</div><div class="chain-intro-sub">분석 생성 실패</div></div>\n'
+        print("  ⚠️  체인 생성 실패")
+else:
+    chain_html = '<div class="chain-intro"><div class="chain-intro-title">&#128279; 파급 체인</div><div class="chain-intro-sub">뉴스 수집 후 채워집니다</div></div>\n'
 
 # ════════════════════════════════════════════════════════════
 # STEP 4: HTML 빌드
@@ -1139,6 +1271,7 @@ def replace_block(html, s, e, content):
     print(f"  ⚠️  마커 없음: {s[:40]}")
     return html
 
+html = replace_block(html, '<!-- AUTO_CHAIN_START -->', '<!-- AUTO_CHAIN_END -->', chain_html)
 html = replace_block(html, '<!-- AUTO_HEADLINE_START -->', '<!-- AUTO_HEADLINE_END -->', headline_html)
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
 html = replace_block(html, '<!-- AUTO_INTL_START -->',      '<!-- AUTO_INTL_END -->',      intl_html)
