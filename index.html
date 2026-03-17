@@ -340,67 +340,69 @@ function toggleColArchive(el){
 /* ── 주요 뉴스 섹션 태그 ── */
 .hl-sec-tag{font-size:8px;font-weight:700;color:#fff;border-radius:2px;padding:1px 6px;margin-right:4px;flex-shrink:0;white-space:nowrap;vertical-align:middle}
 
-/* ── 파급 체인 ── */
+/* ══ layout-full (피드 전용) ══ */
+.layout-full{max-width:860px;margin:0 auto;padding:12px 16px 32px}
+
+/* ══ 파급 체인 ══ */
 .chain-intro{text-align:center;padding:48px 20px;color:var(--ink3)}
-.chain-intro-icon{font-size:36px;margin-bottom:10px}
-.chain-intro-title{font-size:18px;font-weight:700;color:var(--ink1);margin-bottom:8px}
-.chain-intro-desc{font-size:13px;line-height:1.9}
-.chain-intro-sub{font-size:11px;margin-top:12px}
-.chain-block{margin-bottom:20px}
-.chain-news-card{background:var(--surface);border-radius:8px;padding:14px 16px;border-left:4px solid var(--red);margin-bottom:2px}
-.chain-news-label{font-size:9px;font-weight:700;color:#fff;background:var(--red);border-radius:2px;padding:1px 6px;display:inline-block;margin-bottom:6px;letter-spacing:.04em}
-.chain-news-title{font-size:14px;font-weight:700;color:var(--ink1);line-height:1.5}
-.chain-news-src{font-size:10px;color:var(--ink3);margin-top:5px}
-.chain-arrow{text-align:center;font-size:16px;color:var(--ink3);padding:2px 0;line-height:1.2}
-.chain-node{display:flex;flex-direction:column;gap:0}
-.chain-step{background:var(--tagbg);border-radius:6px;padding:11px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:2px}
-.chain-step-num{font-size:10px;font-weight:700;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.chain-intro-icon{font-size:32px;margin-bottom:8px}
+.chain-intro-title{font-size:17px;font-weight:700;color:var(--ink1);margin-bottom:6px}
+.chain-intro-desc{font-size:13px;line-height:1.8}
+.chain-intro-sub{font-size:11px;margin-top:10px}
+.chain-header-card{background:var(--surface);border-radius:8px;padding:14px 16px;margin-bottom:14px;border-left:4px solid var(--red)}
+.chain-time-badge{font-size:9px;font-weight:700;color:#fff;background:var(--red);border-radius:2px;padding:1px 6px;display:inline-block;margin-bottom:6px;letter-spacing:.04em}
+.chain-seed-title{font-size:15px;font-weight:700;color:var(--ink1);line-height:1.5;margin-bottom:4px}
+.chain-seed-meta{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.chain-block{background:var(--tagbg);border-radius:8px;padding:12px 14px;margin-bottom:8px;border-left:3px solid var(--red)}
+.chain-block-label{font-size:9px;font-weight:700;color:#fff;border-radius:2px;padding:2px 8px;display:inline-block;margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase}
+.chain-steps{display:flex;flex-direction:column}
+.chain-step{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--border)}
+.chain-step:first-child{border-top:none;padding-top:0}
+.chain-step-num{font-size:9px;font-weight:700;color:#fff;border-radius:50%;width:18px;height:18px;min-width:18px;display:flex;align-items:center;justify-content:center;margin-top:2px;flex-shrink:0}
 .chain-step-num.n1{background:var(--red)}.chain-step-num.n2{background:var(--gold)}.chain-step-num.n3{background:var(--navy)}.chain-step-num.n4{background:var(--green)}
-.chain-step-body{flex:1}
-.chain-step-tag{font-size:9px;font-weight:700;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px}
-.chain-step-text{font-size:13px;color:var(--ink1);line-height:1.5;font-weight:600}
-.chain-step-sub{font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.4}
-.chain-stock-wrap{margin-top:2px}
-.chain-stock-card{background:var(--surface);border-radius:8px;padding:14px 16px;border:1.5px solid var(--gold)}
-.chain-stock-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
-.chain-stock-name{font-size:18px;font-weight:800;color:var(--red);letter-spacing:.02em}
-.chain-stock-market{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;color:#fff}
+.chain-step-body{flex:1;display:flex;flex-direction:column;gap:2px}
+.chain-step-tag{font-size:9px;font-weight:700;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase}
+.chain-step-text{font-size:13px;color:var(--ink1);font-weight:600;line-height:1.4}
+.chain-step-sub{font-size:11px;color:var(--ink3);line-height:1.3}
+.chain-arrow-sm{text-align:left;padding-left:28px;font-size:11px;color:var(--ink3);line-height:1;padding-bottom:0}
+.chain-stock-row{margin-top:8px}
+.chain-stock-card{background:var(--surface);border-radius:6px;padding:10px 12px;display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border)}
+.chain-stock-left{display:flex;flex-direction:column;gap:4px;min-width:70px}
+.chain-stock-name{font-size:16px;font-weight:800;color:var(--red);letter-spacing:.02em}
+.chain-stock-market{font-size:8px;font-weight:700;padding:1px 5px;border-radius:8px;color:#fff;width:fit-content}
 .chain-stock-market.kr{background:#c0392b}.chain-stock-market.us{background:#2471a3}
-.chain-stock-logic{font-size:11px;color:var(--gold);margin-bottom:5px;line-height:1.4}
-.chain-stock-reason{font-size:12px;color:var(--ink2);line-height:1.5}
-.chain-stock-prob{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
-.chain-prob-label{font-size:10px;color:var(--ink3);white-space:nowrap}
-.chain-prob-bar-wrap{flex:1;height:7px;background:var(--border);border-radius:4px;overflow:hidden}
-.chain-prob-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--gold))}
-.chain-prob-pct{font-size:13px;font-weight:700;color:var(--green);white-space:nowrap}
-.chain-disclaimer{font-size:10px;color:var(--ink3);text-align:center;padding:12px 8px;line-height:1.6;border-top:1px solid var(--border);margin-top:12px}
-/* ── 오늘의 이슈 ── */
-.issue-block{background:var(--tagbg);border-radius:8px;padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--gold)}
-.issue-title{font-size:15px;font-weight:700;color:var(--ink1);margin-bottom:8px;display:flex;align-items:baseline;gap:6px;line-height:1.4}
-.issue-num{font-size:18px;color:var(--gold);font-weight:800;flex-shrink:0}
-.issue-rel-item{font-size:12px;padding:5px 8px;background:var(--bg);border-radius:4px;display:flex;align-items:baseline;gap:5px;margin-bottom:4px;line-height:1.4}
-.issue-rel-item a{color:var(--ink2);text-decoration:none}.issue-rel-item a:hover{color:var(--red)}
-.issue-stock{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding-top:7px;border-top:1px solid var(--border);margin-top:4px}
-/* ── 공통 종목 ── */
-.hl-sec-tag{font-size:8px;font-weight:700;color:#fff;border-radius:2px;padding:1px 6px;margin-right:4px;flex-shrink:0;white-space:nowrap}
-.stock-label{font-size:9px;font-weight:700;color:#fff;background:var(--navy);border-radius:2px;padding:1px 5px}
-.stock-name{font-size:13px;font-weight:700;color:var(--red)}
-.stock-reason{font-size:10px;color:var(--ink3)}
-.market-badge{font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;color:#fff}
-.market-badge.kr{background:#c0392b}.market-badge.us{background:#2471a3}
-.pt-list{padding:4px 12px 8px;display:flex;flex-direction:column;gap:0}
-.pt-item{display:flex;align-items:baseline;gap:6px;padding:8px 0;border-top:1px solid var(--border)}
-.pt-item:first-child{border-top:none}
+.chain-stock-right{flex:1;display:flex;flex-direction:column;gap:3px}
+.chain-logic-text{font-size:11px;color:var(--gold);line-height:1.4}
+.chain-upside-text{font-size:11px;color:var(--green)}
+.chain-prob-row{display:flex;align-items:center;gap:6px;margin-top:4px}
+.chain-prob-bar-wrap{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.chain-prob-bar{height:100%;border-radius:3px;transition:width .5s}
+.chain-prob-pct{font-size:11px;font-weight:700;white-space:nowrap}
+.chain-disclaimer{font-size:10px;color:var(--ink3);text-align:center;padding:10px;line-height:1.6;border-top:1px solid var(--border);margin-top:10px}
+
+/* ══ 뉴스 피드 ══ */
+#feed-container{max-width:860px;margin:0 auto}
+.feed-status{display:flex;align-items:center;gap:8px;padding:10px 4px;border-bottom:2px solid var(--border);margin-bottom:0;font-size:12px;font-weight:700;color:var(--ink1)}
+.feed-live-dot{width:8px;height:8px;border-radius:50%;background:#2ecc71;animation:pulse 1.8s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.85)}}
+.feed-last-update{font-size:10px;font-weight:400;color:var(--ink3);margin-left:auto}
+.feed-refresh-btn{font-size:10px;padding:2px 8px;border:1px solid var(--border);border-radius:4px;background:var(--tagbg);color:var(--ink2);cursor:pointer;font-family:inherit}
+.feed-refresh-btn:hover{background:var(--border)}
+.feed-list{display:flex;flex-direction:column}
+.feed-item{display:grid;grid-template-columns:44px 6px 1fr;align-items:baseline;gap:10px;padding:6px 4px;border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+.feed-item:hover{background:var(--tagbg)}
+.feed-item:last-child{border-bottom:none}
+.feed-time{font-size:11px;color:var(--ink3);font-family:'Courier New',monospace;letter-spacing:.03em;text-align:right}
+.feed-dot{width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0;justify-self:center}
+.feed-title{font-size:13px;color:var(--ink1);line-height:1.45;text-decoration:none}
+.feed-title:hover{color:var(--red)}
+.feed-loading{padding:40px;text-align:center;color:var(--ink3);font-size:13px}
+.feed-error{padding:20px;text-align:center;color:var(--red);font-size:12px}
+.feed-section-divider{font-size:9px;font-weight:700;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;padding:10px 4px 4px;border-bottom:1px solid var(--border);background:var(--tagbg)}
 
 </style>
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XJRYY78Z2Y"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XJRYY78Z2Y');
-  </script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-XJRYY78Z2Y");</script>
 </head>
 <body>
 
@@ -419,8 +421,8 @@ function toggleColArchive(el){
       <nav class="tabs">
         <button class="tab on" onclick="go('news',this)">뉴스</button>
         <button class="tab"    onclick="go('column',this)">칼럼</button>
-        <button class="tab"    onclick="go('issue',this)">오늘의 이슈</button>
         <button class="tab"    onclick="go('chain',this)">파급 체인</button>
+        <button class="tab"    onclick="go('feed',this)">뉴스 피드</button>
         <button class="tab"    onclick="go('archive',this)">지난 뉴스</button>
       </nav>
       <button class="btn-simple" id="simpleBtn" onclick="toggleSimple()">☰ 간소화</button>
@@ -1061,30 +1063,39 @@ function toggleColArchive(el){
 <!-- ══ 칼럼 패널 ══ -->
 
 <!-- ══ 오늘의 이슈 패널 ══ -->
-<div class="panel" id="panel-issue">
-<div class="layout">
-  <div class="left">
-<!-- AUTO_ISSUE_START -->
-<div style="padding:24px;color:var(--ink3);text-align:center;font-size:14px">오늘의 이슈는 다음 자동 업데이트 시 채워집니다.</div>
-<!-- AUTO_ISSUE_END -->
-  </div>
-  <div class="right">
-  </div>
-</div>
-</div>
-
-
 <!-- ══ 파급 체인 패널 ══ -->
 <div class="panel" id="panel-chain">
 <div class="layout">
   <div class="left">
 <!-- AUTO_CHAIN_START -->
-<div class="chain-intro"><div class="chain-intro-icon">&#128279;</div><div class="chain-intro-title">뉴스 파급 체인</div><div class="chain-intro-desc">오전 핵심 뉴스 1개 &rarr; 산업 &rarr; 기업 &rarr; 수혜주</div><div class="chain-intro-sub">매일 오전 7:25 자동 업데이트</div></div>
+<div class="chain-intro">
+  <div class="chain-intro-icon">&#128279;</div>
+  <div class="chain-intro-title">뉴스 파급 체인</div>
+  <div class="chain-intro-desc">오늘 핵심 뉴스를 3가지 시각으로 분석<br>수혜 체인 · 역발상 체인 · 리스크 체인</div>
+  <div class="chain-intro-sub">매일 오전 7:25 자동 업데이트</div>
+</div>
 <!-- AUTO_CHAIN_END -->
   </div>
   <div class="right">
 <!-- AUTO_CHAIN_RIGHT_START -->
 <!-- AUTO_CHAIN_RIGHT_END -->
+  </div>
+</div>
+</div>
+
+<!-- ══ 뉴스 피드 패널 ══ -->
+<div class="panel" id="panel-feed">
+<div class="layout-full">
+  <div id="feed-container">
+    <div class="feed-status">
+      <span class="feed-live-dot"></span>
+      <span id="feed-status-text">뉴스 불러오는 중...</span>
+      <span id="feed-last-update" class="feed-last-update"></span>
+      <button class="feed-refresh-btn" onclick="fetchFeed()">새로고침</button>
+    </div>
+    <div id="feed-list" class="feed-list">
+      <div class="feed-loading">&#8987; 헤드라인 수집 중...</div>
+    </div>
   </div>
 </div>
 </div>
@@ -1454,5 +1465,131 @@ function closeCase(closeBtn, e){
   closeBtn.closest('.case-panel').classList.remove('open');
 }
 </script>
+
+<script>
+// ── 뉴스 피드: 브라우저에서 직접 RSS 수집 ──────────────────
+var FEED_SOURCES = [
+  // 국내
+  {url:'https://www.hankyung.com/feed/economy',          label:'경제·금융', color:'#1a3050'},
+  {url:'https://www.mk.co.kr/rss/30000001/',              label:'경제·금융', color:'#1a3050'},
+  {url:'https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml', label:'정치·사회', color:'#1a4a2e'},
+  {url:'https://rss.donga.com/total.xml',                 label:'정치·사회', color:'#1a4a2e'},
+  {url:'https://www.yna.co.kr/rss/news.xml',              label:'정치·사회', color:'#1a4a2e'},
+  {url:'https://khan.co.kr/rss/rssdata/total_news.xml',   label:'정치·사회', color:'#1a4a2e'},
+  {url:'https://www.hani.co.kr/rss/',                     label:'정치·사회', color:'#1a4a2e'},
+  // 중앙일보 (Google News)
+  {url:'https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko', label:'종합', color:'#7a5800'},
+  // 해외
+  {url:'https://feeds.bloomberg.com/markets/news.rss',    label:'글로벌', color:'#4a3070'},
+  {url:'https://feeds.a.dj.com/rss/RSSWorldNews.xml',     label:'글로벌', color:'#4a3070'},
+  {url:'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml', label:'글로벌', color:'#4a3070'},
+];
+var RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
+var feedCache = [];
+var feedTimer = null;
+var isFetching = false;
+
+function parsePubDate(s){
+  try{ return new Date(s).getTime(); }catch(e){ return 0; }
+}
+function formatTime(ms){
+  if(!ms) return '--:--';
+  var d = new Date(ms);
+  return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+function isKorean(s){ return /[가-힣]/.test(s); }
+
+async function fetchOneFeed(src){
+  try{
+    var res = await fetch(RSS2JSON + encodeURIComponent(src.url) + '&count=15', {signal: AbortSignal.timeout(8000)});
+    if(!res.ok) return [];
+    var data = await res.json();
+    if(!data.items) return [];
+    return data.items.slice(0,15).map(function(it){
+      return {
+        title: it.title || '',
+        url:   it.link  || '#',
+        time:  parsePubDate(it.pubDate),
+        label: src.label,
+        color: src.color,
+      };
+    }).filter(function(it){ return it.title && it.title.length > 4; });
+  }catch(e){ return []; }
+}
+
+async function fetchFeed(){
+  if(isFetching) return;
+  isFetching = true;
+  document.getElementById('feed-status-text').textContent = '뉴스 수집 중...';
+
+  var results = await Promise.allSettled(FEED_SOURCES.map(fetchOneFeed));
+  var all = [];
+  results.forEach(function(r){
+    if(r.status==='fulfilled') all = all.concat(r.value);
+  });
+
+  // 중복 제거 (제목 앞 15자 기준)
+  var seen = new Set();
+  all = all.filter(function(it){
+    var k = it.title.replace(/[\s\W]/g,'').slice(0,15);
+    if(seen.has(k)) return false;
+    seen.add(k); return true;
+  });
+
+  // 시간 역순 정렬
+  all.sort(function(a,b){ return b.time - a.time; });
+
+  feedCache = all;
+  renderFeed(all);
+
+  var now = new Date();
+  var ts = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  document.getElementById('feed-status-text').textContent = '뉴스 피드 · ' + all.length + '건';
+  document.getElementById('feed-last-update').textContent = ts + ' 업데이트';
+  isFetching = false;
+}
+
+function renderFeed(items){
+  var el = document.getElementById('feed-list');
+  if(!items.length){
+    el.innerHTML = '<div class="feed-error">뉴스를 불러오지 못했습니다</div>';
+    return;
+  }
+  var html = '';
+  var prevLabel = null;
+  items.forEach(function(it){
+    // 섹션 구분선 (시간대별)
+    if(prevLabel !== it.label){
+      html += '<div class="feed-section-divider">' + it.label + '</div>';
+      prevLabel = it.label;
+    }
+    var t = it.time ? formatTime(it.time) : '--:--';
+    var title = it.title.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    html += (
+      '<div class="feed-item" onclick="window.open(\''+it.url+'\',\'_blank\')">' +
+      '<span class="feed-time">'+t+'</span>' +
+      '<span class="feed-dot" style="background:'+it.color+'"></span>' +
+      '<a class="feed-title" href="'+it.url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+title+'</a>' +
+      '</div>'
+    );
+  });
+  el.innerHTML = html;
+}
+
+// 피드 탭 클릭 시 자동 로드
+var _origGo = window.go || function(){};
+window.go = function(id, btn){
+  _origGo(id, btn);
+  if(id === 'feed'){
+    if(!feedCache.length) fetchFeed();
+    // 타이머 시작 (2분마다 자동 갱신)
+    clearInterval(feedTimer);
+    feedTimer = setInterval(fetchFeed, 120000);
+  } else {
+    clearInterval(feedTimer);
+  }
+};
+</script>
+
 </body>
 </html>
