@@ -93,7 +93,7 @@ SECTION_RSS = {
         "매일경제": ["https://www.mk.co.kr/rss/30000001/"],
         "한겨레":   ["https://www.hani.co.kr/rss/economy/",
                      "https://www.hani.co.kr/rss/economy/finance/"],
-        "경향신문": ["https://khan.co.kr/rss/rssdata/kh_economy.xml"],
+        "경향신문": ["https://www.khan.co.kr/rss/rssdata/kh_economy.xml"],
         "연합뉴스": ["https://www.yna.co.kr/rss/economy.xml"],
     },
     "기 업": {
@@ -107,7 +107,7 @@ SECTION_RSS = {
         "매일경제": ["https://www.mk.co.kr/rss/30200030/",
                      "https://www.mk.co.kr/rss/30000001/"],
         "한겨레":   ["https://www.hani.co.kr/rss/economy/"],
-        "경향신문": ["https://khan.co.kr/rss/rssdata/kh_economy.xml"],
+        "경향신문": ["https://www.khan.co.kr/rss/rssdata/kh_economy.xml"],
         "연합뉴스": ["https://www.yna.co.kr/rss/economy.xml"],
     },
     "정책 · 사회": {
@@ -125,7 +125,7 @@ SECTION_RSS = {
                      "https://www.mk.co.kr/rss/30000001/"],
         "한겨레":   ["https://www.hani.co.kr/rss/politics/",
                      "https://www.hani.co.kr/rss/society/"],
-        "경향신문": ["https://khan.co.kr/rss/rssdata/kh_politics.xml"],
+        "경향신문": ["https://www.khan.co.kr/rss/rssdata/kh_politics.xml"],
         "연합뉴스": ["https://www.yna.co.kr/rss/politics.xml"],
     },
     "국 제": {
@@ -140,7 +140,7 @@ SECTION_RSS = {
         "매일경제": ["https://www.mk.co.kr/rss/30300001/",
                      "https://www.mk.co.kr/rss/30000001/"],
         "한겨레":   ["https://www.hani.co.kr/rss/international/"],
-        "경향신문": ["https://khan.co.kr/rss/rssdata/kh_world.xml"],
+        "경향신문": ["https://www.khan.co.kr/rss/rssdata/kh_world.xml"],
         "연합뉴스": ["https://www.yna.co.kr/rss/international.xml"],
     },
 }
@@ -172,8 +172,8 @@ RSS_FALLBACKS = {
         "https://www.hani.co.kr/rss/",
     ]),
     "경향신문": ("p", [
-        "https://khan.co.kr/rss/rssdata/kh_economy.xml",
-        "https://khan.co.kr/rss/rssdata/total_news.xml",
+        "https://www.khan.co.kr/rss/rssdata/kh_economy.xml",
+        "https://www.khan.co.kr/rss/rssdata/total_news.xml",
     ]),
     "연합뉴스": ("w", [
         "https://www.yna.co.kr/rss/economy.xml",
@@ -205,7 +205,7 @@ COLUMN_SOURCES_DEF = [
         "https://www.hani.co.kr/rss/opinion/",
     ]),
     ("경향신문", "p", [
-        "https://khan.co.kr/rss/rssdata/kh_opinion.xml",
+        "https://www.khan.co.kr/rss/rssdata/kh_opinion.xml",
     ]),
     # 연합뉴스 제외 (칼럼/사설 없는 통신사)
 ]
@@ -272,7 +272,7 @@ HEADLINE_SOURCES = [
     ("매경","e","https://www.mk.co.kr/rss/30000001/"),
     ("한경","e","https://www.hankyung.com/feed/economy"),
     ("한겨레","p","https://www.hani.co.kr/rss/"),
-    ("경향","p","https://khan.co.kr/rss/rssdata/kh_politics.xml"),
+    ("경향","p","https://www.khan.co.kr/rss/rssdata/kh_politics.xml"),
     ("연합","w","https://www.yna.co.kr/rss/economy.xml"),
 ]
 
@@ -505,13 +505,11 @@ def get_summary_3(title):
 def get_column_summary(title):
     text = claude(
         f"칼럼/사설 제목: '{title}'\n"
-        "이 칼럼을 독자의 사고를 자극하는 방식으로 요약해줘.\n"
-        "\n"
+        "독자의 사고를 자극하는 방식으로 요약해줘.\n"
         "① 핵심 주장 (한 문장, 40자이내)\n"
         "② 주요 근거나 사례 (1~2문장, 80자이내)\n"
         "③ 이 칼럼이 던지는 질문 (~지 않을까? 형태, 40자이내)\n"
-        "\n"
-        "규칙: 한국어, ①②③ 번호로 시작, 전체 300~400자",
+        "규칙: ①②③ 번호로 시작, 한국어, 전체 300~400자",
         max_tokens=500
     )
     if not text: return "요약 준비 중..."
@@ -845,17 +843,32 @@ if chain_seed:
     seed_sc    = chain_seed["src_class"]
     seed_pub   = chain_seed["pubtime"]
 
-    chain_data = claude_json(
-        f"뉴스: '{seed_title}'\n"
-        "아래 JSON 형식으로만 답해. 다른 텍스트 없이:\n"
-        "{\n"
-        ' "summary": "30자이내 임팩트",\n'
-        ' "chain_main": {"label":"수혜 체인", "steps": [{"tag":"직접영향","text":"변화","sub":"수치"}, {"tag":"산업파급","text":"영향산업","sub":"이유"}, {"tag":"수혜종목","text":"수혜기업","sub":"포인트"}], "stock": {"name":"종목명","market":"KR","logic":"추론과정","upside":"상승근거","probability": 70}},\n'
-        ' "chain_reverse": {"label":"역발상 체인", "steps": [{"tag":"통념","text":"일반적예상","sub":""}, {"tag":"역발상","text":"반대시각","sub":"근거"}, {"tag":"수혜","text":"역발상수혜","sub":""}], "stock": {"name":"종목명","market":"KR","logic":"역발상논리","upside":"근거","probability": 55}},\n'
-        ' "chain_risk": {"label":"리스크 체인", "steps": [{"tag":"리스크","text":"악화시나리오","sub":"조건"}, {"tag":"피해","text":"타격산업","sub":"이유"}, {"tag":"회피","text":"대응전략","sub":""}], "stock": {"name":"종목명","market":"KR","logic":"방어논리","upside":"방어근거","probability": 50}}\n'
-        "}",
-        max_tokens=800
-    )
+    # 파급체인: 한 번에 하나씩 생성 (JSON 잘림 방지)
+    def _make_chain(label, tag1, tag2, tag3):
+        return claude_json(
+            f"뉴스: '{seed_title}'\n"
+            f"'{label}' 관점으로 분석. JSON만 출력 (다른 텍스트 없이):\n"
+            "{"
+            f'"label":"{label}",'
+            '"steps":['
+            f'{{"tag":"{tag1}","text":"20자이내","sub":"근거"}},'
+            f'{{"tag":"{tag2}","text":"20자이내","sub":"이유"}},'
+            f'{{"tag":"{tag3}","text":"20자이내","sub":"포인트"}}'
+            '],'
+            '"stock":{"name":"종목명","market":"KR또는US","logic":"추론과정 30자","upside":"상승근거 20자","probability":70}'
+            "}",
+            max_tokens=400
+        )
+
+    cm = _make_chain("수혜 체인",   "직접 영향", "산업 파급", "수혜 종목")
+    cr = _make_chain("역발상 체인", "통념",      "역발상",    "역발상 수혜")
+    ck = _make_chain("리스크 체인", "리스크",    "피해 산업", "회피 전략")
+
+    chain_data = {}
+    if cm: chain_data["chain_main"]    = cm
+    if cr: chain_data["chain_reverse"] = cr
+    if ck: chain_data["chain_risk"]    = ck
+    chain_data["summary"] = seed_title[:30] if not chain_data else chain_data.get("chain_main",{}).get("label","")
 
     arr = "&#8595;"
     chain_cfg = {
@@ -864,8 +877,8 @@ if chain_seed:
         "chain_risk":    {"lb":"var(--gold)", "ncs":["n2","n2","n4"], "bc":"var(--gold)"},
     }
 
-    if chain_data:
-        summary = esc(chain_data.get("summary",""))
+    if chain_data and (chain_data.get("chain_main") or chain_data.get("chain_reverse")):
+        summary = esc(seed_title[:30])
         try:    t_str = datetime.fromisoformat(seed_pub).astimezone(KST).strftime("%H:%M")
         except: t_str = ""
         tlbl = f'{"오전" if is_morning else "오후"} {t_str}' if t_str else ("오전" if is_morning else "오후")
@@ -941,6 +954,82 @@ if chain_seed:
 else:
     chain_html = '<div class="chain-intro"><div class="chain-intro-title">&#128279; 파급 체인</div><div class="chain-intro-sub">뉴스 수집 후 채워집니다</div></div>\n'
 
+
+# ════════════════════════════════════════════════════════════
+# 뉴스 피드 HTML 정적 생성 (CORS 우회 — Actions에서 직접 수집)
+# ════════════════════════════════════════════════════════════
+print("\n📰 뉴스 피드 빌드...")
+
+feed_items = []
+seen_feed = set()
+
+# 섹션별 뉴스 + 해외뉴스를 시간순 정렬
+FEED_COLORS = {
+    "경제 · 금융": "#1a3050",
+    "기 업":       "#7a1f1f",
+    "정책 · 사회": "#1a4a2e",
+    "국 제":       "#7a5800",
+    "해 외":       "#4a3070",
+}
+for sec in NEWS_SECTIONS:
+    for it in section_news.get(sec, []):
+        dk = dedup_key(it.get("title",""))
+        if dk in seen_feed: continue
+        seen_feed.add(dk)
+        feed_items.append({
+            "title": it.get("title",""),
+            "url":   it.get("url","#"),
+            "time":  it.get("pubtime",""),
+            "color": FEED_COLORS.get(sec, "#888"),
+        })
+for it in intl_news:
+    dk = dedup_key(it.get("ko_title", it.get("title","")))
+    if dk in seen_feed: continue
+    seen_feed.add(dk)
+    feed_items.append({
+        "title": it.get("ko_title", it.get("title","")),
+        "url":   it.get("url","#"),
+        "time":  it.get("pubtime",""),
+        "color": FEED_COLORS["해 외"],
+    })
+
+# 시간 역순 정렬
+def _sort_time(x):
+    try: return datetime.fromisoformat(x["time"])
+    except: return datetime.min.replace(tzinfo=KST)
+feed_items.sort(key=_sort_time, reverse=True)
+
+feed_rows = ""
+for fi in feed_items:
+    try:
+        dt = datetime.fromisoformat(fi["time"]).astimezone(KST)
+        t_str = dt.strftime("%H:%M")
+    except:
+        t_str = "--:--"
+    title = esc(fi["title"])
+    url   = fi["url"]
+    color = fi["color"]
+    feed_rows += (
+        f'<div class="feed-item" onclick="window.open(\'{url}\',\'_blank\')">'
+        f'<span class="feed-time">{t_str}</span>'
+        f'<span class="feed-dot" style="background:{color}"></span>'
+        f'<a class="feed-title" href="{url}" target="_blank" rel="noopener" '
+        f'onclick="event.stopPropagation()">{title}</a>'
+        f'</div>\n'
+    )
+
+feed_html = f"""
+<div class="feed-status">
+  <span class="feed-live-dot"></span>
+  <span>오늘의 뉴스 피드 · {len(feed_items)}건</span>
+  <span class="feed-last-update">{now_kst.strftime('%H:%M')} 업데이트</span>
+</div>
+<div class="feed-list">
+{feed_rows}
+</div>
+"""
+print(f"  ✅ 피드 {len(feed_items)}건 생성")
+
 # ════════════════════════════════════════════════════════════
 # STEP 4: HTML 빌드
 # ════════════════════════════════════════════════════════════
@@ -999,11 +1088,20 @@ headline_html += (
     '<div class="sec-line"></div><span class="sec-toggle">▾</span></div>\n'
     '    <div class="sec-body collapsed">\n'
 )
+_hl_used = set()
+def _pick_hl(items):
+    for it in items:
+        if it["source"] not in _hl_used:
+            return it
+    return items[0] if items else None
+
 for section in NEWS_SECTIONS:
     items = section_news.get(section, [])
     if not items:
         continue
-    item  = items[0]
+    item = _pick_hl(items)
+    if not item: continue
+    _hl_used.add(item["source"])
     color = SECTION_COLORS[section]
     cc    = CARD_COLORS[section]
     hk    = HIST_KEYS[section]
@@ -1121,7 +1219,10 @@ def build_right(data, hl_list):
     stats = ""
     for n in nums[:6]:
         clr = "r" if n.get("up", True) else "b"
-        stats += f'<div class="mstat"><div class="mnum {clr}">{esc(str(n["value"]))}</div><div class="mlbl">{esc(n["label"])}<br><small style="font-size:9px">{esc(n["desc"])}</small></div></div>'
+        _val  = str(n.get("value", n.get("수치", "--")))
+        _lbl  = str(n.get("label", n.get("항목", "")))
+        _desc = str(n.get("desc",  n.get("설명", "")))
+        stats += f'<div class="mstat"><div class="mnum {clr}">{esc(_val)}</div><div class="mlbl">{esc(_lbl)}<br><small style="font-size:9px">{esc(_desc)}</small></div></div>'
 
     icons = ['①','②','③','④']
     pts_html = ""
@@ -1260,6 +1361,7 @@ def replace_block(html, s, e, content):
     print(f"  ⚠️  마커 없음: {s[:40]}")
     return html
 
+html = replace_block(html, '<!-- AUTO_FEED_START -->', '<!-- AUTO_FEED_END -->', feed_html)
 html = replace_block(html, '<!-- AUTO_CHAIN_START -->', '<!-- AUTO_CHAIN_END -->', chain_html)
 html = replace_block(html, '<!-- AUTO_HEADLINE_START -->', '<!-- AUTO_HEADLINE_END -->', headline_html)
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
