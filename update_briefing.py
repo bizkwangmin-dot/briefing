@@ -211,14 +211,16 @@ COLUMN_SOURCES_DEF = [
 ]
 
 # ── 해외뉴스 소스 ─────────────────────────────────────────────
+# 해외뉴스 소스 — 영미/유럽/아시아/중동 균형
 INTL_SOURCES = [
+    # 미국 (2개)
     ("블룸버그",      "intl", "https://feeds.bloomberg.com/markets/news.rss"),
-    ("파이낸셜타임스","intl", "https://www.ft.com/rss/home"),
     ("월스트리트저널","intl", "https://feeds.a.dj.com/rss/RSSWorldNews.xml"),
-    ("뉴욕타임스",   "intl",  "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml"),
-    ("가디언",       "intl",  "https://www.theguardian.com/world/rss"),
-    ("BBC비즈니스",  "intl",  "https://feeds.bbci.co.uk/news/business/rss.xml"),
+    # 영국 (1개)
+    ("파이낸셜타임스","intl", "https://www.ft.com/rss/home"),
+    # 국제통신 (1개)
     ("로이터",       "intl",  "https://feeds.reuters.com/reuters/businessNews"),
+    # 아시아 (아래 INTL_REGION_SOURCES에서 처리)
 ]
 
 INTL_REGION_SOURCES = {
@@ -505,9 +507,14 @@ def get_summary_3(title):
 def get_column_summary(title):
     text = claude(
         f"칼럼/사설 제목: '{title}'\n"
-        "이 칼럼의 핵심 주장과 근거를 3~4문장으로 요약해줘.\n"
-        "규칙: 자연스러운 문장으로, 기호 없이, 한국어, 전체 150자 이내",
-        max_tokens=200
+        "독자의 사고를 확장하는 방식으로 요약해줘.\n"
+        "\n"
+        "① 핵심 주장 (한 문장, 40자이내)\n"
+        "② 주요 근거나 사례 (1~2문장, 80자이내)\n"
+        "③ 이 칼럼이 던지는 질문 또는 시사점 (~지 않을까? 형태, 40자이내)\n"
+        "\n"
+        "규칙: 한국어, ①②③ 번호로 시작, 기호 없이, 전체 400자 이내",
+        max_tokens=450
     )
     if not text: return "요약 준비 중..."
     return text.strip()
@@ -568,19 +575,32 @@ all_titles        = []
 global_title_seen = set()   # 섹션 간 완전 중복 방지
 section_news      = {s: [] for s in NEWS_SECTIONS}
 
-def collect_one(src_name, src_cls, url_list):
-    """url_list 순서로 시도해 기사 1개 반환. 실패 시 None"""
+def collect_one(src_name, src_cls, url_list, section=None):
+    """url_list 순서로 시도해 기사 1개 반환. 섹션 관련성 체크 포함."""
+    best = None
+    best_score = -1
     for url in url_list:
         for today_only in [True, False]:
             items = fetch_rss(src_name, src_cls, url, max_items=30, today_only=today_only)
             for item in items:
                 k = dedup_key(item["title"])
-                if k in global_title_seen:
-                    continue
-                if is_hard_excluded(item["title"]):
-                    continue
-                global_title_seen.add(k)   # 즉시 등록 → 신문사 독점 차단
-                return item
+                if k in global_title_seen: continue
+                if is_hard_excluded(item["title"]): continue
+                if section:
+                    sc = section_score(item["title"], section)
+                    # 다른 섹션 점수가 압도적으로 높으면 스킵
+                    other = max((section_score(item["title"], s)
+                                 for s in NEWS_SECTIONS if s != section), default=0)
+                    if other > sc + 2: continue
+                    if sc > best_score:
+                        best_score = sc
+                        best = item
+                else:
+                    global_title_seen.add(k)
+                    return item
+    if best:
+        global_title_seen.add(dedup_key(best["title"]))
+        return best
     return None
 
 for section in NEWS_SECTIONS:
@@ -596,7 +616,7 @@ for section in NEWS_SECTIONS:
             sec_urls.get(src_name, []) + fb_urls
         ))
 
-        item = collect_one(src_name, src_cls, url_list)
+        item = collect_one(src_name, src_cls, url_list, section=section)
         if item:
             print(f"    ✅ [{src_name}] {item['title'][:40]}...")
             item["bullets"] = get_summary_3(item["title"])
@@ -986,7 +1006,12 @@ for section in NEWS_SECTIONS:
     news_html += '    </div>\n'
 news_html += "\n"
 
-# ── 주요 뉴스 섹션: 각 섹션 첫 번째 기사 1개씩 묶기 ─────────
+# ── 주요 뉴스: 섹션별 1개, 신문사 중복 없이 ─────────────────
+def _pick_hl(items, used):
+    for it in items:
+        if it["source"] not in used: return it
+    return items[0] if items else None
+
 headline_html = "\n"
 headline_html += (
     '\n    <div class="sec sec-collapsed" onclick="toggleSection(this)">'
@@ -994,11 +1019,13 @@ headline_html += (
     '<div class="sec-line"></div><span class="sec-toggle">▾</span></div>\n'
     '    <div class="sec-body collapsed">\n'
 )
+hl_used = set()
 for section in NEWS_SECTIONS:
     items = section_news.get(section, [])
-    if not items:
-        continue
-    item  = items[0]
+    if not items: continue
+    item = _pick_hl(items, hl_used)
+    if not item: continue
+    hl_used.add(item["source"])
     color = SECTION_COLORS[section]
     cc    = CARD_COLORS[section]
     hk    = HIST_KEYS[section]
@@ -1028,6 +1055,37 @@ for section in NEWS_SECTIONS:
         </div>
         <div class="case-panel">
           <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>"""
+headline_html += "    </div>\n"
+
+# 해외 대표 1개 추가
+if intl_news:
+    ii = intl_news[0]
+    ko_t = esc(ii.get("ko_title", ii["title"]))
+    u_i = ii["url"]; s_i = esc(ii["source"]); p_i = ii["pubtime"]
+    b_i = ii.get("bullets") or []; hk_i = ii.get("hist_key","iran_war")
+    hl_i = HIST_LABELS.get(hk_i, hk_i)
+    li_i = "".join(f"<li>{esc(b)}</li>" for b in b_i[:3]) if b_i else "<li>번역 로딩 중...</li>"
+    headline_html += f"""
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct">
+        <span class="hl-sec-tag" style="background:var(--navy)">해 외</span>
+        <span class="src intl">{s_i}</span>
+        <span class="ctime" data-pubtime="{p_i}">🕒 --</span>
+        <span class="expand-hint">▾</span>
+      </div>
+      <div class="ch">{ko_t}</div>
+      <div class="card-expand">
+        <ul class="cpts">{li_i}</ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hk_i}',event)">📂 {hl_i}</button>
+          <a class="cbtn read-btn" href="{u_i}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hl_i}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
           <div class="case-panel-body"></div>
         </div>
       </div>
