@@ -1235,14 +1235,18 @@ function toggleColArchive(el){
 <!-- ══ 뉴스 피드 패널 ══ -->
 <div class="panel" id="panel-feed">
 <div class="layout">
-  <div class="feed-status">
-    <span class="feed-live-dot"></span>
-    <span id="feed-status-text">탭 클릭 시 자동 로드</span>
-    <span id="feed-last-update" class="feed-last-update"></span>
-    <button class="feed-refresh-btn" onclick="fetchFeed()">새로고침</button>
+  <div class="left">
+<!-- AUTO_FEED_START -->
+<div class="feed-status">
+  <span class="feed-live-dot"></span>
+  <span>다음 업데이트 시 채워집니다</span>
+</div>
+<div class="feed-list"></div>
+<!-- AUTO_FEED_END -->
   </div>
-  <div id="feed-list" class="feed-list">
-    <div class="feed-loading">뉴스 피드 탭을 클릭하면 실시간으로 불러옵니다</div>
+  <div class="right">
+<!-- AUTO_FEED_RIGHT_START -->
+<!-- AUTO_FEED_RIGHT_END -->
   </div>
 </div>
 </div>
@@ -1609,100 +1613,26 @@ function closeCase(closeBtn, e){
   closeBtn.closest('.case-panel').classList.remove('open');
 }
 </script>
-<script>
-// ── 뉴스 피드: 브라우저에서 직접 RSS 수집 ──
-var FEED_SOURCES = [
-  {url:'https://www.hankyung.com/feed/economy',           color:'#1a3050'},
-  {url:'https://www.mk.co.kr/rss/30000001/',              color:'#1a3050'},
-  {url:'https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml', color:'#7a1f1f'},
-  {url:'https://rss.donga.com/total.xml',                 color:'#7a1f1f'},
-  {url:'https://www.yna.co.kr/rss/news.xml',              color:'#1a4a2e'},
-  {url:'https://khan.co.kr/rss/rssdata/total_news.xml',   color:'#1a4a2e'},
-  {url:'https://www.hani.co.kr/rss/',                     color:'#1a4a2e'},
-  {url:'https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko', color:'#7a5800'},
-  {url:'https://feeds.bloomberg.com/markets/news.rss',    color:'#4a3070'},
-  {url:'https://feeds.a.dj.com/rss/RSSWorldNews.xml',     color:'#4a3070'},
-  {url:'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml', color:'#4a3070'},
-];
-var _R2J = 'https://api.rss2json.com/v1/api.json?rss_url=';
-var _feedCache=[]; var _feedTimer=null; var _fetching=false;
 
-function _fmtT(ms){
-  if(!ms) return '--:--';
-  var d=new Date(ms);
-  return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
-}
-async function _getOne(src){
-  try{
-    var r=await fetch(_R2J+encodeURIComponent(src.url)+'&count=20',{signal:AbortSignal.timeout(8000)});
-    if(!r.ok) return [];
-    var d=await r.json();
-    return (d.items||[]).slice(0,20).map(function(it){
-      return {title:it.title||'',url:it.link||'#',time:it.pubDate?new Date(it.pubDate).getTime():0,color:src.color};
-    }).filter(function(it){return it.title.length>4;});
-  }catch(e){return [];}
-}
-async function fetchFeed(){
-  if(_fetching) return; _fetching=true;
-  var st=document.getElementById('feed-status-text');
-  if(st) st.textContent='수집 중...';
-  var res=await Promise.allSettled(FEED_SOURCES.map(_getOne));
-  var all=[];
-  res.forEach(function(r){if(r.status==='fulfilled') all=all.concat(r.value);});
-  var seen=new Set();
-  all=all.filter(function(it){
-    var k=it.title.replace(/[\s\W]/g,'').slice(0,15);
-    if(seen.has(k)) return false; seen.add(k); return true;
-  });
-  all.sort(function(a,b){return b.time-a.time;});
-  _feedCache=all;
-  var fl=document.getElementById('feed-list');
-  if(!fl){_fetching=false;return;}
-  if(!all.length){fl.innerHTML='<div class="feed-error">불러오기 실패 — 새로고침 눌러주세요</div>';_fetching=false;return;}
-  var h='';
-  all.forEach(function(it){
-    var t=it.time?_fmtT(it.time):'--:--';
-    var title=it.title.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    h+='<div class="feed-item" onclick="window.open(\''+it.url+'\',\'_blank\')">'
-      +'<span class="feed-time">'+t+'</span>'
-      +'<span class="feed-dot" style="background:'+it.color+'"></span>'
-      +'<a class="feed-title" href="'+it.url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+title+'</a>'
-      +'</div>';
-  });
-  fl.innerHTML=h;
-  var now=new Date(); var ts=('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
-  if(st) st.textContent='뉴스 피드 · '+all.length+'건';
-  var lu=document.getElementById('feed-last-update'); if(lu) lu.textContent=ts+' 업데이트';
-  _fetching=false;
-}
-(function(){
-  var _orig=window.go;
-  window.go=function(id,btn){
-    if(_orig) _orig(id,btn);
-    if(id==='feed'){
-      if(!_feedCache.length) fetchFeed();
-      clearInterval(_feedTimer); _feedTimer=setInterval(fetchFeed,120000);
-    } else { clearInterval(_feedTimer); }
-  };
-})();
-</script>
 
 <script>
-// 파급체인 탭 열릴 때 뉴스 탭 사이드바 복사해서 표시
-(function(){
-  var _og2 = window.go;
+// 파급체인·피드 탭 열릴 때 사이드바 내용 복사
+document.addEventListener('DOMContentLoaded', function(){
+  var orig_go = window.go;
   window.go = function(id, btn){
-    if(_og2) _og2(id, btn);
-    if(id === 'chain'){
-      var src = document.querySelector('#panel-news .right');
-      var dst = document.querySelector('#panel-chain .right');
-      if(src && dst && dst.children.length === 0){
-        dst.innerHTML = src.innerHTML;
+    if(orig_go) orig_go(id, btn);
+    ['chain','feed'].forEach(function(tab){
+      if(id === tab){
+        var src = document.querySelector('#panel-news .right');
+        var dst = document.querySelector('#panel-'+tab+' .right');
+        if(src && dst && !dst.hasAttribute('data-copied')){
+          dst.innerHTML = src.innerHTML;
+          dst.setAttribute('data-copied','1');
+        }
       }
-    }
+    });
   };
-  window.copyChainSidebar = true;
-})();
+});
 </script>
 </body>
 </html>
