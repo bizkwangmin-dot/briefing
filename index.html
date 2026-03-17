@@ -340,7 +340,7 @@ function toggleColArchive(el){
 /* ── 주요 뉴스 섹션 태그 ── */
 .hl-sec-tag{font-size:8px;font-weight:700;color:#fff;border-radius:2px;padding:1px 6px;margin-right:4px;flex-shrink:0;white-space:nowrap;vertical-align:middle}
 
-/* ══ layout-full (피드 전용) ══ */
+/* ══ layout-full ══ */
 .layout-full{max-width:860px;margin:0 auto;padding:12px 16px 32px}
 
 /* ══ 파급 체인 ══ */
@@ -364,8 +364,8 @@ function toggleColArchive(el){
 .chain-step-tag{font-size:9px;font-weight:700;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase}
 .chain-step-text{font-size:13px;color:var(--ink1);font-weight:600;line-height:1.4}
 .chain-step-sub{font-size:11px;color:var(--ink3);line-height:1.3}
-.chain-arrow-sm{text-align:left;padding-left:28px;font-size:11px;color:var(--ink3);line-height:1;padding-bottom:0}
-.chain-stock-row{margin-top:8px}
+.chain-arrow-sm{text-align:left;padding-left:28px;font-size:11px;color:var(--ink3);line-height:1.2;padding-top:2px}
+.chain-stock-row{margin-top:6px}
 .chain-stock-card{background:var(--surface);border-radius:6px;padding:10px 12px;display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border)}
 .chain-stock-left{display:flex;flex-direction:column;gap:4px;min-width:70px}
 .chain-stock-name{font-size:16px;font-weight:800;color:var(--red);letter-spacing:.02em}
@@ -380,29 +380,33 @@ function toggleColArchive(el){
 .chain-prob-pct{font-size:11px;font-weight:700;white-space:nowrap}
 .chain-disclaimer{font-size:10px;color:var(--ink3);text-align:center;padding:10px;line-height:1.6;border-top:1px solid var(--border);margin-top:10px}
 
-/* ══ 뉴스 피드 ══ */
-#feed-container{max-width:860px;margin:0 auto}
+/* ══ 뉴스 피드 (Finviz 스타일) ══ */
 .feed-status{display:flex;align-items:center;gap:8px;padding:10px 4px;border-bottom:2px solid var(--border);margin-bottom:0;font-size:12px;font-weight:700;color:var(--ink1)}
-.feed-live-dot{width:8px;height:8px;border-radius:50%;background:#2ecc71;animation:pulse 1.8s infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.85)}}
+.feed-live-dot{width:8px;height:8px;border-radius:50%;background:#2ecc71;animation:feedpulse 1.8s infinite;flex-shrink:0}
+@keyframes feedpulse{0%,100%{opacity:1}50%{opacity:.3}}
 .feed-last-update{font-size:10px;font-weight:400;color:var(--ink3);margin-left:auto}
 .feed-refresh-btn{font-size:10px;padding:2px 8px;border:1px solid var(--border);border-radius:4px;background:var(--tagbg);color:var(--ink2);cursor:pointer;font-family:inherit}
 .feed-refresh-btn:hover{background:var(--border)}
 .feed-list{display:flex;flex-direction:column}
-.feed-item{display:grid;grid-template-columns:44px 6px 1fr;align-items:baseline;gap:10px;padding:6px 4px;border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+.feed-item{display:grid;grid-template-columns:40px 8px 1fr;align-items:baseline;gap:10px;padding:5px 4px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
 .feed-item:hover{background:var(--tagbg)}
 .feed-item:last-child{border-bottom:none}
-.feed-time{font-size:11px;color:var(--ink3);font-family:'Courier New',monospace;letter-spacing:.03em;text-align:right}
-.feed-dot{width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0;justify-self:center}
+.feed-time{font-size:11px;color:var(--ink3);font-family:'Courier New',monospace;letter-spacing:.02em;text-align:right;line-height:1.8}
+.feed-dot{width:6px;height:6px;border-radius:50%;justify-self:center;margin-top:7px;flex-shrink:0}
 .feed-title{font-size:13px;color:var(--ink1);line-height:1.45;text-decoration:none}
 .feed-title:hover{color:var(--red)}
 .feed-loading{padding:40px;text-align:center;color:var(--ink3);font-size:13px}
 .feed-error{padding:20px;text-align:center;color:var(--red);font-size:12px}
-.feed-section-divider{font-size:9px;font-weight:700;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;padding:10px 4px 4px;border-bottom:1px solid var(--border);background:var(--tagbg)}
 
 </style>
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XJRYY78Z2Y"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-XJRYY78Z2Y");</script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-XJRYY78Z2Y");
+  </script>
 </head>
 <body>
 
@@ -1071,7 +1075,7 @@ function toggleColArchive(el){
 <div class="chain-intro">
   <div class="chain-intro-icon">&#128279;</div>
   <div class="chain-intro-title">뉴스 파급 체인</div>
-  <div class="chain-intro-desc">오늘 핵심 뉴스를 3가지 시각으로 분석<br>수혜 체인 · 역발상 체인 · 리스크 체인</div>
+  <div class="chain-intro-desc">오늘 핵심 뉴스를 3가지 시각으로 분석<br>수혜 · 역발상 · 리스크 체인</div>
   <div class="chain-intro-sub">매일 오전 7:25 자동 업데이트</div>
 </div>
 <!-- AUTO_CHAIN_END -->
@@ -1086,16 +1090,14 @@ function toggleColArchive(el){
 <!-- ══ 뉴스 피드 패널 ══ -->
 <div class="panel" id="panel-feed">
 <div class="layout-full">
-  <div id="feed-container">
-    <div class="feed-status">
-      <span class="feed-live-dot"></span>
-      <span id="feed-status-text">뉴스 불러오는 중...</span>
-      <span id="feed-last-update" class="feed-last-update"></span>
-      <button class="feed-refresh-btn" onclick="fetchFeed()">새로고침</button>
-    </div>
-    <div id="feed-list" class="feed-list">
-      <div class="feed-loading">&#8987; 헤드라인 수집 중...</div>
-    </div>
+  <div class="feed-status">
+    <span class="feed-live-dot"></span>
+    <span id="feed-status-text">탭 클릭 시 자동 로드</span>
+    <span id="feed-last-update" class="feed-last-update"></span>
+    <button class="feed-refresh-btn" onclick="fetchFeed()">새로고침</button>
+  </div>
+  <div id="feed-list" class="feed-list">
+    <div class="feed-loading">뉴스 피드 탭을 클릭하면 실시간으로 불러옵니다</div>
   </div>
 </div>
 </div>
@@ -1465,131 +1467,82 @@ function closeCase(closeBtn, e){
   closeBtn.closest('.case-panel').classList.remove('open');
 }
 </script>
-
 <script>
-// ── 뉴스 피드: 브라우저에서 직접 RSS 수집 ──────────────────
+// ── 뉴스 피드: 브라우저에서 직접 RSS 수집 ──
 var FEED_SOURCES = [
-  // 국내
-  {url:'https://www.hankyung.com/feed/economy',          label:'경제·금융', color:'#1a3050'},
-  {url:'https://www.mk.co.kr/rss/30000001/',              label:'경제·금융', color:'#1a3050'},
-  {url:'https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml', label:'정치·사회', color:'#1a4a2e'},
-  {url:'https://rss.donga.com/total.xml',                 label:'정치·사회', color:'#1a4a2e'},
-  {url:'https://www.yna.co.kr/rss/news.xml',              label:'정치·사회', color:'#1a4a2e'},
-  {url:'https://khan.co.kr/rss/rssdata/total_news.xml',   label:'정치·사회', color:'#1a4a2e'},
-  {url:'https://www.hani.co.kr/rss/',                     label:'정치·사회', color:'#1a4a2e'},
-  // 중앙일보 (Google News)
-  {url:'https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko', label:'종합', color:'#7a5800'},
-  // 해외
-  {url:'https://feeds.bloomberg.com/markets/news.rss',    label:'글로벌', color:'#4a3070'},
-  {url:'https://feeds.a.dj.com/rss/RSSWorldNews.xml',     label:'글로벌', color:'#4a3070'},
-  {url:'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml', label:'글로벌', color:'#4a3070'},
+  {url:'https://www.hankyung.com/feed/economy',           color:'#1a3050'},
+  {url:'https://www.mk.co.kr/rss/30000001/',              color:'#1a3050'},
+  {url:'https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml', color:'#7a1f1f'},
+  {url:'https://rss.donga.com/total.xml',                 color:'#7a1f1f'},
+  {url:'https://www.yna.co.kr/rss/news.xml',              color:'#1a4a2e'},
+  {url:'https://khan.co.kr/rss/rssdata/total_news.xml',   color:'#1a4a2e'},
+  {url:'https://www.hani.co.kr/rss/',                     color:'#1a4a2e'},
+  {url:'https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko', color:'#7a5800'},
+  {url:'https://feeds.bloomberg.com/markets/news.rss',    color:'#4a3070'},
+  {url:'https://feeds.a.dj.com/rss/RSSWorldNews.xml',     color:'#4a3070'},
+  {url:'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml', color:'#4a3070'},
 ];
-var RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
-var feedCache = [];
-var feedTimer = null;
-var isFetching = false;
+var _R2J = 'https://api.rss2json.com/v1/api.json?rss_url=';
+var _feedCache=[]; var _feedTimer=null; var _fetching=false;
 
-function parsePubDate(s){
-  try{ return new Date(s).getTime(); }catch(e){ return 0; }
-}
-function formatTime(ms){
+function _fmtT(ms){
   if(!ms) return '--:--';
-  var d = new Date(ms);
-  return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+  var d=new Date(ms);
+  return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
 }
-function isKorean(s){ return /[가-힣]/.test(s); }
-
-async function fetchOneFeed(src){
+async function _getOne(src){
   try{
-    var res = await fetch(RSS2JSON + encodeURIComponent(src.url) + '&count=15', {signal: AbortSignal.timeout(8000)});
-    if(!res.ok) return [];
-    var data = await res.json();
-    if(!data.items) return [];
-    return data.items.slice(0,15).map(function(it){
-      return {
-        title: it.title || '',
-        url:   it.link  || '#',
-        time:  parsePubDate(it.pubDate),
-        label: src.label,
-        color: src.color,
-      };
-    }).filter(function(it){ return it.title && it.title.length > 4; });
-  }catch(e){ return []; }
+    var r=await fetch(_R2J+encodeURIComponent(src.url)+'&count=20',{signal:AbortSignal.timeout(8000)});
+    if(!r.ok) return [];
+    var d=await r.json();
+    return (d.items||[]).slice(0,20).map(function(it){
+      return {title:it.title||'',url:it.link||'#',time:it.pubDate?new Date(it.pubDate).getTime():0,color:src.color};
+    }).filter(function(it){return it.title.length>4;});
+  }catch(e){return [];}
 }
-
 async function fetchFeed(){
-  if(isFetching) return;
-  isFetching = true;
-  document.getElementById('feed-status-text').textContent = '뉴스 수집 중...';
-
-  var results = await Promise.allSettled(FEED_SOURCES.map(fetchOneFeed));
-  var all = [];
-  results.forEach(function(r){
-    if(r.status==='fulfilled') all = all.concat(r.value);
+  if(_fetching) return; _fetching=true;
+  var st=document.getElementById('feed-status-text');
+  if(st) st.textContent='수집 중...';
+  var res=await Promise.allSettled(FEED_SOURCES.map(_getOne));
+  var all=[];
+  res.forEach(function(r){if(r.status==='fulfilled') all=all.concat(r.value);});
+  var seen=new Set();
+  all=all.filter(function(it){
+    var k=it.title.replace(/[\s\W]/g,'').slice(0,15);
+    if(seen.has(k)) return false; seen.add(k); return true;
   });
-
-  // 중복 제거 (제목 앞 15자 기준)
-  var seen = new Set();
-  all = all.filter(function(it){
-    var k = it.title.replace(/[\s\W]/g,'').slice(0,15);
-    if(seen.has(k)) return false;
-    seen.add(k); return true;
+  all.sort(function(a,b){return b.time-a.time;});
+  _feedCache=all;
+  var fl=document.getElementById('feed-list');
+  if(!fl){_fetching=false;return;}
+  if(!all.length){fl.innerHTML='<div class="feed-error">불러오기 실패 — 새로고침 눌러주세요</div>';_fetching=false;return;}
+  var h='';
+  all.forEach(function(it){
+    var t=it.time?_fmtT(it.time):'--:--';
+    var title=it.title.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    h+='<div class="feed-item" onclick="window.open(\''+it.url+'\',\'_blank\')">'
+      +'<span class="feed-time">'+t+'</span>'
+      +'<span class="feed-dot" style="background:'+it.color+'"></span>'
+      +'<a class="feed-title" href="'+it.url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+title+'</a>'
+      +'</div>';
   });
-
-  // 시간 역순 정렬
-  all.sort(function(a,b){ return b.time - a.time; });
-
-  feedCache = all;
-  renderFeed(all);
-
-  var now = new Date();
-  var ts = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-  document.getElementById('feed-status-text').textContent = '뉴스 피드 · ' + all.length + '건';
-  document.getElementById('feed-last-update').textContent = ts + ' 업데이트';
-  isFetching = false;
+  fl.innerHTML=h;
+  var now=new Date(); var ts=('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
+  if(st) st.textContent='뉴스 피드 · '+all.length+'건';
+  var lu=document.getElementById('feed-last-update'); if(lu) lu.textContent=ts+' 업데이트';
+  _fetching=false;
 }
-
-function renderFeed(items){
-  var el = document.getElementById('feed-list');
-  if(!items.length){
-    el.innerHTML = '<div class="feed-error">뉴스를 불러오지 못했습니다</div>';
-    return;
-  }
-  var html = '';
-  var prevLabel = null;
-  items.forEach(function(it){
-    // 섹션 구분선 (시간대별)
-    if(prevLabel !== it.label){
-      html += '<div class="feed-section-divider">' + it.label + '</div>';
-      prevLabel = it.label;
-    }
-    var t = it.time ? formatTime(it.time) : '--:--';
-    var title = it.title.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    html += (
-      '<div class="feed-item" onclick="window.open(\''+it.url+'\',\'_blank\')">' +
-      '<span class="feed-time">'+t+'</span>' +
-      '<span class="feed-dot" style="background:'+it.color+'"></span>' +
-      '<a class="feed-title" href="'+it.url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+title+'</a>' +
-      '</div>'
-    );
-  });
-  el.innerHTML = html;
-}
-
-// 피드 탭 클릭 시 자동 로드
-var _origGo = window.go || function(){};
-window.go = function(id, btn){
-  _origGo(id, btn);
-  if(id === 'feed'){
-    if(!feedCache.length) fetchFeed();
-    // 타이머 시작 (2분마다 자동 갱신)
-    clearInterval(feedTimer);
-    feedTimer = setInterval(fetchFeed, 120000);
-  } else {
-    clearInterval(feedTimer);
-  }
-};
+(function(){
+  var _orig=window.go;
+  window.go=function(id,btn){
+    if(_orig) _orig(id,btn);
+    if(id==='feed'){
+      if(!_feedCache.length) fetchFeed();
+      clearInterval(_feedTimer); _feedTimer=setInterval(fetchFeed,120000);
+    } else { clearInterval(_feedTimer); }
+  };
+})();
 </script>
-
 </body>
 </html>
