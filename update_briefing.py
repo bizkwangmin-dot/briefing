@@ -505,14 +505,14 @@ def get_summary_3(title):
 def get_column_summary(title):
     text = claude(
         f"칼럼/사설 제목: '{title}'\n"
-        "독자의 사고를 확장하는 방식으로 요약해줘.\n"
+        "이 칼럼을 독자의 사고를 자극하는 방식으로 요약해줘.\n"
         "\n"
         "① 핵심 주장 (한 문장, 40자이내)\n"
         "② 주요 근거나 사례 (1~2문장, 80자이내)\n"
         "③ 이 칼럼이 던지는 질문 (~지 않을까? 형태, 40자이내)\n"
         "\n"
-        "규칙: 한국어, ①②③ 번호로 시작, 기호 없이, 전체 400자 이내",
-        max_tokens=450
+        "규칙: 한국어, ①②③ 번호로 시작, 전체 300~400자",
+        max_tokens=500
     )
     if not text: return "요약 준비 중..."
     return text.strip()
@@ -573,10 +573,8 @@ all_titles        = []
 global_title_seen = set()   # 섹션 간 완전 중복 방지
 section_news      = {s: [] for s in NEWS_SECTIONS}
 
-def collect_one(src_name, src_cls, url_list, section=None):
-    """url_list 순서로 시도해 기사 1개 반환. 섹션 관련성 체크 포함."""
-    best = None
-    best_score = -1
+def collect_one(src_name, src_cls, url_list):
+    """url_list 순서로 시도해 기사 1개 반환. 실패 시 None"""
     for url in url_list:
         for today_only in [True, False]:
             items = fetch_rss(src_name, src_cls, url, max_items=30, today_only=today_only)
@@ -586,24 +584,8 @@ def collect_one(src_name, src_cls, url_list, section=None):
                     continue
                 if is_hard_excluded(item["title"]):
                     continue
-                if section:
-                    sc = section_score(item["title"], section)
-                    other = max(
-                        (section_score(item["title"], s)
-                         for s in NEWS_SECTIONS if s != section),
-                        default=0
-                    )
-                    if other > sc + 2:
-                        continue   # 다른 섹션 기사 → 스킵
-                    if sc > best_score:
-                        best_score = sc
-                        best = item
-                else:
-                    global_title_seen.add(k)
-                    return item
-    if best:
-        global_title_seen.add(dedup_key(best["title"]))
-        return best
+                global_title_seen.add(k)   # 즉시 등록 → 신문사 독점 차단
+                return item
     return None
 
 for section in NEWS_SECTIONS:
@@ -619,7 +601,7 @@ for section in NEWS_SECTIONS:
             sec_urls.get(src_name, []) + fb_urls
         ))
 
-        item = collect_one(src_name, src_cls, url_list, section=section)
+        item = collect_one(src_name, src_cls, url_list)
         if item:
             print(f"    ✅ [{src_name}] {item['title'][:40]}...")
             item["bullets"] = get_summary_3(item["title"])
@@ -864,15 +846,15 @@ if chain_seed:
     seed_pub   = chain_seed["pubtime"]
 
     chain_data = claude_json(
-        f"오늘의 핵심 뉴스: '{seed_title}'\n"
-        "이 뉴스를 3가지 각도로 파급 체인 분석. JSON만 출력:\n"
+        f"뉴스: '{seed_title}'\n"
+        "아래 JSON 형식으로만 답해. 다른 텍스트 없이:\n"
         "{\n"
-        '  "summary": "한줄 임팩트 30자이내",\n'
-        '  "chain_main":    {"label":"수혜 체인",   "steps":[{"tag":"직접 영향","text":"30자","sub":"수치"},{"tag":"산업 파급","text":"30자","sub":"이유"},{"tag":"의외의 수혜","text":"30자","sub":"포인트"}], "stock":{"name":"메가캡제외 중소형","market":"KR또는US","logic":"A→B→C 50자","upside":"수치포함 30자","probability":72}},\n'
-        '  "chain_reverse": {"label":"역발상 체인", "steps":[{"tag":"통념","text":"30자","sub":""},{"tag":"역발상","text":"30자","sub":"근거"},{"tag":"역발상 수혜","text":"30자","sub":""}], "stock":{"name":"역발상 종목","market":"KR또는US","logic":"논리 50자","upside":"30자","probability":58}},\n'
-        '  "chain_risk":    {"label":"리스크 체인", "steps":[{"tag":"리스크 경로","text":"30자","sub":"조건"},{"tag":"피해 산업","text":"30자","sub":"이유"},{"tag":"회피 전략","text":"30자","sub":""}], "stock":{"name":"방어용 종목","market":"KR또는US","logic":"방어 논리 50자","upside":"방어 근거 30자","probability":55}}\n'
-        '}',
-        max_tokens=900
+        ' "summary": "30자이내 임팩트",\n'
+        ' "chain_main": {"label":"수혜 체인", "steps": [{"tag":"직접영향","text":"변화","sub":"수치"}, {"tag":"산업파급","text":"영향산업","sub":"이유"}, {"tag":"수혜종목","text":"수혜기업","sub":"포인트"}], "stock": {"name":"종목명","market":"KR","logic":"추론과정","upside":"상승근거","probability": 70}},\n'
+        ' "chain_reverse": {"label":"역발상 체인", "steps": [{"tag":"통념","text":"일반적예상","sub":""}, {"tag":"역발상","text":"반대시각","sub":"근거"}, {"tag":"수혜","text":"역발상수혜","sub":""}], "stock": {"name":"종목명","market":"KR","logic":"역발상논리","upside":"근거","probability": 55}},\n'
+        ' "chain_risk": {"label":"리스크 체인", "steps": [{"tag":"리스크","text":"악화시나리오","sub":"조건"}, {"tag":"피해","text":"타격산업","sub":"이유"}, {"tag":"회피","text":"대응전략","sub":""}], "stock": {"name":"종목명","market":"KR","logic":"방어논리","upside":"방어근거","probability": 50}}\n'
+        "}",
+        max_tokens=800
     )
 
     arr = "&#8595;"
@@ -1009,14 +991,7 @@ for section in NEWS_SECTIONS:
     news_html += '    </div>\n'
 news_html += "\n"
 
-# ── 주요 뉴스: 섹션별 1개, 신문사 중복 없이 ─────────────────
-def _pick_hl(items, used):
-    """신문사 중복 피해서 선택"""
-    for it in items:
-        if it["source"] not in used:
-            return it
-    return items[0] if items else None
-
+# ── 주요 뉴스 섹션: 각 섹션 첫 번째 기사 1개씩 묶기 ─────────
 headline_html = "\n"
 headline_html += (
     '\n    <div class="sec sec-collapsed" onclick="toggleSection(this)">'
@@ -1024,15 +999,11 @@ headline_html += (
     '<div class="sec-line"></div><span class="sec-toggle">▾</span></div>\n'
     '    <div class="sec-body collapsed">\n'
 )
-hl_used = set()
 for section in NEWS_SECTIONS:
     items = section_news.get(section, [])
     if not items:
         continue
-    item = _pick_hl(items, hl_used)
-    if not item:
-        continue
-    hl_used.add(item["source"])
+    item  = items[0]
     color = SECTION_COLORS[section]
     cc    = CARD_COLORS[section]
     hk    = HIST_KEYS[section]
