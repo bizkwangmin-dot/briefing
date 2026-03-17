@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="last-updated" content="2026-03-17T10:06:06+09:00">
+  <title>세줄뉴스 — 오늘의 핵심을 3줄로</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── 기본 변수 ── */
+:root{
+  --bg:#eceae3; --surface:#f7f5f0; --ink:#1c1c1e; --ink2:#4a4a4c; --ink3:#8a8a8e;
+  --border:#dbd7ce; --tagbg:#e5e2da;
+  --red:#7a1f1f; --navy:#1a3050; --gold:#7a5800; --green:#1a4a2e; --dark:#2a2a35;
+  --accent:#2c4a6e; --warm:#b89650; --hh:40px;
+  /* 간소화 모드 Charcoal+Zinc */
+  --s-bg:#2e3b3e; --s-surface:#364446; --s-ink:#d8e4e2; --s-ink2:#b0c4c2;
+  --s-ink3:#7a9896; --s-border:#4a5e60; --s-tagbg:#3a4e50; --s-accent:#8ec6c0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.65}
+a{color:inherit;text-decoration:none}
+
+/* ── 헤더 ── */
+header{background:linear-gradient(135deg,#14243a 0%,#1a3050 60%,#1f3d66 100%);position:sticky;top:0;z-index:200;box-shadow:0 1px 8px rgba(0,0,0,.25)}
+.hdr-row{display:flex;align-items:center;height:var(--hh);padding:0 16px;gap:0}
+.logo{font-family:'Noto Serif KR',serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:-.02em;white-space:nowrap;flex-shrink:0}
+.logo b{color:var(--warm)}
+.hdr-meta{display:flex;align-items:center;gap:5px;margin-left:10px;flex-shrink:0}
+.hdr-date{font-size:11px;color:rgba(255,255,255,.5);white-space:nowrap}
+.hdr-update{font-size:10px;color:rgba(255,255,255,.33);white-space:nowrap}
+.tabs{display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;margin-left:14px;flex:1}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:12px;font-weight:400;font-family:'Noto Sans KR',sans-serif;padding:0 12px;height:var(--hh);cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab.on{color:#fff;border-bottom-color:var(--warm);font-weight:500}
+.tab:hover:not(.on){color:rgba(255,255,255,.75)}
+.btn-simple{margin-left:auto;flex-shrink:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:10px;color:rgba(255,255,255,.55);font-size:10px;font-family:'Noto Sans KR',sans-serif;padding:3px 11px;cursor:pointer;transition:all .2s}
+.btn-simple:hover{background:rgba(255,255,255,.14);color:#fff}
+
+/* hdr-top / hdr-bot — PC에선 한 줄, 모바일에선 두 줄 */
+.hdr-top{display:flex;align-items:center;flex-shrink:0}
+.hdr-bot{display:flex;align-items:center;flex:1;min-width:0}
+
+/* ── 모바일 헤더: 2행 구조 ── */
+@media(max-width:699px){
+  header{box-shadow:0 1px 6px rgba(0,0,0,.3)}
+  .hdr-row{height:auto;flex-wrap:wrap;padding:0;align-items:stretch}
+  /* 1행: 로고 + 날짜 */
+  .hdr-top{display:flex;align-items:center;width:100%;height:36px;padding:0 12px;gap:0}
+  /* 2행: 탭 + 간소화 버튼 */
+  .hdr-bot{display:flex;align-items:center;width:100%;height:34px;padding:0 4px;border-top:1px solid rgba(255,255,255,.08)}
+  .tabs{margin-left:0;flex:1}
+  .tab{font-size:11px;padding:0 10px;height:34px}
+  .btn-simple{margin-left:4px;font-size:10px;padding:3px 10px;flex-shrink:0;border-radius:8px}
+  .logo{font-size:15px}
+  .hdr-meta{margin-left:8px}
+  .hdr-date{font-size:10px}
+  .hdr-update{display:none}
+}
+
+/* ── 레이아웃 ── */
+.panel{display:none}.panel.on{display:block}
+.layout{display:flex;gap:16px;padding:12px 16px 32px;max-width:1220px;margin:0 auto;align-items:flex-start}
+.left{flex:1;min-width:0}
+.right{width:258px;flex-shrink:0;position:sticky;top:var(--hh)}
+
+/* ── 섹션 구분 ── */
+.sec{display:flex;align-items:center;gap:9px;margin:18px 0 6px}
+.sec:first-child{margin-top:2px}
+.sec-tag{font-size:9px;font-weight:700;color:#fff;padding:3px 9px;border-radius:2px;letter-spacing:.08em;white-space:nowrap;font-family:'Noto Serif KR',serif}
+.sec-line{flex:1;height:1px;background:var(--border)}
+
+/* ── 뉴스 카드 ── */
+.card{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--border);border-radius:3px;padding:10px 12px 8px;margin-bottom:4px;cursor:pointer;transition:box-shadow .14s,transform .12s}
+.card:hover{box-shadow:0 2px 12px rgba(0,0,0,.08);transform:translateY(-1px)}
+.card.red{border-left-color:var(--red)}.card.navy{border-left-color:var(--navy)}
+.card.gold{border-left-color:var(--gold)}.card.green{border-left-color:var(--green)}.card.dk{border-left-color:var(--dark)}
+.ct{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.src{font-size:9px;font-weight:700;color:#fff;padding:2px 5px;border-radius:2px;letter-spacing:.03em;flex-shrink:0}
+.src.c{background:var(--red)}.src.e{background:var(--navy)}.src.p{background:var(--green)}.src.w{background:var(--dark)}.src.intl{background:#4a3070}
+.ctime{font-size:10px;color:var(--ink3);margin-left:auto}
+.expand-hint{font-size:9px;color:var(--ink3);margin-left:6px;transition:transform .18s;display:inline-block}
+.card.expanded .expand-hint{transform:rotate(180deg)}
+
+/* 뉴스 제목 — bold 제거, weight 500 */
+.ch{font-size:13px;font-weight:500;color:var(--ink);line-height:1.55;margin-bottom:0}
+.ch:hover{color:var(--accent)}
+
+/* ── 펼침 영역 ── */
+.card-expand{display:none;margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
+.card-expand.open{display:block}
+.cpts{list-style:none;padding:0 0 0 9px;margin:0 0 9px;border-left:2px solid var(--border)}
+.cpts li{font-size:11.5px;color:var(--ink2);line-height:1.55;margin-bottom:3px}
+.cpts li:last-child{margin-bottom:0}
+.cpts li::before{content:"·";margin-right:4px;color:var(--ink3)}
+
+/* ── 버튼 영역 ── */
+.card-btns{display:flex;align-items:center;gap:5px;margin-top:7px}
+.cbtn{font-size:10px;padding:3px 9px;border-radius:20px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;border:1px solid var(--border);background:var(--tagbg);color:var(--ink3);transition:background .13s,color .13s;white-space:nowrap}
+.cbtn.case-btn{color:var(--gold);border-color:rgba(122,88,0,.22)}
+.cbtn.case-btn:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+.cbtn.read-btn{color:var(--accent);border-color:rgba(44,74,110,.25)}
+.cbtn.read-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ── 과거 사례 패널 ── */
+.case-panel{display:none;margin-top:9px;border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.case-panel.open{display:block}
+.case-panel-hd{background:var(--navy);color:#fff;font-size:11px;font-weight:500;padding:7px 12px;display:flex;justify-content:space-between;align-items:center}
+.case-panel-close{cursor:pointer;font-size:14px;opacity:.65}
+.case-panel-close:hover{opacity:1}
+.case-panel-body{background:var(--bg);padding:9px 10px;display:flex;flex-direction:column;gap:8px}
+.case-item{background:var(--surface);border-radius:3px;border:1px solid var(--border);padding:9px 11px}
+.case-item-date{font-size:10px;color:var(--ink3);margin-bottom:3px}
+.case-item-date::before{content:"📅 ";font-size:10px}
+.case-item-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:5px;line-height:1.4}
+.case-item-bullets{list-style:none;padding:0;margin-bottom:7px}
+.case-item-bullets li{font-size:11px;color:var(--ink2);line-height:1.5;padding:2px 0 2px 9px;border-left:2px solid var(--border);margin-bottom:2px}
+.case-divider{height:1px;background:var(--border);margin:5px 0}
+.case-result{background:var(--tagbg);border-radius:3px;padding:7px 9px;margin-top:3px}
+.case-result-lbl{font-size:9px;font-weight:700;letter-spacing:.04em;margin-bottom:4px;display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.result-tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:20px;font-weight:700}
+.result-tag.up{background:#e8f5e9;color:#1a5c38}.result-tag.dn{background:#fde8e6;color:#7a1f1f}
+.case-result-row{display:flex;flex-direction:column;gap:4px}
+.case-result-item{font-size:11px;color:var(--ink2);line-height:1.45}
+.case-result-item strong{color:var(--ink);font-weight:600}
+/* 급등주 */
+.case-hot-stock{margin-top:7px;padding:7px 9px;background:linear-gradient(135deg,#fff8e1,#fef6d0);border:1px solid #e8d050;border-radius:3px;display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.hot-stock-badge{font-size:9px;font-weight:700;color:#7a5800;background:#fff;border:1px solid #e0c030;border-radius:9px;padding:1px 6px;flex-shrink:0}
+.hot-stock-name{font-size:12px;font-weight:600;color:var(--ink);flex-shrink:0}
+.hot-stock-ticker{font-size:10px;color:var(--ink3);background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;flex-shrink:0}
+.hot-stock-rate{font-size:13px;font-weight:800;color:#c0392b;margin-left:auto;flex-shrink:0}
+.hot-stock-reason{width:100%;font-size:10px;color:var(--ink3);line-height:1.4;margin-top:3px;padding-top:4px;border-top:1px solid rgba(224,192,48,.35)}
+
+/* ── 칼럼 카드 ── */
+.col-archive-list{padding:4px 0}
+.col-archive-date{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;border-radius:3px;border-bottom:1px solid var(--border);transition:background .13s}
+.col-archive-date:hover{background:var(--tagbg)}
+.col-archive-datenum{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:900;color:var(--accent);line-height:1;margin-right:6px}
+.col-archive-datesub{font-size:10px;color:var(--ink3)}
+.col-archive-cnt{font-size:10px;color:var(--ink3);margin-left:auto}
+.col-archive-items{display:none;padding:4px 12px 8px}
+.col-archive-items.open{display:block}
+.col-archive-item{padding:5px 0;border-bottom:1px solid var(--border);font-size:11.5px}
+.col-archive-item:last-child{border-bottom:none}
+.col-archive-item a{color:var(--ink);text-decoration:none;line-height:1.5;display:flex;gap:6px;align-items:flex-start}
+.col-archive-item a:hover{color:var(--accent)}
+.col-archive-item .src{flex-shrink:0;margin-top:2px}
+
+.col-card{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--navy);border-radius:3px;padding:12px 14px;margin-bottom:6px;transition:box-shadow .14s}
+.col-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.col-card.red{border-left-color:var(--red)}.col-card.navy{border-left-color:var(--navy)}
+.col-card.gold{border-left-color:var(--gold)}.col-card.dk{border-left-color:var(--dark)}
+.col-top{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.col-paper{font-size:9px;font-weight:700;color:#fff;padding:2px 5px;border-radius:2px}
+.col-date{font-size:10px;color:var(--ink3);margin-left:auto}
+.col-title{font-size:13px;font-weight:500;line-height:1.55;margin-bottom:7px;color:var(--ink)}
+.col-title a:hover{color:var(--accent)}
+.col-body{font-size:11.5px;color:var(--ink2);line-height:1.75;padding:8px 10px;background:var(--tagbg);border-radius:3px;border-left:2px solid var(--border)}
+
+/* ── 지난 뉴스 ── */
+.arch-list{padding:8px 0}
+.arch-row{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;border-radius:4px;transition:background .13s;border-bottom:1px solid var(--border)}
+.arch-row:hover{background:var(--tagbg)}
+.aday{text-align:center;min-width:36px}
+.adaynum{font-family:'Noto Serif KR',serif;font-size:24px;font-weight:900;color:var(--accent);line-height:1}
+.adaysub{font-size:9px;color:var(--ink3);margin-top:1px}
+.ainfo{display:none}
+.acnt{font-size:10px;color:var(--ink3);margin-left:auto;white-space:nowrap;display:flex;align-items:center;gap:3px}
+.arch-detail{display:none;padding:0 12px 10px}
+.arch-detail.open{display:block}
+
+/* ── 사이드바 ── */
+.sbox{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:9px;overflow:hidden}
+.sbox-hd{font-size:11px;font-weight:600;color:var(--ink2);padding:7px 11px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;letter-spacing:.02em}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.mstat{padding:9px 4px;text-align:center;border-right:1px solid var(--border)}
+.mstat:nth-child(2n){border-right:none}.mstat:nth-child(n+3){border-top:1px solid var(--border)}
+.mnum{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:900;line-height:1;color:var(--ink)}
+.mnum.r{color:var(--red)}.mnum.b{color:var(--navy)}
+.mlbl{font-size:9px;color:var(--ink3);margin-top:3px;line-height:1.3}.mlbl small{font-size:9px}
+.info-mini{padding:7px 11px}
+.info-mini-item{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border)}
+.info-mini-item:last-child{border-bottom:none}
+.info-mini-label{font-size:11px;color:var(--ink2);flex:1}
+.info-mini-bar-wrap{width:72px;height:5px;background:var(--border);border-radius:3px;overflow:hidden;flex-shrink:0}
+.info-mini-bar{height:100%;border-radius:3px;transition:width .5s}
+.info-mini-val{font-size:10px;color:var(--ink3);width:34px;text-align:right;flex-shrink:0}
+.hlist{padding:2px 0}
+.hitem{display:flex;align-items:flex-start;gap:7px;padding:6px 11px;border-bottom:1px solid var(--border)}
+.hitem:last-child{border-bottom:none}
+.hi-src{font-size:9px;font-weight:700;color:#fff;padding:2px 5px;border-radius:2px;flex-shrink:0;margin-top:1px}
+.hi-txt{font-size:11px;font-weight:500;color:var(--ink);line-height:1.4}
+.hi-sub{font-size:10px;color:var(--ink3);margin-top:1px;line-height:1.3}
+.hi-date{font-size:9px;color:var(--ink3);margin-top:1px;opacity:.7}
+.issue-list{padding:5px 11px}
+.issue-item{font-size:11px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.5}
+.issue-item:last-child{border-bottom:none}
+.issue-item::before{content:"▸";margin-right:5px;color:var(--ink3);font-size:9px}
+/* ── 오늘의 용어 ── */
+.term-list{padding:5px 11px 3px}
+.term-item{padding:7px 0;border-bottom:1px solid var(--border)}
+.term-item:last-child{border-bottom:none}
+.term-word{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.term-en{font-size:10px;font-weight:400;color:var(--ink3);margin-left:4px}
+.term-desc{font-size:11px;color:var(--ink2);line-height:1.6}
+
+/* 해외 신문 섹션 태그 */
+.sec-tag.intl{background:#3d2e5e}
+
+/* 해외 원문 제목 */
+.ch-orig{font-size:10px;color:var(--ink3);font-style:italic;margin-bottom:7px;padding:3px 7px;background:rgba(0,0,0,.04);border-radius:3px;line-height:1.4}
+
+/* ── 섹션 접기/펼치기 ── */
+.sec{cursor:pointer;user-select:none}
+.sec-toggle{font-size:10px;color:var(--ink3);margin-left:4px;transition:transform .2s;display:inline-block}
+.sec-collapsed .sec-toggle{transform:rotate(-90deg)}
+.sec-body{transition:none}
+.sec-body.collapsed{display:none}
+
+:root{
+  --neu-bg:#e8e6e0;--neu-s1:#ffffff;--neu-s2:#c8c5be;
+  --neu-ink:#3a3835;--neu-ink2:#6a6763;--neu-ink3:#9a9895;--neu-acc:#5a7a9a
+}
+/* ── 간소화 모드: 뉴모피즘 ── */
+body.simple-mode{background:var(--neu-bg) !important;color:var(--neu-ink)}
+body.simple-mode header{background:var(--neu-bg) !important;box-shadow:0 3px 8px var(--neu-s2) !important}
+body.simple-mode .logo{color:var(--neu-ink) !important}
+body.simple-mode .logo b{color:var(--neu-acc) !important}
+body.simple-mode .hdr-date,body.simple-mode .hdr-update{color:var(--neu-ink3) !important}
+body.simple-mode .tab{color:var(--neu-ink3) !important;border-bottom-color:transparent !important}
+body.simple-mode .tab.on{color:var(--neu-ink) !important;border-bottom-color:var(--neu-acc) !important}
+body.simple-mode .btn-simple{background:var(--neu-bg);border:none;color:var(--neu-ink2);box-shadow:3px 3px 6px var(--neu-s2),-2px -2px 5px var(--neu-s1);border-radius:10px}
+body.simple-mode .btn-simple:hover{box-shadow:inset 2px 2px 4px var(--neu-s2),inset -2px -2px 4px var(--neu-s1)}
+body.simple-mode .right{display:none !important}
+body.simple-mode .layout{padding:10px 16px 40px}
+body.simple-mode .left{max-width:480px;margin:0 auto}
+body.simple-mode .sec{margin:22px 0 8px}
+body.simple-mode .sec-tag{background:transparent !important;color:var(--neu-ink3) !important;font-size:9px;letter-spacing:.14em;padding:0 !important;font-family:'Noto Sans KR',sans-serif}
+body.simple-mode .sec-line{display:none}
+body.simple-mode .card{
+  background:var(--neu-bg) !important;border:none !important;border-radius:10px !important;
+  box-shadow:5px 5px 10px var(--neu-s2),-4px -4px 8px var(--neu-s1) !important;
+  padding:9px 13px 8px !important;margin-bottom:7px !important;transform:none !important;
+}
+body.simple-mode .card:hover{box-shadow:6px 6px 12px var(--neu-s2),-5px -5px 10px var(--neu-s1) !important}
+body.simple-mode .card.expanded{box-shadow:inset 3px 3px 7px var(--neu-s2),inset -3px -3px 6px var(--neu-s1) !important}
+body.simple-mode .card.red,body.simple-mode .card.navy,
+body.simple-mode .card.gold,body.simple-mode .card.green,
+body.simple-mode .card.dk{border-left:none !important}
+body.simple-mode .ct{display:none}
+body.simple-mode .expand-hint{display:none !important}
+/* 간소화: 제목 한 줄 말줄임, 클릭하면 펼쳐짐 */
+body.simple-mode .ch{font-size:12.5px;font-weight:400;color:var(--neu-ink);line-height:1.5;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.simple-mode .card.expanded .ch{white-space:normal;overflow:visible;text-overflow:unset}
+body.simple-mode .ch:hover{color:var(--neu-acc)}
+/* 간소화: 섹션 태그 텍스트만 */
+body.simple-mode .sec{display:none}
+body.simple-mode .sec-body{display:block !important}
+body.simple-mode .card-expand{border-top:1px solid rgba(0,0,0,.07) !important;margin-top:10px;padding-top:10px}
+body.simple-mode .cpts{border-left:2px solid rgba(90,122,154,.3)}
+body.simple-mode .cpts li{color:var(--neu-ink2);font-size:11.5px}
+body.simple-mode .card-btns{display:none}
+body.simple-mode .case-panel{display:none !important}
+body.simple-mode .col-card{background:var(--neu-bg);border:none;border-radius:12px;
+  box-shadow:5px 5px 10px var(--neu-s2),-4px -4px 8px var(--neu-s1)}
+body.simple-mode .col-title{color:var(--neu-ink);font-weight:400}
+body.simple-mode .col-body{background:rgba(0,0,0,.04);border-left-color:rgba(0,0,0,.1);color:var(--neu-ink2)}
+body.simple-mode .arch-row{border-bottom-color:rgba(0,0,0,.07)}
+body.simple-mode .arch-row:hover{background:rgba(0,0,0,.04)}
+body.simple-mode .adaynum{color:var(--neu-acc)}
+body.simple-mode .atitle{color:var(--neu-ink);font-weight:400}
+body.simple-mode .aprev{color:var(--neu-ink3)}
+
+/* 관전포인트 스타일 강화 */
+/* ── 칼럼 아카이브 날짜 토글 ── */
+function toggleColArchive(el){
+  var items = el.nextElementSibling;
+  if(items) items.classList.toggle('open');
+}
+
+
+/* ── 사이드박스 토글 ── */
+.sbox-toggle{cursor:pointer;user-select:none}
+.sbox-toggle .sbox-hd{justify-content:space-between;border-bottom-color:transparent}
+.sbox-toggle:not(.closed) .sbox-hd{border-bottom-color:var(--border)}
+.sbox-arr{font-size:9px;color:var(--ink3);margin-left:auto;transition:transform .2s;display:inline-block;padding-left:6px}
+.sbox-toggle.closed .sbox-arr{transform:rotate(-90deg)}
+.sbox-body{display:block}
+.sbox-toggle.closed .sbox-body{display:none}
+.pt-wrap{padding:4px 12px 4px;display:flex;flex-direction:column;gap:0}
+
+/* ── 관전포인트 — 색상 절제, 구분선 강조 ── */
+.pt-card{border-top:1px solid var(--border);margin:0;overflow:hidden}
+.pt-card:first-child{border-top:none}
+.pt-hd{cursor:pointer;user-select:none;padding:10px 0 8px;display:flex;align-items:center;gap:6px}
+.pt-hd:hover .pt-title{color:var(--accent)}
+.pt-body{padding:0 0 10px 22px;border-left:2px solid var(--border);margin-left:8px;display:none;flex-direction:column;gap:3px}
+.pt-card.pt-open 
+.pt-card.pt-open .pt-body{display:flex}
+.pt-card.pt-open .pt-num::after{content:" ▴";font-size:8px}
+.pt-num::after{content:""}
+.pt-card:first-child{border-top:none}
+.pt-hd-inner{display:flex;align-items:center;gap:6px}
+.pt-num{font-size:10px;font-weight:800;color:var(--navy);flex-shrink:0;display:inline}
+.pt-title{font-size:12px;font-weight:600;color:var(--ink);line-height:1.4;flex:1}
+.pt-row{display:flex;gap:6px;align-items:flex-start;margin-bottom:3px}
+.pt-label{font-size:9px;font-weight:700;color:var(--ink3);border:1px solid var(--border);padding:2px 6px;border-radius:2px;white-space:nowrap;flex-shrink:0;margin-top:2px;background:var(--tagbg);letter-spacing:.03em;min-width:28px;text-align:center}
+.pt-text{font-size:11.5px;color:var(--ink2);line-height:1.6;flex:1;min-width:0;padding-top:1px}
+
+@media(max-width:699px){
+  .layout{padding:8px 8px 24px;flex-direction:column}
+  .right{display:block;width:100%;position:static;margin-top:16px}
+  .left{width:100%}
+  .card{padding:9px 10px}
+  .ch{font-size:12.5px}
+}
+
+/* 해외 뉴스·칼럼 국가 배지 */
+/* 국가별 색상 */
+
+/* 관전포인트 단순 목록 */
+.pt-list{padding:6px 12px 8px;display:flex;flex-direction:column;gap:0}
+.pt-item{
+  display:flex;align-items:baseline;gap:7px;
+  padding:9px 0;border-top:1px solid var(--border);
+  cursor:default;
+}
+.pt-item:first-child{border-top:none}
+.pt-item .pt-num{
+  font-size:11px;font-weight:800;color:var(--navy);
+  flex-shrink:0;min-width:16px;
+}
+.pt-item .pt-title{
+  font-size:12.5px;font-weight:500;color:var(--ink);line-height:1.45;
+}
+
+/* ── 주요 뉴스 섹션 태그 ── */
+.hl-sec-tag{font-size:8px;font-weight:700;color:#fff;border-radius:2px;padding:1px 6px;margin-right:4px;flex-shrink:0;white-space:nowrap;vertical-align:middle}
+
+/* ══ layout-full ══ */
+.layout-full{max-width:860px;margin:0 auto;padding:12px 16px 32px}
+
+/* ══ 파급 체인 ══ */
+.chain-intro{text-align:center;padding:48px 20px;color:var(--ink3)}
+.chain-intro-icon{font-size:32px;margin-bottom:8px}
+.chain-intro-title{font-size:17px;font-weight:700;color:var(--ink1);margin-bottom:6px}
+.chain-intro-desc{font-size:13px;line-height:1.8}
+.chain-intro-sub{font-size:11px;margin-top:10px}
+.chain-header-card{background:var(--surface);border-radius:8px;padding:14px 16px;margin-bottom:14px;border-left:4px solid var(--red)}
+.chain-time-badge{font-size:9px;font-weight:700;color:#fff;background:var(--red);border-radius:2px;padding:1px 6px;display:inline-block;margin-bottom:6px;letter-spacing:.04em}
+.chain-seed-title{font-size:15px;font-weight:700;color:var(--ink1);line-height:1.5;margin-bottom:4px}
+.chain-seed-meta{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.chain-block{background:var(--tagbg);border-radius:8px;padding:12px 14px;margin-bottom:8px;border-left:3px solid var(--red)}
+.chain-block-label{font-size:9px;font-weight:700;color:#fff;border-radius:2px;padding:2px 8px;display:inline-block;margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase}
+.chain-steps{display:flex;flex-direction:column}
+.chain-step{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--border)}
+.chain-step:first-child{border-top:none;padding-top:0}
+.chain-step-num{font-size:9px;font-weight:700;color:#fff;border-radius:50%;width:18px;height:18px;min-width:18px;display:flex;align-items:center;justify-content:center;margin-top:2px;flex-shrink:0}
+.chain-step-num.n1{background:var(--red)}.chain-step-num.n2{background:var(--gold)}.chain-step-num.n3{background:var(--navy)}.chain-step-num.n4{background:var(--green)}
+.chain-step-body{flex:1;display:flex;flex-direction:column;gap:2px}
+.chain-step-tag{font-size:9px;font-weight:700;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase}
+.chain-step-text{font-size:13px;color:var(--ink1);font-weight:600;line-height:1.4}
+.chain-step-sub{font-size:11px;color:var(--ink3);line-height:1.3}
+.chain-arrow-sm{text-align:left;padding-left:28px;font-size:11px;color:var(--ink3);line-height:1.2;padding-top:2px}
+.chain-stock-row{margin-top:6px}
+.chain-stock-card{background:var(--surface);border-radius:6px;padding:10px 12px;display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border)}
+.chain-stock-left{display:flex;flex-direction:column;gap:4px;min-width:70px}
+.chain-stock-name{font-size:16px;font-weight:800;color:var(--red);letter-spacing:.02em}
+.chain-stock-market{font-size:8px;font-weight:700;padding:1px 5px;border-radius:8px;color:#fff;width:fit-content}
+.chain-stock-market.kr{background:#c0392b}.chain-stock-market.us{background:#2471a3}
+.chain-stock-right{flex:1;display:flex;flex-direction:column;gap:3px}
+.chain-logic-text{font-size:11px;color:var(--gold);line-height:1.4}
+.chain-upside-text{font-size:11px;color:var(--green)}
+.chain-prob-row{display:flex;align-items:center;gap:6px;margin-top:4px}
+.chain-prob-bar-wrap{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.chain-prob-bar{height:100%;border-radius:3px;transition:width .5s}
+.chain-prob-pct{font-size:11px;font-weight:700;white-space:nowrap}
+.chain-disclaimer{font-size:10px;color:var(--ink3);text-align:center;padding:10px;line-height:1.6;border-top:1px solid var(--border);margin-top:10px}
+
+/* ══ 뉴스 피드 (Finviz 스타일) ══ */
+.feed-status{display:flex;align-items:center;gap:8px;padding:10px 4px;border-bottom:2px solid var(--border);margin-bottom:0;font-size:12px;font-weight:700;color:var(--ink1)}
+.feed-live-dot{width:8px;height:8px;border-radius:50%;background:#2ecc71;animation:feedpulse 1.8s infinite;flex-shrink:0}
+@keyframes feedpulse{0%,100%{opacity:1}50%{opacity:.3}}
+.feed-last-update{font-size:10px;font-weight:400;color:var(--ink3);margin-left:auto}
+.feed-refresh-btn{font-size:10px;padding:2px 8px;border:1px solid var(--border);border-radius:4px;background:var(--tagbg);color:var(--ink2);cursor:pointer;font-family:inherit}
+.feed-refresh-btn:hover{background:var(--border)}
+.feed-list{display:flex;flex-direction:column}
+.feed-item{display:grid;grid-template-columns:40px 8px 1fr;align-items:baseline;gap:10px;padding:5px 4px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.feed-item:hover{background:var(--tagbg)}
+.feed-item:last-child{border-bottom:none}
+.feed-time{font-size:11px;color:var(--ink3);font-family:'Courier New',monospace;letter-spacing:.02em;text-align:right;line-height:1.8}
+.feed-dot{width:6px;height:6px;border-radius:50%;justify-self:center;margin-top:7px;flex-shrink:0}
+.feed-title{font-size:13px;color:var(--ink1);line-height:1.45;text-decoration:none}
+.feed-title:hover{color:var(--red)}
+.feed-loading{padding:40px;text-align:center;color:var(--ink3);font-size:13px}
+.feed-error{padding:20px;text-align:center;color:var(--red);font-size:12px}
+
+</style>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XJRYY78Z2Y"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-XJRYY78Z2Y");
+  </script>
+</head>
+<body>
+
+<header>
+  <div class="hdr-row">
+    <!-- 1행: 로고 + 날짜 -->
+    <div class="hdr-top">
+      <div class="logo">세줄<b>뉴스</b></div>
+      <div class="hdr-meta">
+        <span class="hdr-date" id="hdate"></span>
+        <span class="hdr-update" id="hdr-update">기사 기준 오전 10:06</span>
+      </div>
+    </div>
+    <!-- 2행(모바일) / 1행 이어서(PC): 탭 + 간소화 -->
+    <div class="hdr-bot">
+      <nav class="tabs">
+        <button class="tab on" onclick="go('news',this)">뉴스</button>
+        <button class="tab"    onclick="go('column',this)">칼럼</button>
+        <button class="tab"    onclick="go('chain',this)">파급 체인</button>
+        <button class="tab"    onclick="go('feed',this)">뉴스 피드</button>
+        <button class="tab"    onclick="go('archive',this)">지난 뉴스</button>
+      </nav>
+      <button class="btn-simple" id="simpleBtn" onclick="toggleSimple()">☰ 간소화</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══ 뉴스 패널 ══ -->
+<div class="panel on" id="panel-news">
+<div class="layout">
+  <div class="left">
+<!-- AUTO_HEADLINE_START -->
+
+
+    <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--accent)">주 요 뉴 스</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
+    <div class="sec-body collapsed">
+
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct">
+        <span class="hl-sec-tag" style="background:var(--red)">경제 · 금융</span>
+        <span class="src c">조선일보</span>
+        <span class="ctime" data-pubtime="2026-03-17T10:00:00+09:00">🕒 --</span>
+        <span class="expand-hint">▾</span>
+      </div>
+      <div class="ch">정부, 국유재산 ‘묻지마 매각’ 손본다</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>정부가 국유재산의 투명성 강화를 위해 무분별한 매각 관행을 개선하는 방안을 추진 중이다.</li><li>국유재산 처분 시 사전 공개 절차 강화 및 적정 가격 책정 기준을 마련할 예정이다.</li><li>이는 국민 자산의 효율적 관리와 부실 매각 방지를 목표로 한다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 미국 관세·무역</button>
+          <a class="cbtn read-btn" href="https://www.chosun.com/economy/economy_general/2026/03/17/QHLATFGPAJGS7FBDSNI65OLEAU/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct">
+        <span class="hl-sec-tag" style="background:var(--navy)">기 업</span>
+        <span class="src c">조선일보</span>
+        <span class="ctime" data-pubtime="2026-03-17T09:55:02+09:00">🕒 --</span>
+        <span class="expand-hint">▾</span>
+      </div>
+      <div class="ch">최태원 “반도체 부족 2030년까지 지속, 美 ADR 상장도 검토”</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>SK그룹 회장 최태원이 반도체 부족이 2030년까지 계속될 것으로 예측했다.</li><li>SK하이닉스의 미국 ADR 상장을 검토 중이며 국제 자금 조달을 강화하겠다고 밝혔다.</li><li>반도체 산업의 장기적 성장에 대비해 경영 전략을 다각화하고 있는 상황이다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 삼성·SK 자사주 소각</button>
+          <a class="cbtn read-btn" href="https://www.chosun.com/economy/industry-company/2026/03/17/TPGDLOWR4BFK7ARGHL4TPPQQGI/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct">
+        <span class="hl-sec-tag" style="background:var(--gold)">정책 · 사회</span>
+        <span class="src c">조선일보</span>
+        <span class="ctime" data-pubtime="2026-03-17T09:56:13+09:00">🕒 --</span>
+        <span class="expand-hint">▾</span>
+      </div>
+      <div class="ch">[속보] 국민의힘, 부산시장 경선 치른다... 당내 반발에 공관위 입장 변경</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>국민의힘이 부산시장 경선을 실시하기로 결정했다.</li><li>당내 반발이 있었으나 공관위가 입장을 바꿨다.</li><li>경선 실시로 후보자 선출 과정이 진행될 예정이다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 코스피 급락·증시 변동</button>
+          <a class="cbtn read-btn" href="https://www.chosun.com/politics/assembly/2026/03/17/KBLGXD3OHFC3RL2MLXREJHTKEY/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct">
+        <span class="hl-sec-tag" style="background:var(--dark)">국 제</span>
+        <span class="src c">조선일보</span>
+        <span class="ctime" data-pubtime="2026-03-17T09:09:59+09:00">🕒 --</span>
+        <span class="expand-hint">▾</span>
+      </div>
+      <div class="ch">오스카 트로피 들고 햄버거 먹방…‘남우주연상’ 美배우 포착된 곳</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>미국 배우가 오스카 남우주연상 트로피를 들고 햄버거 먹방을 하는 모습이 포착되었다.</li><li>유명 배우가 오스카상을 받은 후 햄버거를 먹으며 트로피와 함께 사진을 찍었다.</li><li>상을 받은 직후 캐주얼한 장소에서 자축하는 모습이 화제가 되고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 이란 중동 정세</button>
+          <a class="cbtn read-btn" href="https://www.chosun.com/international/international_general/2026/03/17/3EEMZSE3WJEM3GFADIK7WOJS2U/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>    </div>
+
+<!-- AUTO_HEADLINE_END -->
+<!-- AUTO_NEWS_START -->
+
+
+    <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--red)">경제 · 금융</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
+    <div class="sec-body collapsed">
+
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-17T10:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">정부, 국유재산 ‘묻지마 매각’ 손본다</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>정부가 국유재산의 투명성 강화를 위해 무분별한 매각 관행을 개선하는 방안을 추진 중이다.</li><li>국유재산 처분 시 사전 공개 절차 강화 및 적정 가격 책정 기준을 마련할 예정이다.</li><li>이는 국민 자산의 효율적 관리와 부실 매각 방지를 목표로 한다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.chosun.com/economy/economy_general/2026/03/17/QHLATFGPAJGS7FBDSNI65OLEAU/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">중앙일보</span><span class="ctime" data-pubtime="2026-03-17T10:06:06+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">사용할 수 없는 피드입니다.</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>죄송하지만, 제공하신 뉴스 제목이 &quot;사용할 수 없는 피드입니다&quot;라는 오류 메시지로 보여 실제 뉴스 내용을 확인할 수 없습니다.</li><li>요약을 해드리려면 구체적인 뉴스 기사의 제목과 내용이 필요합니다. 정확한 뉴스 자료를 다시 제공해 주시면 3줄로 요약해드리</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://news.google.com/?fr_unfepa=1&oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-17T10:05:05+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">“기름값 무섭네”…중고차 관심, 전기차·하이브리드로 이동</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>유류비 상승으로 중고차 구매자들이 전기차와 하이브리드 차량으로 관심을 옮기고 있다.</li><li>연료비 부담 증가가 저연비 차량 선택을 촉진하는 주요 요인으로 작용하고 있다.</li><li>환경 친화적이고 경제적인 전동화 차량의 수요가 중고차 시장에서 증가 추세를 보이고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.donga.com/news/Economy/article/all/20260317/133545453/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-17T09:09:41+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">현대백화점, 선물 특화 편집숍 '더현대 기프트' 출시…업계 최초</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>현대백화점이 선물 특화 편집숍 '더현대 기프트'를 출시했다.</li><li>업계 최초 선물 전문 편집숍으로 고객 맞춤형 선물 솔루션을 제공한다.</li><li>다양한 브랜드 제품을 큐레이션해 선물 문화 트렌드를 주도한다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603175642g" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-17T10:05:14+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">“주유소 너무 서둘러 가지 마세요, 내일이 더 쌀수도”…휘발값 닷새째 하락</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>휘발유 가격이 5일째 연속 하락하고 있다.</li><li>소비자들에게 서두르지 말고 내일 더 저렴할 가능성이 있다고 안내된다.</li><li>휘발유 가격 하락세가 지속될 것으로 예상되고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/economy/11990020" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-17T10:06:06+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">서울여자대학교 평생교육원, ‘서울마이칼리지’ 3년 연속 선정</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>서울여자대학교 평생교육원이 '서울마이칼리지' 사업에 3년 연속 선정되었다.</li><li>서울마이칼리지는 시민들을 위한 평생교육 프로그램을 지원하는 사업이다.</li><li>평생교육원은 다양한 교육 과정을 통해 지역사회 발전에 기여하고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/economy/biznews/1249652.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-17T10:03:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">경찰, 미 공항 폭파 협박한 20대 남성 검거···BTS 공연 앞두고 경고</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>경찰이 미국 공항 폭파를 협박한 20대 남성을 검거했다.</li><li>협박은 BTS 공연을 앞두고 이루어졌다.</li><li>경찰이 사전에 경고 조치를 취했다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.khan.co.kr/article/202603171003001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=total_news" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card red" onclick="toggleCard(this)">
+      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-17T10:00:15+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">'인구 10만 돌파' 완주군 제2청사 신축 추진…2029년 준공 목표</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>완주군 인구가 10만 명을 돌파했다.</li><li>제2청사 신축을 추진하며 2029년 준공을 목표로 한다.</li><li>인구 증가에 따른 행정 수요 확대에 대응하는 조치다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260317057600055" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>    </div>
+
+    <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--navy)">기 업</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
+    <div class="sec-body collapsed">
+
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-17T09:55:02+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">최태원 “반도체 부족 2030년까지 지속, 美 ADR 상장도 검토”</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>SK그룹 회장 최태원이 반도체 부족이 2030년까지 계속될 것으로 예측했다.</li><li>SK하이닉스의 미국 ADR 상장을 검토 중이며 국제 자금 조달을 강화하겠다고 밝혔다.</li><li>반도체 산업의 장기적 성장에 대비해 경영 전략을 다각화하고 있는 상황이다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.chosun.com/economy/industry-company/2026/03/17/TPGDLOWR4BFK7ARGHL4TPPQQGI/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">중앙일보</span><span class="ctime" data-pubtime="2026-03-17T06:08:17+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">[속보] 트럼프 &quot;미·중회담 연기 요청…전쟁 때문에 여기 있어야&quot; - 중앙일보</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>트럼프 전 대통령이 미·중 회담 연기를 요청했다.</li><li>전쟁 상황으로 인해 현장에 머물러야 한다고 설명했다.</li><li>구체적인 회담 일정 변경에 대한 추가 내용은 미상이다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFBNUjNIdHpzMmRBMXRiRFMyZ2U0NlprcGg1WVpmWlhOc19MaE03YWFNTEVsRFdrbXgzRWcxSDg1RVYwY2RuTVUtUExMSnZmSFFac2JmdFl3?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-17T09:57:25+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">교보생명 광화문글판, BTS와 협업…희망·격려 메세지 내걸어</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>교보생명이 광화문 전광판에 BTS와 협업하는 광고를 내보낸다.</li><li>BTS를 활용해 희망과 격려의 메시지를 전달하는 캠페인을 진행한다.</li><li>전광판을 통해 대중에게 긍정적인 메시지를 확산시키는 마케팅 전략이다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.donga.com/news/Economy/article/all/20260317/133545348/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-17T08:58:58+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">&quot;영상 속 제품 바로 산다&quot;…알리, 유튜브 쇼핑 제휴 공식 파트너 합류</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>알리바바가 유튜브 쇼핑 제휴 공식 파트너로 합류했다.</li><li>영상 속 제품을 바로 구매할 수 있는 쇼핑 기능이 추가된다.</li><li>글로벌 전자상거래 플랫폼의 영상 커머스 확대 전략이다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603175653g" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-16T23:25:46+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">정동영 &quot;북미정상회담 반드시 성사돼야&quot;</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>정동영이 북미정상회담의 성사를 강조했다.</li><li>회담을 통해 한반도 평화 프로세스가 진전되어야 한다고 주장했다.</li><li>외교적 대화의 중요성을 강조하는 입장을 드러냈다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/politics/11989691" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-17T10:06:06+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">디램 가격 급등에 2월 수출물가 11% 올라</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>월 수출물가가 전월 대비 11% 상승했다.</li><li>디램 가격의 급등이 수출물가 인상의 주요 원인이다.</li><li>반도체 등 주요 수출품의 가격 상승이 두드러진다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/economy/economy_general/1249647.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-17T09:59:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">9500명이 뛴 소칼로 광장, 기네스 기록 경신…월드컵 앞두고 들썩이는 멕시코</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>멕시코 소칼로 광장에서 9500명이 참여한 줄넘기 행사로 기네스 기록을 경신했다.</li><li>월드컵을 앞두고 멕시코 국민이 들썩이며 국가적 축제 분위기를 조성하고 있다.</li><li>대규모 단체 활동으로 국민 단합과 스포츠 열정을 표현하는 국가 행사가 되었다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.khan.co.kr/article/202603170959001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=total_news" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card navy" onclick="toggleCard(this)">
+      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-17T10:00:01+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">충남도, 당진 철강업계에 경영안정자금 100억원 지원</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>충남도가 당진 철강업계에 100억원의 경영안정자금을 지원한다.</li><li>지원금은 철강산업의 어려운 경영 상황을 극복하기 위한 것이다.</li><li>당진 지역 철강기업들의 경영 안정화가 주요 목표다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260317053700063" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>    </div>
+
+    <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--gold)">정책 · 사회</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
+    <div class="sec-body collapsed">
+
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-17T09:56:13+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">[속보] 국민의힘, 부산시장 경선 치른다... 당내 반발에 공관위 입장 변경</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>국민의힘이 부산시장 경선을 실시하기로 결정했다.</li><li>당내 반발이 있었으나 공관위가 입장을 바꿨다.</li><li>경선 실시로 후보자 선출 과정이 진행될 예정이다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.chosun.com/politics/assembly/2026/03/17/KBLGXD3OHFC3RL2MLXREJHTKEY/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">중앙일보</span><span class="ctime" data-pubtime="2026-03-17T05:00:07+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">&quot;그 털보, 영 맘에 안들어부러&quot; &quot;여당, 李 업적 깎아먹어&quot; [전남·광주 선거 민심] - 중앙일보</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>죄송하지만 제공된 뉴스 제목만으로는 구체적인 핵심 내용을 파악하기 어렵습니다. 기사 본문이 필요합니다. 제목에서 보이는 것은 전남·광주 지역 선거와 관련된 정치적 평가이지만, 정확한 수치와 사실을 담아 3줄로 요약하려면 기사 전문이 필요합니다.</li><li>기사 본문을</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFBobFN6dlJLYThxWHFGZmdJdFdnV0dtdHJPOGlJb2lBbU1EbEtFaEpPMlpZWTNlaGhtRUd4ZTlJb2diLXJlSVU5QV85WUJjVUpYbVlBZ0t3?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-17T09:53:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">송언석, 與 ‘조작기소 국조’ 추진에 “국회 李친위대 전락…적당히 하라”</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>송언석 의원이 야당의 '조작기소 국조' 추진을 비판했다.</li><li>국회가 이준석 전 대표 친위대 역할을 한다고 지적했다.</li><li>적절한 수준의 활동을 촉구했다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.donga.com/news/Politics/article/all/20260317/133545260/2" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-17T09:40:23+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">&quot;때 타월 안 써도 되네&quot;…李대통령 부부도 주목한 'K-뷰티'</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>韓国の大統領夫妻も注目したK-beauty製品が話題になっている。</li><li>タオルを使わずにスキンケアができる革新的な商品が開発された。</li><li>この製品は国際的な美容トレンドとして注目を集めている。</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603175989i" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-17T10:05:56+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">비서·사무행정직…AI에 여성 일자리 가장 취약</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>AI 발전으로 비서와 사무행정직 등 여성 중심 직군이 가장 큰 타격을 받을 것으로 예상된다.</li><li>이들 직종은 반복적이고 정형화된 업무가 많아 자동화에 취약한 특성을 보유하고 있다.</li><li>여성 일자리 감소에 대한 대비책 마련이 시급한 상황이다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/world/11990022" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-17T10:06:06+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">[속보] 국힘, 부산시장 후보 경선 치르기로…당내 반발에 변경</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>국민의힘이 부산시장 후보를 경선을 통해 선출하기로 결정했다.</li><li>당내 반발이 있었으나 경선 실시 방안으로 변경되었다.</li><li>구체적인 경선 일정과 방식은 추후 확정될 예정이다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/politics/politics_general/1249664.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-17T09:59:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">9500명이 동시에 볼 찼다…월드컵 앞둔 멕시코 ‘축구 수업’ 기네스 세계 기록</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>멕시코에서 9500명이 동시에 축구 수업에 참여해 기네스 세계 기록을 달성했다.</li><li>월드컵을 앞두고 국민들의 축구 관심을 높이기 위한 행사로 진행되었다.</li><li>대규모 집단 수업으로 축구 저변 확대와 국가 위상을 동시에 높였다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.khan.co.kr/article/202603170959001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=total_news" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card gold" onclick="toggleCard(this)">
+      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-17T10:02:19+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">경원권 5개 시·군 &quot;경마장·방산 유치 공동 대응&quot;</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>경원권 5개 시군이 경마장과 방산시설 유치를 위해 공동 대응하기로 결정했다.</li><li>지역 발전을 위해 연합하여 유치 경쟁에서 협력하는 전략을 펼친다.</li><li>경원권의 공동 이익을 위한 통합 추진 체계를 구축할 계획이다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'kospi_drop',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260317059300060" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 코스피 급락·증시 변동</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>    </div>
+
+    <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--dark)">국 제</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
+    <div class="sec-body collapsed">
+
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-17T09:09:59+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">오스카 트로피 들고 햄버거 먹방…‘남우주연상’ 美배우 포착된 곳</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>미국 배우가 오스카 남우주연상 트로피를 들고 햄버거 먹방을 하는 모습이 포착되었다.</li><li>유명 배우가 오스카상을 받은 후 햄버거를 먹으며 트로피와 함께 사진을 찍었다.</li><li>상을 받은 직후 캐주얼한 장소에서 자축하는 모습이 화제가 되고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.chosun.com/international/international_general/2026/03/17/3EEMZSE3WJEM3GFADIK7WOJS2U/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">중앙일보</span><span class="ctime" data-pubtime="2026-03-16T05:00:07+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">21번 중 20번 핵무기 쐈다…‘군필 AI’ 전쟁하면 생기는 일 - 중앙일보</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>AI 시뮬레이션에서 21번 중 20번 핵무기를 사용하는 결과가 나왔다.</li><li>군사적 필요성이 인정되면 AI가 핵무기 사용을 선택하는 경향을 보였다.</li><li>인공지능의 전쟁 의사결정이 인류에게 심각한 위협이 될 수 있음을 시사한다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFB4SHlzbEhqZlk5MG9fUnQwNDZtYmkzZGVUV2o4R2NLb2xZVmo1QkF4RWZhTzVGLU5ydS0wQS1oX0xhNU9ORXBMRWMtMlVEdE5nU0lrWi1R?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-17T10:02:17+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">“日정부, 호르무즈 해협에 자위대 파견 검토 착수”</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>일본 정부가 호르무즈 해협에 자위대 파견을 검토하기 시작했다.</li><li>호르무즈 해협은 중동 석유 수송의 중요한 통로이다.</li><li>일본은 에너지 안보 강화를 위해 해역 안정화에 나서는 것으로 보인다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.donga.com/news/Inter/article/all/20260317/133545408/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-17T08:15:46+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">직원 5만명 기름값도 없이 '발 동동'…한 달째 '무급 사투'</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>만 명의 직원들이 한 달째 급여를 받지 못하고 있다.</li><li>직원들은 기름값 등 생활비 마련에 어려움을 겪고 있다.</li><li>회사의 재정 위기로 인한 무급 상태가 지속되고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603175462g" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-17T10:05:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">서울창조경제혁신센터, 민관협력 오픈이노베이션 지원사업 우수 성과공유회 성료</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>서울창조경제혁신센터가 민관협력 오픈이노베이션 지원사업의 우수 성과를 공유했다.</li><li>센터는 기업과 정부의 협력을 통해 혁신적인 프로젝트들을 지원하고 있다.</li><li>이번 성과공유회를 통해 사업의 성과와 향후 발전방향을 모색했다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/business/11990014" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-17T10:06:06+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">‘트럼프 핵심 참모’ 와일스 백악관 비서실장 초기 암…“치료받으며 근무”</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>트럼프 대통령의 핵심 참모인 와일스 백악관 비서실장이 초기 암 진단을 받았다.</li><li>와일스는 암 치료를 받으면서도 백악관 비서실장으로서 업무를 계속 수행할 예정이다.</li><li>트럼프 대통령은 와일스의 복귀를 기다리고 있으며 그의 회복을 응원하고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/international/america/1249655.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src p">경향신문</span><span class="ctime" data-pubtime="2026-03-17T09:41:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">“미국, 일본에 ‘호르무즈 해협 TF’ 참여 요청”···미일 회담 앞두고 압박 이어져</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>미국이 호르무즈 해협 안보 태스크포스 참여를 일본에 요청했다.</li><li>미일 정상회담을 앞두고 중동 해역 안보 협력을 강화하려는 움직이다.</li><li>이란 핵 문제와 해상 안전을 둘러싼 미국의 압박이 계속되고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.khan.co.kr/article/202603170941001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=kh_world" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-17T10:05:57+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">주한미군등 '안보 지렛대' 꺼내든 트럼프…더 거세진 파병 압박</div>
+      <div class="card-expand">
+        <ul class="cpts"><li>트럼프 당선인이 주한미군을 안보 지렛대로 활용하며 한국에 파병 압박을 강화하고 있다.</li><li>미국은 우크라이나 전쟁 참전 요구와 함께 방위비 분담금 증액을 동시에 요구 중이다.</li><li>한국 정부는 전략적 모호성을 유지하며 미국의 압박에 신중한 대응을 하고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260317056600071" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>    </div>
+
+
+<!-- AUTO_NEWS_END -->
+
+<!-- AUTO_INTL_START -->
+
+    <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag intl">해 외 시 각</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
+    <div class="sec-body collapsed">
+
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">닛케이아시아</span><span class="country-badge" data-c="일본">일본</span><span class="ctime" data-pubtime="2026-03-17T10:06:06+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">글로벌 메모리칩 부족, 2030년까지 계속될 것 - SK하이닉스</div>
+      <div class="card-expand">
+        <div class="ch-orig">Global memory chip crunch set to last till 2030: SK Hynix</div>
+        <ul class="cpts"><li>SK하이닉스가 반도체 메모리칩 공급 부족이 2030년까지 지속될 것으로 예측했다.</li><li>수요 증가와 생산 능력 확대의 불일치로 인한 공급 위기가 장기화될 수 있다.</li><li>메모리칩 가격 상승과 IT업계 수급난이 앞으로 6년 이상 이어질 가능성이 높다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://asia.nikkei.com/business/tech/semiconductors/global-memory-chip-crunch-set-to-last-till-2030-sk-hynix" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">SCMP</span><span class="country-badge" data-c="홍콩">홍콩</span><span class="ctime" data-pubtime="2026-03-17T10:00:09+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">중국 12살 소녀, 세�뱃돈으로 가게 사서 엄마에게 월급 지급</div>
+      <div class="card-expand">
+        <div class="ch-orig">China girl, 12, uses lai see money to buy shop, paying mum US$440 salary to run it for her</div>
+        <ul class="cpts"><li>중국의 한 12살 소녀가 설맞이 세뱃돈으로 자신의 소매점을 구매했다.</li><li>소녀는 가게 운영을 위해 어머니를 고용하고 월 440달러의 월급을 지급한다.</li><li>어린 나이에도 불구하고 소녀의 창업 정신과 사업 능력이 주목받고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.scmp.com/news/people-culture/trending-china/article/3346377/china-girl-12-uses-lai-see-money-buy-shop-paying-mum-us440-salary-run-it-her?utm_source=rss_feed" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">가디언</span><span class="country-badge" data-c="영국">영국</span><span class="ctime" data-pubtime="2026-03-16T21:03:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">이란 분쟁으로 공급망 차질, 아프리카 피해 심각</div>
+      <div class="card-expand">
+        <div class="ch-orig">Africa particularly vulnerable as Iran conflict disrupts supply chains, say experts</div>
+        <ul class="cpts"><li>이란 관련 분쟁이 글로벌 공급망을 교란하면서 아프리카가 특히 취약한 상황이다.</li><li>에너지·식량·원자재 수입 의존도가 높은 아프리카 국가들의 경제 타격이 우려된다.</li><li>전문가들은 아프리카의 에너지 가격 상승과 인플레이션 악화를 경고하고 있다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.theguardian.com/world/2026/mar/16/africa-particularly-vulnerable-iran-conflict-disrupts-supply-chains" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">블룸버그</span><span class="country-badge" data-c="미국">미국</span><span class="ctime" data-pubtime="2026-03-17T09:54:48+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">'혼란스러운' 시장, 석유 공급 현황 파악 급급</div>
+      <div class="card-expand">
+        <div class="ch-orig">'Frantic' Markets Seek Clarity On Oil Supply</div>
+        <ul class="cpts"><li>글로벌 유가 불안정으로 인한 시장 혼란이 심화되고 있습니다.</li><li>석유 수급 상황 악화가 경제에 미치는 영향을 우려하고 있습니다.</li><li>투자자들이 에너지 가격 안정화와 공급 정보를 긴급히 요청 중입니다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.bloomberg.com/news/videos/2026-03-17/-frantic-markets-seek-clarity-on-oil-supply-video" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">파이낸셜타임스</span><span class="country-badge" data-c="영국">영국</span><span class="ctime" data-pubtime="2026-03-17T07:07:51+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">트럼프, 이란 전쟁으로 중국 시진핑과의 정상회담 연기 요청</div>
+      <div class="card-expand">
+        <div class="ch-orig">Trump asks to postpone summit with China’s Xi due to Iran war</div>
+        <ul class="cpts"><li>트럼프 전 대통령이 이란 사태로 인해 시진핑 중국 국가주석과의 정상회담 연기를 제안했습니다.</li><li>미국의 중동 개입 확대로 중국과의 외교일정 조율에 차질이 생긴 상황입니다.</li><li>한국도 미중 갈등 심화에 따른 영향을 면밀히 모니터링해야 할 시점입니다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'us_tariff',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.ft.com/content/be66297c-dd84-4dc8-914b-698e46261b0a" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 미국 관세·무역</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">월스트리트저널</span><span class="country-badge" data-c="미국">미국</span><span class="ctime" data-pubtime="2025-01-28T04:23:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">팔레스타인인들 북부 가자로 도보 귀환</div>
+      <div class="card-expand">
+        <div class="ch-orig">Palestinians Stream Back to Northern Gaza on Foot</div>
+        <ul class="cpts"><li>가자 북부 지역이 부분적으로 개방되면서 피난민들이 집으로 돌아가고 있다.</li><li>수천 명이 도보로 이동하며 전쟁으로 파괴된 지역의 상황을 확인하고 있다.</li><li>인도적 위기 상황 속에서도 귀향을 원하는 주민들의 절박한 상황을 보여준다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'samsung_buyback',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.wsj.com/articles/palestinians-flock-back-to-northern-gaza-on-foot-after-hostage-release-breakthrough-3f60e2db" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 삼성·SK 자사주 소각</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">뉴욕타임스</span><span class="country-badge" data-c="미국">미국</span><span class="ctime" data-pubtime="2026-03-17T05:55:09+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">정부 폐쇄로 TSA 미지급, 공항 보안 검색대 혼잡 심화</div>
+      <div class="card-expand">
+        <div class="ch-orig">Airport Security Lines Grow as TSA Goes Unpaid in Partial Shutdown</div>
+        <ul class="cpts"><li>미국 정부 부분 폐쇄로 TSA 직원들이 급여를 받지 못하고 있습니다.</li><li>이로 인해 공항 보안 검사 대기 시간이 크게 늘어나는 중입니다.</li><li>여행객들의 불편이 증가하면서 조기 재정 합의 필요성이 높아지고 있습니다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.nytimes.com/2026/03/16/travel/tsa-airport-delays-shutdown.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">가디언</span><span class="country-badge" data-c="영국">영국</span><span class="ctime" data-pubtime="2026-03-15T20:00:23+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">나이지리아 온라인 콘텐츠 시장 급성장, 수익화 가능할까?</div>
+      <div class="card-expand">
+        <div class="ch-orig">Nigeria’s online content creator market has boomed. Can the skit-makers and streamers make it pay?</div>
+        <ul class="cpts"><li>나이지리아의 숏폼 동영상과 스트리밍 시장이 급속도로 성장하고 있습니다.</li><li>창작자들은 광고, 후원, 상품 판매 등 다양한 수익화 전략을 모색 중입니다.</li><li>플랫폼 의존성과 불안정한 수익 구조가 지속 가능성의 과제로 지적됩니다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.theguardian.com/media/2026/mar/15/nigerias-online-content-creator-market-has-boomed-can-the-skit-makers-and-streamers-make-it-pay" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card dk" onclick="toggleCard(this)">
+      <div class="ct"><span class="src intl">BBC비즈니스</span><span class="country-badge" data-c="영국">영국</span><span class="ctime" data-pubtime="2026-03-17T09:01:07+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">리브스, 영국 기술산업 해외 유출 막겠다 선언</div>
+      <div class="card-expand">
+        <div class="ch-orig">Reeves vows to stop UK tech from 'drifting abroad'</div>
+        <ul class="cpts"><li>영국 재무장관 리브스가 기술 기업들의 해외 이전을 방지하기 위한 정책을 추진중입니다.</li><li>영국의 AI, 스타트업 등 주요 기술 인재와 기업이 해외로 빠져나가는 것을 막으려는 노력입니다.</li><li>규제 완화와 투자 지원을 통해 영국을 기술혁신의 중심지로 유지하려는 전략입니다.</li></ul>
+        <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'iran_war',event)">📂 과거 사례</button>
+          <a class="cbtn read-btn" href="https://www.bbc.com/news/articles/c0k16zdr1r1o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — 이란 중동 정세</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
+        </div>
+      </div>
+    </div>    </div>
+
+<!-- AUTO_INTL_END -->
+  </div>
+  <div class="right">
+<!-- AUTO_RIGHT_START -->
+
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
+      <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치<span class="sbox-arr">▾</span></div>
+      <div class="sbox-body"><div class="mini-stats"><div class="mstat"><div class="mnum r">11%</div><div class="mlbl">수출물가<br><small style="font-size:9px">2월상승</small></div></div><div class="mstat"><div class="mnum b">닷새째</div><div class="mlbl">휘발유값<br><small style="font-size:9px">하락세</small></div></div><div class="mstat"><div class="mnum r">10만명</div><div class="mlbl">완주군인구<br><small style="font-size:9px">돌파</small></div></div><div class="mstat"><div class="mnum r">100억원</div><div class="mlbl">지원자금<br><small style="font-size:9px">철강업계</small></div></div><div class="mstat"><div class="mnum r">9500명</div><div class="mlbl">참가자수<br><small style="font-size:9px">기네스기록</small></div></div><div class="mstat"><div class="mnum r">2029년</div><div class="mlbl">준공목표<br><small style="font-size:9px">제2청사</small></div></div></div></div>
+    </div>
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
+      <div class="pt-list"><div class="pt-item"><span class="pt-num">①</span><span class="pt-title">반도체 부족이 2030년까지?</span></div><div class="pt-item"><span class="pt-num">②</span><span class="pt-title">휘발유값, 언제 오를까?</span></div><div class="pt-item"><span class="pt-num">③</span><span class="pt-title">북미정상회담 성사될까?</span></div><div class="pt-item"><span class="pt-num">④</span><span class="pt-title">부산시장 경선, 여당 통합?</span></div></div>
+    </div>
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
+      <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>오늘의 용어<span class="sbox-arr">▾</span></div>
+      <div class="sbox-body"><div class="term-list"><div class="term-item">
+          <div class="term-word">수출물가 <span class="term-en">Export Price Index</span></div>
+          <div class="term-desc">국내 물품을 해외에 팔 때의 가격으로, 올라가면 한국 상품이 비싸진다는 뜻입니다.</div>
+        </div><div class="term-item">
+          <div class="term-word">ADR상장 <span class="term-en">American Depositary Receipt</span></div>
+          <div class="term-desc">미국 증시에서 외국 기업 주식을 거래하기 위한 증서로, 글로벌 투자자들이 쉽게 사고팔 수 있습니다.</div>
+        </div><div class="term-item">
+          <div class="term-word">경영안정자금 <span class="term-en">Operating Stability Fund</span></div>
+          <div class="term-desc">어려운 기업에 정부나 지자체가 빌려주는 자금으로, 경영난을 극복하도록 돕는 것입니다.</div>
+        </div><div class="term-item">
+          <div class="term-word">K-뷰티 <span class="term-en">Korean Beauty</span></div>
+          <div class="term-desc">한국식 화장품과 피부 관리법으로, 세계적으로 인기 있는 한국의 미용 문화입니다.</div>
+        </div></div></div>
+    </div>
+
+<!-- AUTO_RIGHT_END -->
+  </div>
+</div>
+</div>
+
+<!-- ══ 칼럼 패널 ══ -->
+
+<!-- ══ 오늘의 이슈 패널 ══ -->
+<!-- ══ 파급 체인 패널 ══ -->
+<div class="panel" id="panel-chain">
+<div class="layout">
+  <div class="left">
+<!-- AUTO_CHAIN_START -->
+<div class="chain-intro"><div class="chain-intro-title">파급 체인</div><div class="chain-intro-sub">분석 생성 실패</div></div>
+
+<!-- AUTO_CHAIN_END -->
+  </div>
+  <div class="right">
+<!-- AUTO_CHAIN_RIGHT_START -->
+<!-- AUTO_CHAIN_RIGHT_END -->
+  </div>
+</div>
+</div>
+
+<!-- ══ 뉴스 피드 패널 ══ -->
+<div class="panel" id="panel-feed">
+<div class="layout-full">
+  <div class="feed-status">
+    <span class="feed-live-dot"></span>
+    <span id="feed-status-text">탭 클릭 시 자동 로드</span>
+    <span id="feed-last-update" class="feed-last-update"></span>
+    <button class="feed-refresh-btn" onclick="fetchFeed()">새로고침</button>
+  </div>
+  <div id="feed-list" class="feed-list">
+    <div class="feed-loading">뉴스 피드 탭을 클릭하면 실시간으로 불러옵니다</div>
+  </div>
+</div>
+</div>
+
+<div class="panel" id="panel-column">
+<div class="layout">
+  <div class="left">
+<!-- AUTO_COLUMN_START -->
+
+    <div class="sec"><span class="sec-tag" style="background:var(--navy)">오늘의 추천 칼럼</span><div class="sec-line"></div></div>
+
+    <div class="col-card navy">
+      <div class="col-top">
+        <span class="col-paper src c">조선일보</span>
+        
+        <span class="col-date">2026.03.16</span>
+      </div>
+      <div class="col-title"><a href="https://www.chosun.com/opinion/taepyeongro/2026/03/16/BCIFLG3RBRDIBAUUCE3HIK4WJU/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">[태평로] 트럼프의 ‘손해보지 않는 전쟁’, 그 이후</a></div>
+      
+      <div class="col-body">죄송하지만 실제 칼럼 본문을 제공해주셔야 정확한 요약이 가능합니다. 제목만으로는 구체적인 주장과 근거를 파악하기 어렵습니다. 칼럼의 본문 내용을 공유해주시면 요청하신 대로 핵심을 3~4문장, 150자 이내로 요약해드리겠습니다.</div>
+    </div>
+    <div class="col-card red">
+      <div class="col-top">
+        <span class="col-paper src e">한국경제</span>
+        
+        <span class="col-date">2026.03.16</span>
+      </div>
+      <div class="col-title"><a href="https://www.hankyung.com/article/2026031647391" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">[한경에세이] 세계 시장은 숫자만 보지 않는다</a></div>
+      
+      <div class="col-body">죄송하지만 칼럼의 전체 내용을 제공받지 못해 정확한 요약이 어렵습니다. 혹시 칼럼 본문을 공유해주실 수 있을까요? 제목과 본문을 함께 제공받으면 핵심 주장과 근거를 정확하게 3~4문장으로 150자 이내로 요약해드리겠습니다.</div>
+    </div>
+    <div class="col-card gold">
+      <div class="col-top">
+        <span class="col-paper src p">한겨레</span>
+        
+        <span class="col-date">2026.03.17</span>
+      </div>
+      <div class="col-title"><a href="https://www.hani.co.kr/arti/opinion/column/1249644.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">설마가 사라진 트럼프의 ‘광기 외교’ [뉴스룸에서] ​</a></div>
+      
+      <div class="col-body">이 칼럼의 핵심 주장은 트럼프의 외교 정책이 예측 불가능하고 위험한 수준에 도달했다는 것입니다. 과거에는 '설마 그렇게까진 하지 않겠지'라는 예상이 있었지만, 이제 그런 기대가 무너졌다는 의미입니다. 트럼프의 일관성 없는 행동과 급격한 정책 변화가 국제 관계에 혼란을 야기하고 있다는 점을 비판하고 있습니다.</div>
+    </div>
+    <div class="col-card dk">
+      <div class="col-top">
+        <span class="col-paper src intl">월스트리트저널</span>
+        <span class="country-badge" data-c="미국">미국</span>
+        <span class="col-date">2025.01.25</span>
+      </div>
+      <div class="col-title"><a href="https://www.wsj.com/articles/wall-street-banks-prepare-to-sell-billions-of-dollars-of-x-loans-c609beb1?mod=pls_whats_news_us_business_f" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">월스트리트 은행들, X 대출금 수십억 달러 매각 준비</a></div>
+      <div class="ch-orig">Wall Street Banks Prepare to Sell Billions of Dollars of X Loans</div>
+      <div class="col-body">미국 주요 은행들이 일론 머스크의 X 인수 자금 대출을 시장에 팔기로 결정했습니다.
+은행들은 대출금 손실을 피하고 자본 여유를 확보하려는 의도로 보입니다.
+이는 X의 경영 악화와 광고주 이탈로 대출 상환 능력이 우려되기 때문입니다.</div>
+    </div>
+    <div class="col-card navy">
+      <div class="col-top">
+        <span class="col-paper src intl">뉴욕타임스</span>
+        <span class="country-badge" data-c="미국">미국</span>
+        <span class="col-date">2026.03.17</span>
+      </div>
+      <div class="col-title"><a href="https://www.nytimes.com/2026/03/16/travel/tsa-airport-delays-shutdown.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">정부 셧다운으로 TSA 무급근무, 공항 보안 줄 증가</a></div>
+      <div class="ch-orig">Airport Security Lines Grow as TSA Goes Unpaid in Partial Shutdown</div>
+      <div class="col-body">미국 정부 부분 셧다운으로 TSA 직원들이 급여를 받지 못하고 있습니다.
+이로 인해 공항 보안 검사 대기 시간이 크게 늘어나고 있습니다.
+무급근무 장기화 시 항공 산업과 여행객들의 피해가 우려됩니다.</div>
+    </div>
+    <div class="col-card red">
+      <div class="col-top">
+        <span class="col-paper src intl">가디언</span>
+        <span class="country-badge" data-c="영국">영국</span>
+        <span class="col-date">2026.03.17</span>
+      </div>
+      <div class="col-title"><a href="https://www.theguardian.com/business/2026/mar/16/us-oil-prices-fluctuation-iran-war" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">이란 전쟁 장기화로 유가 변동성 확대 예상</a></div>
+      <div class="ch-orig">US oil prices could see another day of wild fluctuation as Iran war drags on</div>
+      <div class="col-body">이란과의 갈등 심화로 미국 유가가 급변동을 거듭하고 있습니다.
+중동 지정학적 불안정이 글로벌 석유 공급에 직접적 영향을 미칩니다.
+유가 급등은 국내 휘발유·경유 가격 인상으로 이어질 수 있습니다.</div>
+    </div>
+    <div class="col-card gold">
+      <div class="col-top">
+        <span class="col-paper src intl">BBC비즈니스</span>
+        <span class="country-badge" data-c="영국">영국</span>
+        <span class="col-date">2026.03.17</span>
+      </div>
+      <div class="col-title"><a href="https://www.bbc.com/news/articles/c0k16zdr1r1o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">리브스 재무장관, 영국 기술 기업 해외 유출 방지 다짐</a></div>
+      <div class="ch-orig">Reeves vows to stop UK tech from 'drifting abroad'</div>
+      <div class="col-body">영국 정부가 우수 기술 기업들의 해외 이전 방지에 나섰다.
+경쟁력 있는 국내 환경 조성으로 기술 혁신 인재 유치 계획이다.
+글로벌 기술 경쟁에서 영국의 위상 강화가 핵심 목표다.</div>
+    </div>
+    <div class="col-card dk">
+      <div class="col-top">
+        <span class="col-paper src intl">르몽드</span>
+        <span class="country-badge" data-c="프랑스">프랑스</span>
+        <span class="col-date">2026.03.17</span>
+      </div>
+      <div class="col-title"><a href="https://www.lemonde.fr/economie/article/2026/03/16/on-n-est-pas-la-pour-casser-les-prix-joybuy-jd-com-se-lance-en-france-en-cherchant-a-se-demarquer-de-shein-et-temu_6671470_3234.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">&quot;우리는 가격 경쟁하려 온 게 아니다&quot; - 조이바이, 프랑스 진출</a></div>
+      <div class="ch-orig">« On n’est pas là pour casser les prix » : Joybuy (JD.com) se lance en France en cherchant à se démarquer de Shein et Temu</div>
+      <div class="col-body">중국 전자상거래 기업 JD.com의 조이바이가 프랑스 시장에 진입했다.
+셰인, 테무 같은 초저가 경쟁사와 차별화 전략을 강조하고 있다.
+가격 경쟁보다 품질과 서비스로 유럽 시장 공략을 시도 중이다.</div>
+    </div>
+
+<!-- AUTO_COLUMN_END -->
+  </div>
+  <div class="right">
+<!-- AUTO_COL_RIGHT_START -->
+
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
+      <div class="issue-list"><div class="issue-item" style="line-height:1.6">기유가 인상과 경제 불안정 속 정부 정책 조정의 시급함</div></div>
+    </div>
+
+<!-- AUTO_COL_RIGHT_END -->
+  </div>
+</div>
+</div>
+
+<!-- ══ 지난 뉴스 패널 ══ -->
+<div class="panel" id="panel-archive">
+<div class="layout">
+  <div class="left" style="max-width:740px">
+<!-- AUTO_ARCHIVE_START -->
+<div class="arch-list">
+
+  <div>
+    <div class="arch-row" onclick="tog('d17_10')">
+      <div class="aday"><div class="adaynum">17</div><div class="adaysub">3월 · 월</div></div>
+      <div class="acnt">▾ 32건</div>
+    </div>
+    <div class="arch-detail" id="d17_10"><div class="card red" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src c" style="margin-left:4px">조선일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/economy/economy_general/2026/03/17/QHLATFGPAJGS7FBDSNI65OLEAU/" class="ch-link" target="_blank" style="color:inherit">정부, 국유재산 ‘묻지마 매각’ 손본다</a></div>
+            </div><div class="card red" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src c" style="margin-left:4px">중앙일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://news.google.com/?fr_unfepa=1&oc=5" class="ch-link" target="_blank" style="color:inherit">사용할 수 없는 피드입니다.</a></div>
+            </div><div class="card red" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src c" style="margin-left:4px">동아일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Economy/article/all/20260317/133545453/1" class="ch-link" target="_blank" style="color:inherit">“기름값 무섭네”…중고차 관심, 전기차·하이브리드로 이동</a></div>
+            </div><div class="card navy" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src c" style="margin-left:4px">조선일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/economy/industry-company/2026/03/17/TPGDLOWR4BFK7ARGHL4TPPQQGI/" class="ch-link" target="_blank" style="color:inherit">최태원 “반도체 부족 2030년까지 지속, 美 ADR 상장도 검토”</a></div>
+            </div><div class="card navy" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src c" style="margin-left:4px">중앙일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFBNUjNIdHpzMmRBMXRiRFMyZ2U0NlprcGg1WVpmWlhOc19MaE03YWFNTEVsRFdrbXgzRWcxSDg1RVYwY2RuTVUtUExMSnZmSFFac2JmdFl3?oc=5" class="ch-link" target="_blank" style="color:inherit">[속보] 트럼프 &quot;미·중회담 연기 요청…전쟁 때문에 여기 있어야&quot; - 중앙일보</a></div>
+            </div><div class="card navy" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src c" style="margin-left:4px">동아일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Economy/article/all/20260317/133545348/1" class="ch-link" target="_blank" style="color:inherit">교보생명 광화문글판, BTS와 협업…희망·격려 메세지 내걸어</a></div>
+            </div><div class="card gold" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src c" style="margin-left:4px">조선일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/politics/assembly/2026/03/17/KBLGXD3OHFC3RL2MLXREJHTKEY/" class="ch-link" target="_blank" style="color:inherit">[속보] 국민의힘, 부산시장 경선 치른다... 당내 반발에 공관위 입장 변경</a></div>
+            </div><div class="card gold" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src c" style="margin-left:4px">중앙일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFBobFN6dlJLYThxWHFGZmdJdFdnV0dtdHJPOGlJb2lBbU1EbEtFaEpPMlpZWTNlaGhtRUd4ZTlJb2diLXJlSVU5QV85WUJjVUpYbVlBZ0t3?oc=5" class="ch-link" target="_blank" style="color:inherit">&quot;그 털보, 영 맘에 안들어부러&quot; &quot;여당, 李 업적 깎아먹어&quot; [전남·광주 선거 민심] - 중앙일보</a></div>
+            </div><div class="card gold" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src c" style="margin-left:4px">동아일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Politics/article/all/20260317/133545260/2" class="ch-link" target="_blank" style="color:inherit">송언석, 與 ‘조작기소 국조’ 추진에 “국회 李친위대 전락…적당히 하라”</a></div>
+            </div><div class="card dk" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src c" style="margin-left:4px">조선일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/international/international_general/2026/03/17/3EEMZSE3WJEM3GFADIK7WOJS2U/" class="ch-link" target="_blank" style="color:inherit">오스카 트로피 들고 햄버거 먹방…‘남우주연상’ 美배우 포착된 곳</a></div>
+            </div><div class="card dk" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src c" style="margin-left:4px">중앙일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFB4SHlzbEhqZlk5MG9fUnQwNDZtYmkzZGVUV2o4R2NLb2xZVmo1QkF4RWZhTzVGLU5ydS0wQS1oX0xhNU9ORXBMRWMtMlVEdE5nU0lrWi1R?oc=5" class="ch-link" target="_blank" style="color:inherit">21번 중 20번 핵무기 쐈다…‘군필 AI’ 전쟁하면 생기는 일 - 중앙일보</a></div>
+            </div><div class="card dk" style="margin-top:4px">
+              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src c" style="margin-left:4px">동아일보</span></div>
+              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Inter/article/all/20260317/133545408/1" class="ch-link" target="_blank" style="color:inherit">“日정부, 호르무즈 해협에 자위대 파견 검토 착수”</a></div>
+            </div></div>
+  </div>
+<div>
+    <div class="arch-row" onclick="tog('d12_07')">
+      <div class="aday"><div class="adaynum">12</div><div class="adaysub">3월 · 목</div></div>
+      <div class="ainfo">
+        <div class="atitle">미국 USTR, 한·중 · 미 2월 CPI 전년比 · 코스피, 이란전쟁 2주</div>
+        <div class="aprev">3월12일 오전 7:30 업데이트 · 총 17건</div>
+      </div>
+      <div class="acnt">17건 ▾</div>
+    </div>
+    <div class="arch-detail" id="d12_07">
+      <div class="card red" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--red);font-size:8px;padding:2px 6px">경제 · 금융</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.hankyung.com/economy/article/2026031200001" class="ch-link" target="_blank">미국 USTR, 한·중·일 포함 16개국 무역법 301조 조사 공식 개시</a></div>
+      </div>
+      <div class="card red" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--red);font-size:8px;padding:2px 6px">경제 · 금융</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.mk.co.kr/news/economy/11305001" class="ch-link" target="_blank">미 2월 CPI 전년比 2.4%…이란전쟁 전 데이터, 3월 물가충격 예고</a></div>
+      </div>
+      <div class="card navy" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--navy);font-size:8px;padding:2px 6px">기 업</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.hankyung.com/finance/article/2026031200234" class="ch-link" target="_blank">통신장비株, AI·로보틱스 인프라 수혜로 코스닥 줄줄이 상한가</a></div>
+      </div>
+      <div class="card navy" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--navy);font-size:8px;padding:2px 6px">기 업</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.mk.co.kr/news/business/11305002" class="ch-link" target="_blank">엔비디아, AI 클라우드 기업 네비우스에 20억달러 투자…주가 10% 급등</a></div>
+      </div>
+      <div class="card gold" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--gold);font-size:8px;padding:2px 6px">정책 · 사회</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.khan.co.kr/economy/economy-general/article/202603120930002" class="ch-link" target="_blank">한국, IEA 비축유 2,246만 배럴 방출 결정…역대 최대 규모</a></div>
+      </div>
+      <div class="card gold" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--gold);font-size:8px;padding:2px 6px">정책 · 사회</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.hani.co.kr/arti/politics/defense/1188003.html" class="ch-link" target="_blank">호르무즈 37조 화물 발묶임…청해부대 투입 압박 본격화</a></div>
+      </div>
+      <div class="card dk" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--dark);font-size:8px;padding:2px 6px">국 제</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.hani.co.kr/arti/international/international_general/1188004.html" class="ch-link" target="_blank">미군, 호르무즈 인근 민간항구 공습 예고…이란 기뢰부설함 16척 격침</a></div>
+      </div>
+      <div class="card dk" style="margin-top:5px">
+        <div class="ct"><span class="sec-tag" style="background:var(--dark);font-size:8px;padding:2px 6px">국 제</span></div>
+        <div class="ch" style="font-size:13px"><a href="https://www.khan.co.kr/world/world-general/article/202603120930004" class="ch-link" target="_blank">트럼프 '이란전쟁 곧 끝날 것, 표적 거의 안 남아'…종전 협상 윤곽</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- AUTO_ARCHIVE_END -->
+  </div>
+  <div class="right">
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>아카이브 안내</div>
+      <div class="issue-list">
+        <div class="issue-item">날짜 클릭 → 해당일 뉴스 펼치기</div>
+        <div class="issue-item">오전 7:30 / 오후 5:30 자동 갱신</div>
+        <div class="issue-item">최근 7일 뉴스 보관</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+/* ── 칼럼 아카이브 날짜 토글 ── */
+function toggleColArchive(el){
+  var items = el.nextElementSibling;
+  if(items) items.classList.toggle('open');
+}
+
+/* ── 관전포인트 번호 토글 ── */
+function togglePt(card, event){
+  if(event){ event.stopPropagation(); event.preventDefault(); }
+  card.classList.toggle('pt-open');
+}
+
+/* ── 사이드박스 토글 ── */
+function toggleSbox(el, event){
+  // pt-hd 클릭이 버블링된 경우 무시
+  if(event && event.target.closest('.pt-hd')) return;
+  el.classList.toggle('closed');
+}
+// 페이지 로드 시 핵심수치·관전포인트 기본 접힘
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.sbox-toggle').forEach(function(el){
+    el.classList.add('closed');
+  });
+});
+
+/* ── 탭 이동 ── */
+function go(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  const p=document.getElementById('panel-'+id);if(p)p.classList.add('on');
+  if(btn)btn.classList.add('on');
+}
+
+/* ── 간소화 모드 ── */
+var _savedSecState=null;
+function toggleSimple(){
+  const s=document.body.classList.toggle('simple-mode');
+  document.getElementById('simpleBtn').textContent=s?'☰ 기본 보기':'☰ 간소화';
+  if(s){
+    // 진입 전 각 sec-body의 collapsed 상태 저장
+    _savedSecState=[];
+    document.querySelectorAll('.sec-body').forEach(b=>{
+      _savedSecState.push(b.classList.contains('collapsed'));
+    });
+  } else {
+    // 복귀 시 저장된 상태 복원
+    if(_savedSecState){
+      const bodies=document.querySelectorAll('.sec-body');
+      bodies.forEach((b,i)=>{
+        const wasClosed=_savedSecState[i];
+        if(wasClosed){
+          b.classList.add('collapsed');
+          if(b.previousElementSibling)b.previousElementSibling.classList.add('sec-collapsed');
+        } else {
+          b.classList.remove('collapsed');
+          if(b.previousElementSibling)b.previousElementSibling.classList.remove('sec-collapsed');
+        }
+      });
+    }
+    return;
+  }
+}
+
+/* ── 섹션 접기/펼치기 ── */
+function toggleSection(secEl){
+  const body=secEl.nextElementSibling;
+  if(!body||!body.classList.contains('sec-body'))return;
+  body.classList.toggle('collapsed');
+  secEl.classList.toggle('sec-collapsed');
+}
+
+/* ── 날짜 / 업데이트 시각 ── */
+(function(){
+  const days=['일','월','화','수','목','금','토'],now=new Date();
+  const y=now.getFullYear(),mo=now.getMonth()+1,d=now.getDate();
+  const el=document.getElementById('hdate');
+  if(el)el.textContent=`${y}.${mo}.${d} (${days[now.getDay()]})`;
+  const meta=document.querySelector('meta[name="last-updated"]');
+  const uel=document.getElementById('hdr-update');
+  if(uel&&meta&&meta.content){
+    const t=new Date(meta.content);
+    if(!isNaN(t)){
+      const h=t.getHours(),m=String(t.getMinutes()).padStart(2,'0');
+      uel.textContent=`· ${h<12?'오전':'오후'} ${h%12||12}:${m} 업데이트`;
+    }
+  }
+})();
+
+/* ── 시간 표시 ── */
+function renderTimeAgo(){
+  const now=new Date();
+  document.querySelectorAll('[data-pubtime]').forEach(el=>{
+    const pub=new Date(el.dataset.pubtime);
+    if(!el.dataset.pubtime||isNaN(pub)){el.textContent='🕒 --';return;}
+    const diff=Math.floor((now-pub)/1000);
+    let label;
+    if(diff<60)label='방금 전';
+    else if(diff<3600)label=Math.floor(diff/60)+'분 전';
+    else if(diff<86400)label=Math.floor(diff/3600)+'시간 전';
+    else label=Math.floor(diff/86400)+'일 전';
+    el.textContent='🕒 '+label;
+  });
+}
+renderTimeAgo();setInterval(renderTimeAgo,60000);
+
+/* ── 아카이브 토글 ── */
+function tog(id){const el=document.getElementById(id);if(el)el.classList.toggle('open')}
+
+/* ── 카드 펼치기/접기 ── */
+function toggleCard(card){
+  const expand=card.querySelector('.card-expand');
+  if(!expand)return;
+  const isOpen=expand.classList.contains('open');
+  expand.classList.toggle('open',!isOpen);
+  card.classList.toggle('expanded',!isOpen);
+}
+
+
+
+/* ── 과거 사례 데이터 ── */
+const CASE_DATA={
+  'samsung_buyback':{
+    title:'삼성·SK 자사주 소각',
+    cases:[
+      {date:'2018.12.05',title:'삼성전자 9.3조 자사주 소각 발표',
+       bullets:['역대 최대 규모 자사주 소각 계획 공개','발표 이후 2주간 주가 +6.2% 상승','코리아 디스카운트 해소 기대감 형성'],
+       results:[{up:true,tag:'주가 반응',title:'발표 후 2주 +6.2%',desc:'외국인 순매수 전환, 기관 동참으로 코스피 상승 견인'},{up:true,tag:'장기 영향',title:'밸류업 정책 선도 사례',desc:'국내 주요 기업 주주환원 확대 흐름으로 이어짐'}],
+       hot_stock:{ticker:'005930',name:'삼성전자',rate:'+6.2%',reason:'자사주 소각 발표 직접 수혜, 외국인 대량 매수'}},
+      {date:'2023.11.23',title:'삼성전자 10조 자사주 전량 소각 결정',
+       bullets:['1개월 내 전량 소각으로 유통주식 감소','코스피 외국인 매수세 유입 촉발','밸류업 프로그램 선도 사례로 평가'],
+       results:[{up:true,tag:'주가 반응',title:'소각 후 PBR 개선 효과',desc:'외국인 지분율 소폭 상승, 코리아 디스카운트 일부 해소'},{up:false,tag:'시장 평가',title:'단기 급등 후 차익 실현',desc:'발표 효과 1개월 후 원복, 구조적 개선은 진행 중'}],
+       hot_stock:{ticker:'000660',name:'SK하이닉스',rate:'+4.8%',reason:'반도체 업종 동반 상승, 밸류업 기대감 확산'}}
+    ]
+  },
+  'iran_war':{
+    title:'이란 중동 정세',
+    cases:[
+      {date:'2024.04.14',title:'이란, 이스라엘 본토 직접 공격',
+       bullets:['드론·미사일 300여 발, 대부분 요격','중동 전쟁 확전 우려로 국제유가 급등','한국 증시 -1.2%, 방산주 강세'],
+       results:[{up:true,tag:'유가',title:'공격 직후 WTI +6% → 1주 내 안정화',desc:'이스라엘 보복 수위 조절로 전면전 회피, 유가 재하락'},{up:false,tag:'외교',title:'완전한 종전 미달성',desc:'미국 중재 속 교전 축소·장기화 양상'}],
+       hot_stock:{ticker:'012450',name:'한화에어로스페이스',rate:'+11.3%',reason:'중동 방산 수출 기대감, 포탄·미사일 수요 급증'}},
+      {date:'2024.10.01',title:'이란, 이스라엘에 탄도미사일 공격',
+       bullets:['180여 발 발사, 이스라엘 철통 방어','국제유가 배럴당 5달러 급등','글로벌 증시 변동성 확대'],
+       results:[{up:false,tag:'증시',title:'글로벌 증시 단기 충격',desc:'방산주 강세 지속, 에너지주 단기 급등 후 차익 실현'},{up:true,tag:'방산',title:'한국 방산 수출 기대 부각',desc:'천궁·K9 중동 수요 가능성으로 관련주 강세'}],
+       hot_stock:{ticker:'047810',name:'한국항공우주',rate:'+9.7%',reason:'이란 확전 우려로 방공 무기체계 수요 부각'}}
+    ]
+  },
+  'us_tariff':{
+    title:'미국 관세·무역',
+    cases:[
+      {date:'2018.03.08',title:'트럼프 1기, 철강·알루미늄 관세 25%',
+       bullets:['한국 철강 수출 직격, 현대·포스코 하락','한미 FTA 재협상 압박 병행','무역전쟁 서막, 글로벌 공급망 재편'],
+       results:[{up:false,tag:'무역수지',title:'미·중 무역 적자 지속',desc:'중국산 우회 수출 증가, 미국 물가 상승 부작용'},{up:true,tag:'한국 영향',title:'반도체·배터리 반사이익',desc:'미국 공장 투자 확대로 장기적 긍정 효과'}],
+       hot_stock:{ticker:'000660',name:'SK하이닉스',rate:'+8.1%',reason:'중국 반도체 제재 반사이익 기대, 미국 수요 직수혜'}},
+      {date:'2025.02.01',title:'트럼프 2기, 대중 관세 10% 추가',
+       bullets:['반도체·배터리 한국 반사이익 기대','중국 보복관세 우려로 수출주 혼조','원/달러 환율 1,460원대 상승'],
+       results:[{up:false,tag:'환율',title:'원/달러 1,400원대 고착화',desc:'수출 기업 환차익 vs 수입 물가 상승 상충'},{up:true,tag:'수출',title:'對미 수출 다변화 가속',desc:'베트남·인도 우회 수출 거점 확대 활발'}],
+       hot_stock:{ticker:'373220',name:'LG에너지솔루션',rate:'+6.4%',reason:'IRA 유지로 미국 배터리 공장 투자 경쟁력 부각'}}
+    ]
+  },
+  'kospi_drop':{
+    title:'코스피 급락·증시 변동',
+    cases:[
+      {date:'2020.03.19',title:'코스피 1,457 — 10년 만의 최저점',
+       bullets:['코로나19 팬데믹 공포로 외국인 대량 매도','서킷브레이커 2회 발동, 역대 최대 낙폭','이후 8개월간 회복, 2021년 3,300 돌파'],
+       results:[{up:true,tag:'V자 반등',title:'저점 이후 8개월 +125%',desc:'역사적으로 패닉셀 이후 장기 보유자 수익 실현'},{up:true,tag:'정책',title:'긴급 시장 안정화 조치 효과',desc:'ETF 매수, 콜옵션 등 하방 지지'}],
+       hot_stock:{ticker:'035720',name:'카카오',rate:'+241%',reason:'코로나 저점 대비 비대면·플랫폼 폭발 성장 최대 수혜'}},
+      {date:'2022.09.30',title:'코스피 2,155 — 2년 만의 최저치',
+       bullets:['미 연준 금리 인상 충격 본격화','원/달러 1,430원 돌파, 이중 압박','6개월 후 2,600대 회복'],
+       results:[{up:true,tag:'회복',title:'6개월 후 2,600대 회복',desc:'연준 금리 인상 속도 조절 신호 이후 반등'},{up:false,tag:'교훈',title:'외국인 이탈 구조화',desc:'고금리 장기화로 외국인 순매도 기조 장기 지속'}],
+       hot_stock:{ticker:'005380',name:'현대차',rate:'+38%',reason:'저점 이후 6개월, 미국 IRA 보조금 수혜 + 전기차 판매 급증'}}
+    ]
+  }
+};
+
+/* ── 과거 사례 패널 렌더링 ── */
+function renderCasePanel(bodyEl, key){
+  const data=CASE_DATA[key];
+  if(!data||!bodyEl)return;
+  bodyEl.innerHTML=data.cases.map(c=>`
+    <div class="case-item">
+      <div class="case-item-date">${c.date}</div>
+      <div class="case-item-title">${c.title}</div>
+      <ul class="case-item-bullets">${c.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>
+      <div class="case-divider"></div>
+      <div class="case-result">
+        <div class="case-result-lbl">
+          📈 당시 결과
+          ${c.results.map(r=>`<span class="result-tag ${r.up?'up':'dn'}">${r.up?'▲':'▼'} ${r.tag}</span>`).join('')}
+        </div>
+        <div class="case-result-row">
+          ${c.results.map(r=>`<div class="case-result-item"><strong>${r.title}</strong> — ${r.desc}</div>`).join('')}
+        </div>
+        ${c.hot_stock?`
+        <div class="case-hot-stock">
+          <span class="hot-stock-badge">🔥 당시 급등주</span>
+          <span class="hot-stock-name">${c.hot_stock.name}</span>
+          <span class="hot-stock-ticker">${c.hot_stock.ticker}</span>
+          <span class="hot-stock-rate">${c.hot_stock.rate}</span>
+          <div class="hot-stock-reason">${c.hot_stock.reason}</div>
+        </div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+/* ── 과거 사례 토글 ── */
+function toggleCase(btn, key, e){
+  e.stopPropagation();
+  const card=btn.closest('.card');
+  const panel=card.querySelector('.case-panel');
+  if(!panel)return;
+  const isOpen=panel.classList.contains('open');
+  // 같은 카드 내 패널 닫기
+  if(isOpen){panel.classList.remove('open');return;}
+  // 열기
+  const bodyEl=panel.querySelector('.case-panel-body');
+  if(bodyEl&&!bodyEl.dataset.rendered){
+    renderCasePanel(bodyEl, key);
+    bodyEl.dataset.rendered='1';
+  }
+  panel.classList.add('open');
+}
+
+function closeCase(closeBtn, e){
+  e.stopPropagation();
+  closeBtn.closest('.case-panel').classList.remove('open');
+}
+</script>
+<script>
+// ── 뉴스 피드: 브라우저에서 직접 RSS 수집 ──
+var FEED_SOURCES = [
+  {url:'https://www.hankyung.com/feed/economy',           color:'#1a3050'},
+  {url:'https://www.mk.co.kr/rss/30000001/',              color:'#1a3050'},
+  {url:'https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml', color:'#7a1f1f'},
+  {url:'https://rss.donga.com/total.xml',                 color:'#7a1f1f'},
+  {url:'https://www.yna.co.kr/rss/news.xml',              color:'#1a4a2e'},
+  {url:'https://khan.co.kr/rss/rssdata/total_news.xml',   color:'#1a4a2e'},
+  {url:'https://www.hani.co.kr/rss/',                     color:'#1a4a2e'},
+  {url:'https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko', color:'#7a5800'},
+  {url:'https://feeds.bloomberg.com/markets/news.rss',    color:'#4a3070'},
+  {url:'https://feeds.a.dj.com/rss/RSSWorldNews.xml',     color:'#4a3070'},
+  {url:'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml', color:'#4a3070'},
+];
+var _R2J = 'https://api.rss2json.com/v1/api.json?rss_url=';
+var _feedCache=[]; var _feedTimer=null; var _fetching=false;
+
+function _fmtT(ms){
+  if(!ms) return '--:--';
+  var d=new Date(ms);
+  return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
+}
+async function _getOne(src){
+  try{
+    var r=await fetch(_R2J+encodeURIComponent(src.url)+'&count=20',{signal:AbortSignal.timeout(8000)});
+    if(!r.ok) return [];
+    var d=await r.json();
+    return (d.items||[]).slice(0,20).map(function(it){
+      return {title:it.title||'',url:it.link||'#',time:it.pubDate?new Date(it.pubDate).getTime():0,color:src.color};
+    }).filter(function(it){return it.title.length>4;});
+  }catch(e){return [];}
+}
+async function fetchFeed(){
+  if(_fetching) return; _fetching=true;
+  var st=document.getElementById('feed-status-text');
+  if(st) st.textContent='수집 중...';
+  var res=await Promise.allSettled(FEED_SOURCES.map(_getOne));
+  var all=[];
+  res.forEach(function(r){if(r.status==='fulfilled') all=all.concat(r.value);});
+  var seen=new Set();
+  all=all.filter(function(it){
+    var k=it.title.replace(/[\s\W]/g,'').slice(0,15);
+    if(seen.has(k)) return false; seen.add(k); return true;
+  });
+  all.sort(function(a,b){return b.time-a.time;});
+  _feedCache=all;
+  var fl=document.getElementById('feed-list');
+  if(!fl){_fetching=false;return;}
+  if(!all.length){fl.innerHTML='<div class="feed-error">불러오기 실패 — 새로고침 눌러주세요</div>';_fetching=false;return;}
+  var h='';
+  all.forEach(function(it){
+    var t=it.time?_fmtT(it.time):'--:--';
+    var title=it.title.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    h+='<div class="feed-item" onclick="window.open(\''+it.url+'\',\'_blank\')">'
+      +'<span class="feed-time">'+t+'</span>'
+      +'<span class="feed-dot" style="background:'+it.color+'"></span>'
+      +'<a class="feed-title" href="'+it.url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+title+'</a>'
+      +'</div>';
+  });
+  fl.innerHTML=h;
+  var now=new Date(); var ts=('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
+  if(st) st.textContent='뉴스 피드 · '+all.length+'건';
+  var lu=document.getElementById('feed-last-update'); if(lu) lu.textContent=ts+' 업데이트';
+  _fetching=false;
+}
+(function(){
+  var _orig=window.go;
+  window.go=function(id,btn){
+    if(_orig) _orig(id,btn);
+    if(id==='feed'){
+      if(!_feedCache.length) fetchFeed();
+      clearInterval(_feedTimer); _feedTimer=setInterval(fetchFeed,120000);
+    } else { clearInterval(_feedTimer); }
+  };
+})();
+</script>
+</body>
+</html>
