@@ -799,7 +799,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"title":"네번째 핵심 질문 20자이내"}}
   ],
   "주요이슈": ["22자이내 이슈1","22자이내 이슈2","22자이내 이슈3"],
-  "칼럼논점": "오늘 칼럼들의 전반적 논점을 3~4문장 200자이내로. 핵심 쟁점과 시사점 포함. 마크다운 기호 사용 금지.",
+  "칼럼논점": "오늘 칼럼들의 핵심 논점 한 문장 40자이내",
   "오늘의용어": [
     {{"word":"오늘 뉴스에 등장한 어려운 경제·금융 용어","en":"영어명(있으면)","desc":"일반인도 이해할 쉬운 설명 50자이내"}},
     {{"word":"두번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}},
@@ -893,67 +893,58 @@ if chain_seed:
         )
 
         for ck in ["chain_main","chain_reverse","chain_risk"]:
-            cd  = chain_data.get(ck, {})
+            cd = chain_data.get(ck,{})
             if not cd: continue
-            cfg  = chain_cfg[ck]
-            lbl  = esc(cd.get("label", ""))
-            stps = cd.get("steps", [])
-            stk  = cd.get("stock", {})
-            _lb  = cfg["lb"]; _bc = cfg["bc"]
+            cfg = chain_cfg[ck]
+            lbl = esc(cd.get("label",""))
+            stps = cd.get("steps",[])
+            stk = cd.get("stock",{})
 
-            # 내부 콘텐츠 먼저 생성
-            inner = '  <div class="chain-steps">\n'
+            chain_html += (
+                f'\n<div class="chain-block" style="border-left-color:{cfg["bc"]}">\n'
+                f'  <div class="chain-block-label" style="background:{cfg["lb"]}">{lbl}</div>\n'
+                f'  <div class="chain-steps">\n'
+            )
             for si, sd in enumerate(stps[:3]):
-                tag   = esc(sd.get("tag", ""))
-                txt   = esc(sd.get("text", ""))
-                sub   = esc(sd.get("sub", ""))
-                nc    = cfg["ncs"][si] if si < len(cfg["ncs"]) else "n4"
+                tag = esc(sd.get("tag","")); txt = esc(sd.get("text","")); sub = esc(sd.get("sub",""))
+                nc = cfg["ncs"][si] if si < len(cfg["ncs"]) else "n4"
                 sub_h = f'<span class="chain-step-sub">{sub}</span>' if sub else ""
                 if si > 0:
-                    inner += f'    <div class="chain-arrow-sm">{arr}</div>\n'
-                inner += (
+                    chain_html += f'    <div class="chain-arrow-sm">{arr}</div>\n'
+                chain_html += (
                     f'    <div class="chain-step">'
                     f'<div class="chain-step-num {nc}">{si+1}</div>'
                     f'<div class="chain-step-body">'
-                    f'<span class="chain-step-tag">{tag}</span> '
+                    f'<span class="chain-step-tag">{tag}</span>'
                     f'<span class="chain-step-text">{txt}</span>{sub_h}'
                     f'</div></div>\n'
                 )
-            inner += '  </div>\n'
+            chain_html += '  </div>\n'
 
-            # 종목 (85% 이상만)
-            stock_inner = ""
             if stk and stk.get("name"):
-                nm  = esc(stk["name"]); mk = stk.get("market", chain_market_hint)
-                logic = esc(stk.get("logic", "")); up = esc(stk.get("upside", ""))
-                try:    prob = min(max(int(stk.get("probability", 0)), 0), 100)
-                except: prob = 0
-                if prob >= 85:
-                    up_h = f'<div class="chain-upside-text">&#9650; {up}</div>' if up else ""
-                    stock_inner = (
-                        f'  <div class="chain-stock-row">'
-                        f'<div class="chain-stock-card">'
-                        f'<div class="chain-stock-left">'
-                        f'<span class="chain-stock-name">{nm}</span>'
-                        f'<span class="chain-stock-market {mk.lower()}">{mk}</span>'
-                        f'</div><div class="chain-stock-right">'
-                        f'<div class="chain-logic-text">&#128270; {logic}</div>{up_h}'
-                        f'<div class="chain-prob-row">'
-                        f'<div class="chain-prob-bar-wrap"><div class="chain-prob-bar" style="width:{prob}%;background:var(--green)"></div></div>'
-                        f'<span class="chain-prob-pct" style="color:var(--green)">{prob}%</span>'
-                        f'</div></div></div></div>\n'
-                    )
-
-            # sec-collapsed 래핑 (뉴스 섹션과 완전히 동일한 구조)
-            chain_html += (
-                f'\n<div class="sec sec-collapsed" onclick="toggleSection(this)">'
-                f'<span class="sec-tag" style="background:{_lb}">{lbl}</span>'
-                f'<div class="sec-line"></div><span class="sec-toggle">▾</span>'
-                f'</div>\n<div class="sec-body collapsed">\n'
-                f'<div class="chain-block" style="border-left-color:{_bc};background:var(--tagbg);border-radius:8px;padding:12px 14px;margin:4px 0">\n'
-                f'{inner}{stock_inner}'
-                f'</div>\n</div>\n'
-            )
+                nm = esc(stk["name"]); mk = stk.get("market","KR")
+                logic = esc(stk.get("logic","")); up = esc(stk.get("upside",""))
+                try:    prob = min(max(int(stk.get("probability",65)),0),100)
+                except: prob = 65
+                pc = "var(--green)" if prob>=65 else ("var(--gold)" if prob>=50 else "var(--red)")
+                up_h = f'<div class="chain-upside-text">&#9650; {up}</div>' if up else ""
+                chain_html += (
+                    f'  <div class="chain-stock-row">\n'
+                    f'  <div class="chain-stock-card">'
+                    f'<div class="chain-stock-left">'
+                    f'<span class="chain-stock-name">{nm}</span>'
+                    f'<span class="chain-stock-market {mk.lower()}">{mk}</span>'
+                    f'</div>'
+                    f'<div class="chain-stock-right">'
+                    f'<div class="chain-logic-text">&#128270; {logic}</div>'
+                    f'{up_h}'
+                    f'<div class="chain-prob-row">'
+                    f'<div class="chain-prob-bar-wrap"><div class="chain-prob-bar" style="width:{prob}%;background:{pc}"></div></div>'
+                    f'<span class="chain-prob-pct" style="color:{pc}">{prob}%</span>'
+                    f'</div></div></div>\n'
+                    f'  </div>\n'
+                )
+            chain_html += '</div>\n'
 
         chain_html += '<div class="chain-disclaimer">&#9888;&#65039; AI 분석 참고 정보 — 투자는 전문가 상담 후 본인 판단으로</div>\n'
         print(f"  ✅ 파급 체인 3종: {seed_title[:30]}...")
@@ -1066,12 +1057,7 @@ def make_news_card(item, card_color, hist_key):
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
-          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1126,7 +1112,6 @@ for section in NEWS_SECTIONS:
     headline_html += f"""
     <div class="card {cc}" onclick="toggleCard(this)">
       <div class="ct">
-        <span class="hl-sec-tag" style="background:{color}">{section}</span>
         <span class="src {sc}">{src}</span>
         <span class="ctime" data-pubtime="{pub}">🕒 --</span>
         <span class="expand-hint">▾</span>
@@ -1135,12 +1120,7 @@ for section in NEWS_SECTIONS:
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
-          <button class="cbtn case-btn" onclick="toggleCase(this,'{hk}',event)">📂 {hist_label}</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>"""
@@ -1174,12 +1154,7 @@ def make_intl_card(item):
         {orig_html}
         {bullets_html}
         <div class="card-btns">
-          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1248,6 +1223,10 @@ def build_right(data, hl_list):
         </div>'''
 
     return f"""
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
+      <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치<span class="sbox-arr">▾</span></div>
+      <div class="sbox-body"><div class="mini-stats">{stats}</div></div>
+    </div>
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
       <div class="pt-list">{pts_html}</div>
@@ -1260,30 +1239,7 @@ def build_right(data, hl_list):
 
 right_html = build_right(sidebar_data, hl_items)
 
-# 파급체인 전용 사이드바: 핵심수치만, 항상 펼침
-_nums  = sidebar_data.get("핵심수치", [])
-_stats = ""
-for _n in _nums[:6]:
-    _clr  = "r" if _n.get("up", True) else "b"
-    _val  = str(_n.get("value", _n.get("수치", "--")))
-    _lbl  = str(_n.get("label", _n.get("항목", "")))
-    _desc = str(_n.get("desc",  _n.get("설명", "")))
-    _stats += (f'<div class="mstat"><div class="mnum {_clr}">{esc(_val)}</div>'
-               f'<div class="mlbl">{esc(_lbl)}<br><small style="font-size:9px">{esc(_desc)}</small></div></div>')
-chain_right_html = f"""    <div class="sbox">
-      <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치</div>
-      <div class="sbox-body"><div class="mini-stats">{_stats if _stats else '<div style="color:var(--ink3);font-size:12px;padding:4px">업데이트 준비 중</div>'}</div></div>
-    </div>
-"""
-
 논점 = esc(sidebar_data.get("칼럼논점", ""))
-mobile_col_논점_html = f"""<div class="mobile-col-논점">
-    <div class="sbox">
-      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
-      <div class="issue-list"><div class="issue-item" style="line-height:1.7">{논점}</div></div>
-    </div>
-</div>
-"""
 col_right_html = f"""
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
@@ -1390,12 +1346,10 @@ def replace_block(html, s, e, content):
     return html
 
 html = replace_block(html, '<!-- AUTO_FEED_START -->', '<!-- AUTO_FEED_END -->', feed_html)
-html = replace_block(html, '<!-- AUTO_CHAIN_RIGHT_START -->', '<!-- AUTO_CHAIN_RIGHT_END -->', chain_right_html)
 html = replace_block(html, '<!-- AUTO_CHAIN_START -->', '<!-- AUTO_CHAIN_END -->', chain_html)
 html = replace_block(html, '<!-- AUTO_HEADLINE_START -->', '<!-- AUTO_HEADLINE_END -->', headline_html)
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
 html = replace_block(html, '<!-- AUTO_INTL_START -->',      '<!-- AUTO_INTL_END -->',      intl_html)
-html = replace_block(html, '<!-- AUTO_MOBILE_COL_논점_START -->', '<!-- AUTO_MOBILE_COL_논점_END -->', mobile_col_논점_html)
 html = replace_block(html, '<!-- AUTO_COLUMN_START -->',    '<!-- AUTO_COLUMN_END -->',    col_html)
 html = replace_block(html, '<!-- AUTO_RIGHT_START -->',     '<!-- AUTO_RIGHT_END -->',     right_html)
 html = replace_block(html, '<!-- AUTO_COL_RIGHT_START -->', '<!-- AUTO_COL_RIGHT_END -->', col_right_html)
