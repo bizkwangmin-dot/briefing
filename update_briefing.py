@@ -59,7 +59,7 @@ now_ymd     = now_kst.strftime("%Y.%m.%d")
 now_display = now_kst.strftime("%Y.%m.%d %H:%M KST")
 today_str   = now_kst.strftime("%-m월 %-d일")
 today_day   = now_kst.strftime("%-d")
-today_sub   = now_kst.strftime("%-m월 · ") + ['일','월','화','수','목','금','토'][now_kst.weekday()]
+today_sub   = now_kst.strftime("%-m월 · ") + ['일','월','화','수','목','금','토'][now_kst.weekday()] + (" 오전" if now_kst.hour < 12 else " 오후")
 weekday_ko  = ['월','화','수','목','금','토','일'][now_kst.weekday()]
 header_date = f"{now_kst.strftime('%Y.%-m.%-d')} ({weekday_ko})"
 
@@ -189,8 +189,8 @@ COLUMN_SOURCES_DEF = [
         "https://www.chosun.com/arc/outboundfeeds/rss/category/opinion/?outputType=xml",
     ]),
     ("중앙일보", "c", [
-        "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
-        "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+        "https://news.google.com/rss/search?q=site:joongang.co.kr+칼럼+사설&hl=ko&gl=KR&ceid=KR:ko",
+        "https://news.google.com/rss/search?q=joongang+칼럼&hl=ko&gl=KR&ceid=KR:ko",
     ]),
     ("동아일보", "c", [
         "https://rss.donga.com/opinion.xml",
@@ -490,17 +490,20 @@ def fetch_rss(source, src_class, url, max_items=15, today_only=True):
 
 # ── Claude 요약 함수 ─────────────────────────────────────────
 def get_summary_3(title):
-    text = claude(
-        f"뉴스 제목: '{title}'\n"
-        "핵심 내용을 반드시 3줄로 요약해줘.\n"
-        "규칙: 각 줄 앞에 어떤 기호도 없이 내용만, 한 줄 40자 이내, 수치·사실 중심, 한국어, 딱 3줄만 출력",
-        max_tokens=150
-    )
-    if not text: return None
-    lines = [l.strip().lstrip('·-•*①②③1234567890.) ').strip()
-             for l in text.split('\n') if l.strip()]
-    result = [l for l in lines if len(l) > 4][:3]
-    return result if len(result) >= 2 else None
+    for attempt in range(2):  # 실패 시 1회 재시도
+        text = claude(
+            f"뉴스 제목: '{title}'\n"
+            "핵심 내용을 반드시 3줄로 요약해줘.\n"
+            "규칙: 각 줄 앞에 어떤 기호도 없이 내용만, 한 줄 40자 이내, 수치·사실 중심, 한국어, 딱 3줄만 출력",
+            max_tokens=150
+        )
+        if not text: continue
+        lines = [l.strip().lstrip('·-•*①②③1234567890.) ').strip()
+                 for l in text.split('\n') if l.strip()]
+        result = [l for l in lines if len(l) > 4][:3]
+        if len(result) >= 2:
+            return result
+    return ["제목 참고", title[:30], "기사 원문 확인"]  # 요약 실패 시 기본값
 
 def get_column_summary(title):
     text = claude(
@@ -826,6 +829,22 @@ else:
 print("\n🔗 파급 체인 빌드...")
 is_morning = now_kst.hour < 12
 
+# 파급체인 전용 사이드바 — 핵심수치만 (항상 펼침)
+_nums  = sidebar_data.get("핵심수치", [])
+_stats = ""
+for _n in _nums[:6]:
+    _clr  = "r" if _n.get("up", True) else "b"
+    _val  = str(_n.get("value", _n.get("수치", "--")))
+    _lbl  = str(_n.get("label", _n.get("항목", "")))
+    _desc = str(_n.get("desc",  _n.get("설명", "")))
+    _stats += (f'<div class="mstat"><div class="mnum {_clr}">{esc(_val)}</div>'
+               f'<div class="mlbl">{esc(_lbl)}<br><small style="font-size:9px">{esc(_desc)}</small></div></div>')
+chain_right_html = f"""    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치</div>
+      <div class="sbox-body"><div class="mini-stats">{_stats or '<div style="color:var(--ink3);font-size:12px;padding:4px">업데이트 준비 중</div>'}</div></div>
+    </div>
+"""
+
 HIGH_IMPACT_KW = ["전쟁","제재","금리","관세","봉쇄","폭락","급등","위기","협상","붕괴",
                   "파산","인상","인하","충격","급락","폭등","긴축","기준금리","FOMC","Fed"]
 def impact_score(t):
@@ -999,8 +1018,15 @@ def _sort_time(x):
     except: return datetime.min.replace(tzinfo=KST)
 feed_items.sort(key=_sort_time, reverse=True)
 
+FEED_SKIP_KW = ["사용할 수 없는 피드", "피드를 불러올 수 없", "Feed not available",
+                "Error fetching", "잘못된 피드", "404", "403"]
 feed_rows = ""
 for fi in feed_items:
+    # 오류성 기사 필터
+    if any(kw in fi["title"] for kw in FEED_SKIP_KW):
+        continue
+    if len(fi["title"].strip()) < 5:
+        continue
     try:
         dt = datetime.fromisoformat(fi["time"]).astimezone(KST)
         t_str = dt.strftime("%H:%M")
@@ -1057,7 +1083,12 @@ def make_news_card(item, card_color, hist_key):
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1112,6 +1143,7 @@ for section in NEWS_SECTIONS:
     headline_html += f"""
     <div class="card {cc}" onclick="toggleCard(this)">
       <div class="ct">
+        <span class="hl-sec-tag" style="background:{color}">{section}</span>
         <span class="src {sc}">{src}</span>
         <span class="ctime" data-pubtime="{pub}">🕒 --</span>
         <span class="expand-hint">▾</span>
@@ -1120,7 +1152,12 @@ for section in NEWS_SECTIONS:
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hk}',event)">📂 {hist_label}</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>"""
@@ -1154,7 +1191,12 @@ def make_intl_card(item):
         {orig_html}
         {bullets_html}
         <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1182,7 +1224,9 @@ for i, item in enumerate(columns):
         date_str = now_ymd
     summary   = esc(item.get("summary", "요약 준비 중..."))
     orig_html = f'<div class="ch-orig">{esc(item["orig_title"])}</div>' if is_intl and item.get("orig_title") else ''
-    country_badge = f'<span class="country-badge" data-c="{country}">{country}</span>' if is_intl and country else ''
+    _cbg = {"미국":"#1a3050","일본":"#7a1f1f","영국":"#1a4a2e","홍콩":"#4a3070","중국":"#7a3000","유럽":"#1a4a2e","프랑스":"#1a4a2e","해외":"#555"}
+    _cc  = _cbg.get(country, "#555")
+    country_badge = (f'<span class="src" style="background:{_cc};color:#fff;font-size:8px;padding:2px 6px">{country}</span>' if is_intl and country else '')
     col_html += f'''
     <div class="col-card {cc}">
       <div class="col-top">
@@ -1223,10 +1267,6 @@ def build_right(data, hl_list):
         </div>'''
 
     return f"""
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
-      <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치<span class="sbox-arr">▾</span></div>
-      <div class="sbox-body"><div class="mini-stats">{stats}</div></div>
-    </div>
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
       <div class="pt-list">{pts_html}</div>
@@ -1240,6 +1280,11 @@ def build_right(data, hl_list):
 right_html = build_right(sidebar_data, hl_items)
 
 논점 = esc(sidebar_data.get("칼럼논점", ""))
+mobile_col_논점_html = f"""<div class="mobile-col-논점 sbox">
+    <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
+    <div class="issue-list"><div class="issue-item" style="line-height:1.7">{논점}</div></div>
+</div>
+"""
 col_right_html = f"""
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
@@ -1346,10 +1391,13 @@ def replace_block(html, s, e, content):
     return html
 
 html = replace_block(html, '<!-- AUTO_FEED_START -->', '<!-- AUTO_FEED_END -->', feed_html)
+html = replace_block(html, '<!-- AUTO_CHAIN_MOBILE_STATS_START -->', '<!-- AUTO_CHAIN_MOBILE_STATS_END -->', f'<div class="chain-mobile-stats">{chain_right_html}</div>')
+html = replace_block(html, '<!-- AUTO_CHAIN_RIGHT_START -->', '<!-- AUTO_CHAIN_RIGHT_END -->', chain_right_html)
 html = replace_block(html, '<!-- AUTO_CHAIN_START -->', '<!-- AUTO_CHAIN_END -->', chain_html)
 html = replace_block(html, '<!-- AUTO_HEADLINE_START -->', '<!-- AUTO_HEADLINE_END -->', headline_html)
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
 html = replace_block(html, '<!-- AUTO_INTL_START -->',      '<!-- AUTO_INTL_END -->',      intl_html)
+html = replace_block(html, '<!-- AUTO_MOBILE_COL_논점_START -->', '<!-- AUTO_MOBILE_COL_논점_END -->', mobile_col_논점_html)
 html = replace_block(html, '<!-- AUTO_COLUMN_START -->',    '<!-- AUTO_COLUMN_END -->',    col_html)
 html = replace_block(html, '<!-- AUTO_RIGHT_START -->',     '<!-- AUTO_RIGHT_END -->',     right_html)
 html = replace_block(html, '<!-- AUTO_COL_RIGHT_START -->', '<!-- AUTO_COL_RIGHT_END -->', col_right_html)
@@ -1367,6 +1415,11 @@ if '<!-- AUTO_ARCHIVE_START -->' in html and '<!-- AUTO_ARCHIVE_END -->' in html
         inner = re.sub(r'^<div class="arch-list">\s*', '', existing, count=1)
         inner = re.sub(r'\s*</div>\s*$', '', inner)
         new_arch = f'<div class="arch-list">\n{archive_entry}\n{inner}\n</div>'
+        # 14회(7일×2회) 초과 항목 삭제
+        entries = re.findall(r'<div>\s*<div class="arch-row".*?</div>\s*</div>', new_arch, re.DOTALL)
+        if len(entries) > 14:
+            kept = ''.join(entries[:14])
+            new_arch = f'<div class="arch-list">\n{kept}\n</div>'
         html = replace_block(html, '<!-- AUTO_ARCHIVE_START -->', '<!-- AUTO_ARCHIVE_END -->', new_arch)
         print("  ✅ 아카이브 항목 추가")
     else:
