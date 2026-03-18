@@ -509,7 +509,7 @@ def get_column_summary(title):
         "① 핵심 주장 (한 문장, 40자이내)\n"
         "② 주요 근거나 사례 (1~2문장, 80자이내)\n"
         "③ 이 칼럼이 던지는 질문 (~지 않을까? 형태, 40자이내)\n"
-        "규칙: ①②③ 번호로 시작, 한국어, 전체 300~400자",
+        "절대 규칙: #·**·---·* 마크다운 금지. 순수텍스트. ①②③ 번호시작. 한국어. 300~400자.",
         max_tokens=500
     )
     if not text: return "요약 준비 중..."
@@ -586,7 +586,7 @@ def collect_one(src_name, src_cls, url_list):
                 return item
     return None
 
-# ── 1단계: 신문사별 기사 수집 ──────────────────────────────────
+# ── 1단계: 신문사별 수집 ────────────────────────────────────────
 print("  [1단계] 신문사별 수집...")
 raw_pool = []
 for src_name in ALL_SOURCE_NAMES:
@@ -607,7 +607,7 @@ print("  [2단계] AI 섹션 분류...")
 def ai_classify(title):
     r = claude(
         f"뉴스 제목: '{title}'\n"
-        "4개 중 하나만 정확히 출력:\n경제 · 금융\n기 업\n정책 · 사회\n국 제",
+        "아래 4개 중 정확히 하나만 출력:\n경제 · 금융\n기 업\n정책 · 사회\n국 제",
         max_tokens=15
     )
     if not r: return "경제 · 금융"
@@ -814,7 +814,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"title":"네번째 핵심 질문 20자이내"}}
   ],
   "주요이슈": ["22자이내 이슈1","22자이내 이슈2","22자이내 이슈3"],
-  "칼럼논점": "오늘 칼럼들의 핵심 논점 한 문장 40자이내",
+  "칼럼논점": "오늘 칼럼들을 관통하는 시대적 맥락과 핵심 쟁점. 독자가 어떤 관점으로 읽으면 좋을지, 칼럼들의 공통 흐름과 지금 왜 중요한지 포함. 4~6문장 300자이내. 마크다운(#,**,---) 절대 금지.",
   "오늘의용어": [
     {{"word":"오늘 뉴스에 등장한 어려운 경제·금융 용어","en":"영어명(있으면)","desc":"일반인도 이해할 쉬운 설명 50자이내"}},
     {{"word":"두번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}},
@@ -822,7 +822,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"word":"네번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}}
   ]
 }}
-중요: 오늘의 용어는 오늘 뉴스에 실제 등장한 단어, 중학생도 이해하게 쉽게.""", max_tokens=800)
+중요: 오늘의 용어는 오늘 뉴스에 실제 등장한 단어, 중학생도 이해하게 쉽게.""", max_tokens=1200)
 
 if not sidebar_data:
     sidebar_data = {
@@ -871,7 +871,8 @@ else:
     chain_pool = list(intl_news) if intl_news else [it for sl in section_news.values() for it in sl]
     chain_market_hint = "US"
 chain_pool.sort(key=lambda x: impact_score(x.get("ko_title", x.get("title",""))), reverse=True)
-chain_seed = chain_pool[0] if chain_pool else None
+chain_seeds = chain_pool[:2] if len(chain_pool) >= 2 else chain_pool
+chain_seed = chain_seeds[0] if chain_seeds else None
 
 chain_html = "\n"
 if chain_seed:
@@ -921,24 +922,33 @@ if chain_seed:
         except: t_str = ""
         tlbl = f'{"오전" if is_morning else "오후"} {t_str}' if t_str else ("오전" if is_morning else "오후")
 
+        related_html = ""
+        for _cs in chain_seeds[:2]:
+            _ct=esc(_cs.get("ko_title",_cs["title"])); _cu=_cs["url"]
+            _csrc=esc(_cs["source"]); _csc=_cs["src_class"]
+            related_html+=(
+                f'<div style="padding:4px 0;border-top:1px solid var(--border);margin-top:4px">'
+                f'<span class="src {_csc}" style="font-size:8px">{_csrc}</span> '
+                f'<a href="{_cu}" target="_blank" rel="noopener" style="font-size:12px;color:var(--ink2);text-decoration:none">{_ct}</a></div>'
+            )
         chain_html += (
             f'\n<div class="chain-header-card">\n'
             f'  <div class="chain-time-badge">{tlbl} 핵심 뉴스</div>\n'
             f'  <div class="chain-seed-title"><a href="{seed_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">{esc(seed_title)}</a></div>\n'
-            f'  <div class="chain-seed-meta"><span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span>'
-            f'{(" &nbsp;·&nbsp; " + esc(summary)) if summary else ""}</div>\n'
+            f'  <div class="chain-seed-meta"><span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span></div>\n'
+            f'  {related_html}\n'
             f'</div>\n'
         )
 
         for ck in ["chain_main","chain_reverse","chain_risk"]:
-            cd = chain_data.get(ck,{}); 
+            cd=chain_data.get(ck,{})
             if not cd: continue
-            cfg = chain_cfg[ck]; lbl = esc(cd.get("label",""))
-            stps = cd.get("steps",[]); stk = cd.get("stock",{})
-            _lb = cfg["lb"]; _bc = cfg["bc"]
+            cfg=chain_cfg[ck]; lbl=esc(cd.get("label",""))
+            stps=cd.get("steps",[]); stk=cd.get("stock",{})
+            _lb=cfg["lb"]; _bc=cfg["bc"]
 
-            inner = '  <div class="chain-steps">\n'
-            for si, sd in enumerate(stps[:3]):
+            inner='  <div class="chain-steps">\n'
+            for si,sd in enumerate(stps[:3]):
                 tag=esc(sd.get("tag","")); txt=esc(sd.get("text","")); sub=esc(sd.get("sub",""))
                 nc=cfg["ncs"][si] if si<len(cfg["ncs"]) else "n4"
                 sub_h=f'<span class="chain-step-sub">{sub}</span>' if sub else ""
@@ -1029,8 +1039,11 @@ def _sort_time(x):
     except: return datetime.min.replace(tzinfo=KST)
 feed_items.sort(key=_sort_time, reverse=True)
 
+FEED_BAD = ["사용할 수 없는 피드","피드를 불러올 수 없","Feed not available"]
 feed_rows = ""
 for fi in feed_items:
+    if any(b in fi["title"] for b in FEED_BAD): continue
+    if len(fi["title"].strip()) < 5: continue
     try:
         dt = datetime.fromisoformat(fi["time"]).astimezone(KST)
         t_str = dt.strftime("%H:%M")
@@ -1087,12 +1100,7 @@ def make_news_card(item, card_color, hist_key):
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
-          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1195,12 +1203,7 @@ def make_intl_card(item):
         {orig_html}
         {bullets_html}
         <div class="card-btns">
-          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
