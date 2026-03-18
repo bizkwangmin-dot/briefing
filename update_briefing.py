@@ -509,7 +509,7 @@ def get_column_summary(title):
         "① 핵심 주장 (한 문장, 40자이내)\n"
         "② 주요 근거나 사례 (1~2문장, 80자이내)\n"
         "③ 이 칼럼이 던지는 질문 (~지 않을까? 형태, 40자이내)\n"
-        "절대 규칙: #·**·---·* 마크다운 금지. 순수텍스트. ①②③ 번호시작. 한국어. 300~400자.",
+        "규칙: ①②③ 번호로 시작, 한국어, 전체 300~400자",
         max_tokens=500
     )
     if not text: return "요약 준비 중..."
@@ -586,7 +586,7 @@ def collect_one(src_name, src_cls, url_list):
                 return item
     return None
 
-# ── 1단계: 신문사별 수집 ────────────────────────────────────────
+# ── 1단계: 신문사별 수집 ──────────────────────────────────────
 print("  [1단계] 신문사별 수집...")
 raw_pool = []
 for src_name in ALL_SOURCE_NAMES:
@@ -602,12 +602,17 @@ for src_name in ALL_SOURCE_NAMES:
     else:
         print(f"    ⚠️  [{src_name}] 실패")
 
-# ── 2단계: Claude AI 섹션 분류 ──────────────────────────────────
+# ── 2단계: Claude AI 섹션 분류 ─────────────────────────────────
 print("  [2단계] AI 섹션 분류...")
 def ai_classify(title):
+    """기사 제목으로 섹션 분류"""
     r = claude(
         f"뉴스 제목: '{title}'\n"
-        "아래 4개 중 정확히 하나만 출력:\n경제 · 금융\n기 업\n정책 · 사회\n국 제",
+        "아래 기준으로 섹션 하나만 정확히 출력 (다른 텍스트 없이):\n"
+        "경제 · 금융 = 금리·환율·주가·부동산·세금·은행·물가·GDP·무역\n"
+        "기 업 = 기업실적·신제품·CEO·반도체·자동차·IT·스타트업·상장·M&A\n"
+        "정책 · 사회 = 정부정책·법안·선거·정치·복지·교육·의료·범죄·사고·BTS·공연·문화\n"
+        "국 제 = 미국·중국·일본·유럽·전쟁·외교·국제기구·해외",
         max_tokens=15
     )
     if not r: return "경제 · 금융"
@@ -814,7 +819,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"title":"네번째 핵심 질문 20자이내"}}
   ],
   "주요이슈": ["22자이내 이슈1","22자이내 이슈2","22자이내 이슈3"],
-  "칼럼논점": "오늘 칼럼들을 관통하는 시대적 맥락과 핵심 쟁점. 독자가 어떤 관점으로 읽으면 좋을지, 칼럼들의 공통 흐름과 지금 왜 중요한지 포함. 4~6문장 300자이내. 마크다운(#,**,---) 절대 금지.",
+  "칼럼논점": "오늘 칼럼들을 관통하는 시대적 맥락과 핵심 쟁점. 독자가 어떤 관점으로 읽으면 좋을지, 칼럼들의 공통 흐름과 지금 왜 중요한지 포함. 4~6문장 300자이내. 마크다운 절대 금지.",
   "오늘의용어": [
     {{"word":"오늘 뉴스에 등장한 어려운 경제·금융 용어","en":"영어명(있으면)","desc":"일반인도 이해할 쉬운 설명 50자이내"}},
     {{"word":"두번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}},
@@ -836,24 +841,6 @@ else:
     print("  ✅ 사이드바 생성 완료")
 
 # ════════════════════════════════════════════════════════════
-# 파급체인 전용 사이드바 — 핵심수치만
-# ════════════════════════════════════════════════════════════
-_nums = sidebar_data.get("핵심수치", [])
-_stats = ""
-for _n in _nums[:6]:
-    _clr  = "r" if _n.get("up", True) else "b"
-    _val  = str(_n.get("value", _n.get("수치","--")))
-    _lbl  = str(_n.get("label", _n.get("항목","")))
-    _desc = str(_n.get("desc",  _n.get("설명","")))
-    _stats += (f'<div class="mstat"><div class="mnum {_clr}">{esc(_val)}</div>'
-               f'<div class="mlbl">{esc(_lbl)}<br><small style="font-size:9px">{esc(_desc)}</small></div></div>')
-chain_right_html = f"""    <div class="sbox">
-      <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치</div>
-      <div class="sbox-body"><div class="mini-stats">{_stats or '<div style="color:var(--ink3);font-size:12px;padding:4px">업데이트 준비 중</div>'}</div></div>
-    </div>
-"""
-
-# ════════════════════════════════════════════════════════════
 # 파급 체인 HTML — 수혜/역발상/리스크 3체인
 # ════════════════════════════════════════════════════════════
 print("\n🔗 파급 체인 빌드...")
@@ -864,91 +851,72 @@ HIGH_IMPACT_KW = ["전쟁","제재","금리","관세","봉쇄","폭락","급등"
 def impact_score(t):
     return sum(1 for kw in HIGH_IMPACT_KW if kw in t)
 
-if is_morning:
-    chain_pool = [it for sl in section_news.values() for it in sl]
-    chain_market_hint = "KR"
-else:
-    chain_pool = list(intl_news) if intl_news else [it for sl in section_news.values() for it in sl]
-    chain_market_hint = "US"
-chain_pool.sort(key=lambda x: impact_score(x.get("ko_title", x.get("title",""))), reverse=True)
-chain_seeds = chain_pool[:2] if len(chain_pool) >= 2 else chain_pool
-chain_seed = chain_seeds[0] if chain_seeds else None
+all_flat = [it for sl in section_news.values() for it in sl] + intl_news
+all_flat.sort(key=lambda x: impact_score(x.get("ko_title", x.get("title",""))), reverse=True)
+chain_seed = all_flat[0] if all_flat else None
 
 chain_html = "\n"
-if chain_seed:
-    seed_title = chain_seed.get("ko_title", chain_seed["title"])
-    seed_src   = chain_seed["source"]
-    seed_url   = chain_seed["url"]
-    seed_sc    = chain_seed["src_class"]
-    seed_pub   = chain_seed["pubtime"]
+arr = "&#8595;"
+chain_cfg = {
+    "chain_main":    {"lb":"var(--red)",  "ncs":["n1","n2","n3"], "bc":"var(--red)"},
+    "chain_reverse": {"lb":"var(--navy)", "ncs":["n3","n3","n4"], "bc":"var(--navy)"},
+    "chain_risk":    {"lb":"var(--gold)", "ncs":["n2","n2","n4"], "bc":"var(--gold)"},
+}
 
-    # 파급체인: 한 번에 하나씩 생성 (JSON 잘림 방지)
-    def _make_chain(label, tag1, tag2, tag3):
-        return claude_json(
-            f"뉴스: '{seed_title}'\n"
-            f"'{label}' 관점으로 분석. JSON만 출력 (다른 텍스트 없이):\n"
-            "{"
-            f'"label":"{label}",'
-            '"steps":['
-            f'{{"tag":"{tag1}","text":"20자이내","sub":"근거"}},'
-            f'{{"tag":"{tag2}","text":"20자이내","sub":"이유"}},'
-            f'{{"tag":"{tag3}","text":"20자이내","sub":"포인트"}}'
-            '],'
-            '"stock":{"name":"종목명","market":"KR또는US","logic":"추론과정 30자","upside":"상승근거 20자","probability":70}'
-            "}",
-            max_tokens=400
-        )
+def _make_one_chain(news_title, label, tag1, tag2, tag3, mkt):
+    return claude_json(
+        f"핵심뉴스: '{news_title}'\n[{label}] 3단계 연쇄분석.\n"
+        f"종목: {mkt}시장 중소형주. 삼성전자·현대차·SK하이닉스·NVDA·TSLA·AAPL 제외.\n"
+        "probability: 85이상=연쇄근거+수치+모멘텀 모두 충족. 85미만=name 빈칸.\n"
+        "JSON만 출력:"
+        "{"
+        f'"label":"{label}",'
+        '"steps":['
+        f'{{"tag":"{tag1}","text":"20자","sub":"수치사실"}},'
+        f'{{"tag":"{tag2}","text":"20자","sub":"연결이유"}},'
+        f'{{"tag":"{tag3}","text":"20자","sub":"핵심포인트"}}'
+        '],'
+        f'"stock":{{"name":"{mkt}중소형","market":"{mkt}","logic":"A→B→C 40자","upside":"수치포함 25자","probability":85}}'
+        "} probability 85미만이면 반드시 name 빈문자열.",
+        max_tokens=450
+    )
 
-    cm = _make_chain("수혜 체인",   "직접 영향", "산업 파급", "수혜 종목")
-    cr = _make_chain("역발상 체인", "통념",      "역발상",    "역발상 수혜")
-    ck = _make_chain("리스크 체인", "리스크",    "피해 산업", "회피 전략")
+if chain_seeds:
+    for seed_idx, chain_seed in enumerate(chain_seeds):
+        seed_title = chain_seed.get("ko_title", chain_seed["title"])
+        seed_src   = chain_seed["source"]
+        seed_url   = chain_seed["url"]
+        seed_sc    = chain_seed["src_class"]
+        seed_pub   = chain_seed["pubtime"]
 
-    chain_data = {}
-    if cm: chain_data["chain_main"]    = cm
-    if cr: chain_data["chain_reverse"] = cr
-    if ck: chain_data["chain_risk"]    = ck
-    chain_data["summary"] = seed_title[:30] if not chain_data else chain_data.get("chain_main",{}).get("label","")
-
-    arr = "&#8595;"
-    chain_cfg = {
-        "chain_main":    {"lb":"var(--red)",  "ncs":["n1","n2","n3"], "bc":"var(--red)"},
-        "chain_reverse": {"lb":"var(--navy)", "ncs":["n3","n3","n4"], "bc":"var(--navy)"},
-        "chain_risk":    {"lb":"var(--gold)", "ncs":["n2","n2","n4"], "bc":"var(--gold)"},
-    }
-
-    if chain_data and (chain_data.get("chain_main") or chain_data.get("chain_reverse")):
-        summary = esc(seed_title[:30])
-        try:    t_str = datetime.fromisoformat(seed_pub).astimezone(KST).strftime("%H:%M")
+        try: t_str = datetime.fromisoformat(seed_pub).astimezone(KST).strftime("%H:%M")
         except: t_str = ""
         tlbl = f'{"오전" if is_morning else "오후"} {t_str}' if t_str else ("오전" if is_morning else "오후")
 
-        related_html = ""
-        for _cs in chain_seeds[:2]:
-            _ct=esc(_cs.get("ko_title",_cs["title"])); _cu=_cs["url"]
-            _csrc=esc(_cs["source"]); _csc=_cs["src_class"]
-            related_html+=(
-                f'<div style="padding:4px 0;border-top:1px solid var(--border);margin-top:4px">'
-                f'<span class="src {_csc}" style="font-size:8px">{_csrc}</span> '
-                f'<a href="{_cu}" target="_blank" rel="noopener" style="font-size:12px;color:var(--ink2);text-decoration:none">{_ct}</a></div>'
-            )
         chain_html += (
-            f'\n<div class="chain-header-card">\n'
-            f'  <div class="chain-time-badge">{tlbl} 핵심 뉴스</div>\n'
-            f'  <div class="chain-seed-title"><a href="{seed_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">{esc(seed_title)}</a></div>\n'
+            f'\n<div class="chain-header-card" style="margin-top:{"0" if seed_idx==0 else "20px"}">\n'
+            f'  <div class="chain-time-badge">{tlbl} 핵심 뉴스 {seed_idx+1}</div>\n'
+            f'  <div class="chain-seed-title"><a href="{seed_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">{seed_title}</a></div>\n'
             f'  <div class="chain-seed-meta"><span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span></div>\n'
-            f'  {related_html}\n'
             f'</div>\n'
         )
 
-        for ck in ["chain_main","chain_reverse","chain_risk"]:
-            cd=chain_data.get(ck,{})
-            if not cd: continue
-            cfg=chain_cfg[ck]; lbl=esc(cd.get("label",""))
-            stps=cd.get("steps",[]); stk=cd.get("stock",{})
-            _lb=cfg["lb"]; _bc=cfg["bc"]
+        cd_main = _make_one_chain(seed_title, "수혜 체인",   "직접 영향","산업 파급","수혜 종목", chain_mkt)
+        cd_rev  = _make_one_chain(seed_title, "역발상 체인", "통념",     "역발상",   "역발상 수혜", chain_mkt)
+        cd_risk = _make_one_chain(seed_title, "리스크 체인", "리스크",   "피해 산업","회피 전략", chain_mkt)
 
-            inner='  <div class="chain-steps">\n'
-            for si,sd in enumerate(stps[:3]):
+        for cd in [d for d in [cd_main, cd_rev, cd_risk] if d]:
+            lbl  = esc(cd.get("label",""))
+            stps = cd.get("steps",[])
+            stk  = cd.get("stock",{})
+            if "수혜" in lbl and "역" not in lbl: cfg_key = "chain_main"
+            elif "역발상" in lbl: cfg_key = "chain_reverse"
+            else: cfg_key = "chain_risk"
+            cfg = chain_cfg[cfg_key]
+            _lb = cfg["lb"]; _bc = cfg["bc"]
+
+            inner = '  <div class="chain-steps">\n'
+            for si, sd in enumerate(stps[:3]):
                 tag=esc(sd.get("tag","")); txt=esc(sd.get("text","")); sub=esc(sd.get("sub",""))
                 nc=cfg["ncs"][si] if si<len(cfg["ncs"]) else "n4"
                 sub_h=f'<span class="chain-step-sub">{sub}</span>' if sub else ""
@@ -960,7 +928,7 @@ if chain_seed:
 
             stock_html=""
             if stk and stk.get("name"):
-                nm=esc(stk["name"]); mk=stk.get("market",chain_market_hint)
+                nm=esc(stk["name"]); mk=stk.get("market",chain_mkt)
                 logic=esc(stk.get("logic","")); up=esc(stk.get("upside",""))
                 try: prob=min(max(int(stk.get("probability",0)),0),100)
                 except: prob=0
@@ -986,13 +954,11 @@ if chain_seed:
                 f'{inner}{stock_html}</div>\n</div>\n'
             )
 
-        chain_html += '<div class="chain-disclaimer">&#9888;&#65039; AI 분석 참고 정보 — 투자는 전문가 상담 후 본인 판단으로</div>\n'
-        print(f"  ✅ 파급 체인 3종: {seed_title[:30]}...")
-    else:
-        chain_html = '<div class="chain-intro"><div class="chain-intro-title">파급 체인</div><div class="chain-intro-sub">분석 생성 실패</div></div>\n'
-        print("  ⚠️  체인 생성 실패")
+        print(f"  ✅ 뉴스{seed_idx+1}: {seed_title[:25]}... 완료")
+
+    chain_html += '<div class="chain-disclaimer">&#9888;&#65039; AI 분석 참고 정보 — 투자는 전문가 상담 후 본인 판단으로</div>\n'
 else:
-    chain_html = '<div class="chain-intro"><div class="chain-intro-title">&#128279; 파급 체인</div><div class="chain-intro-sub">뉴스 수집 후 채워집니다</div></div>\n'
+    chain_html = '<div class="chain-intro"><div class="chain-intro-title">&#128279; 파급 체인</div><div class="chain-intro-sub">뉴스 수집 후 채워집니다</div></div>\n' 
 
 
 # ════════════════════════════════════════════════════════════
@@ -1155,7 +1121,6 @@ for section in NEWS_SECTIONS:
     headline_html += f"""
     <div class="card {cc}" onclick="toggleCard(this)">
       <div class="ct">
-        <span class="hl-sec-tag" style="background:{color}">{section}</span>
         <span class="src {sc}">{src}</span>
         <span class="ctime" data-pubtime="{pub}">🕒 --</span>
         <span class="expand-hint">▾</span>
@@ -1164,12 +1129,7 @@ for section in NEWS_SECTIONS:
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
-          <button class="cbtn case-btn" onclick="toggleCase(this,'{hk}',event)">📂 {hist_label}</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>"""
@@ -1272,10 +1232,6 @@ def build_right(data, hl_list):
         </div>'''
 
     return f"""
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
-      <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치<span class="sbox-arr">▾</span></div>
-      <div class="sbox-body"><div class="mini-stats">{stats}</div></div>
-    </div>
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
       <div class="pt-list">{pts_html}</div>
@@ -1395,7 +1351,7 @@ def replace_block(html, s, e, content):
     return html
 
 html = replace_block(html, '<!-- AUTO_FEED_START -->', '<!-- AUTO_FEED_END -->', feed_html)
-html = replace_block(html, '<!-- AUTO_CHAIN_RIGHT_START -->', '<!-- AUTO_CHAIN_RIGHT_END -->', chain_right_html)
+html = replace_block(html, '<!-- AUTO_CHAIN_RIGHT_START -->', '<!-- AUTO_CHAIN_RIGHT_END -->', '')
 html = replace_block(html, '<!-- AUTO_CHAIN_START -->', '<!-- AUTO_CHAIN_END -->', chain_html)
 html = replace_block(html, '<!-- AUTO_HEADLINE_START -->', '<!-- AUTO_HEADLINE_END -->', headline_html)
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
