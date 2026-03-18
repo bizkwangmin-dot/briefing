@@ -59,7 +59,7 @@ now_ymd     = now_kst.strftime("%Y.%m.%d")
 now_display = now_kst.strftime("%Y.%m.%d %H:%M KST")
 today_str   = now_kst.strftime("%-m월 %-d일")
 today_day   = now_kst.strftime("%-d")
-today_sub   = now_kst.strftime("%-m월 · ") + ['일','월','화','수','목','금','토'][now_kst.weekday()] + (" 오전" if now_kst.hour < 12 else " 오후")
+today_sub   = now_kst.strftime("%-m월 · ") + ['일','월','화','수','목','금','토'][now_kst.weekday()]
 weekday_ko  = ['월','화','수','목','금','토','일'][now_kst.weekday()]
 header_date = f"{now_kst.strftime('%Y.%-m.%-d')} ({weekday_ko})"
 
@@ -85,8 +85,8 @@ SECTION_RSS = {
     "경제 · 금융": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-                     "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko"],
+        "중앙일보": ["https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+                     "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko"],
         "동아일보": ["https://rss.donga.com/economy.xml",
                      "https://rss.donga.com/total.xml"],
         "한국경제": ["https://www.hankyung.com/feed/economy"],
@@ -99,8 +99,8 @@ SECTION_RSS = {
     "기 업": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-                     "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko"],
+        "중앙일보": ["https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+                     "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko"],
         "동아일보": ["https://rss.donga.com/economy.xml",
                      "https://rss.donga.com/total.xml"],
         "한국경제": ["https://www.hankyung.com/feed/economy"],
@@ -114,8 +114,8 @@ SECTION_RSS = {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/politics/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/category/national/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-                     "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko"],
+        "중앙일보": ["https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+                     "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko"],
         "동아일보": ["https://rss.donga.com/politics.xml",
                      "https://rss.donga.com/national.xml",
                      "https://rss.donga.com/total.xml"],
@@ -131,8 +131,8 @@ SECTION_RSS = {
     "국 제": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/international/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-                     "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko"],
+        "중앙일보": ["https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+                     "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko"],
         "동아일보": ["https://rss.donga.com/international.xml",
                      "https://rss.donga.com/total.xml"],
         "한국경제": ["https://www.hankyung.com/feed/international",
@@ -152,7 +152,7 @@ RSS_FALLBACKS = {
         "https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
     ]),
     "중앙일보": ("c", [
-        "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
+        "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
         "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
     ]),
     "동아일보": ("c", [
@@ -189,8 +189,8 @@ COLUMN_SOURCES_DEF = [
         "https://www.chosun.com/arc/outboundfeeds/rss/category/opinion/?outputType=xml",
     ]),
     ("중앙일보", "c", [
-        "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-        "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
+        "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
+        "https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko",
     ]),
     ("동아일보", "c", [
         "https://rss.donga.com/opinion.xml",
@@ -267,7 +267,7 @@ INTL_COUNTRY = {
 # ── 헤드라인 소스 (사이드바용) ────────────────────────────────
 HEADLINE_SOURCES = [
     ("조선","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-    ("중앙","c","https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko"),
+    ("중앙","c","https://news.google.com/rss/publications/CAAqBwgKMLe3nQswsvKfAw?hl=ko&gl=KR&ceid=KR:ko"),
     ("동아","c","https://rss.donga.com/total.xml"),
     ("매경","e","https://www.mk.co.kr/rss/30000001/"),
     ("한경","e","https://www.hankyung.com/feed/economy"),
@@ -605,10 +605,9 @@ for src_name in ALL_SOURCE_NAMES:
 # ── 2단계: Claude AI 섹션 분류 ─────────────────────────────────
 print("  [2단계] AI 섹션 분류...")
 def ai_classify(title):
-    """기사 제목으로 섹션 분류"""
     r = claude(
         f"뉴스 제목: '{title}'\n"
-        "아래 기준으로 섹션 하나만 정확히 출력 (다른 텍스트 없이):\n"
+        "아래 기준으로 섹션 하나만 정확히 출력:\n"
         "경제 · 금융 = 금리·환율·주가·부동산·세금·은행·물가·GDP·무역\n"
         "기 업 = 기업실적·신제품·CEO·반도체·자동차·IT·스타트업·상장·M&A\n"
         "정책 · 사회 = 정부정책·법안·선거·정치·복지·교육·의료·범죄·사고·BTS·공연·문화\n"
@@ -819,7 +818,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"title":"네번째 핵심 질문 20자이내"}}
   ],
   "주요이슈": ["22자이내 이슈1","22자이내 이슈2","22자이내 이슈3"],
-  "칼럼논점": "오늘 칼럼들을 관통하는 시대적 맥락과 핵심 쟁점. 독자가 어떤 관점으로 읽으면 좋을지, 칼럼들의 공통 흐름과 지금 왜 중요한지 포함. 4~6문장 300자이내. 마크다운 절대 금지.",
+  "칼럼논점": "오늘 칼럼들의 핵심 논점 한 문장 40자이내",
   "오늘의용어": [
     {{"word":"오늘 뉴스에 등장한 어려운 경제·금융 용어","en":"영어명(있으면)","desc":"일반인도 이해할 쉬운 설명 50자이내"}},
     {{"word":"두번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}},
@@ -827,7 +826,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"word":"네번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}}
   ]
 }}
-중요: 오늘의 용어는 오늘 뉴스에 실제 등장한 단어, 중학생도 이해하게 쉽게.""", max_tokens=1200)
+중요: 오늘의 용어는 오늘 뉴스에 실제 등장한 단어, 중학생도 이해하게 쉽게.""", max_tokens=800)
 
 if not sidebar_data:
     sidebar_data = {
@@ -851,11 +850,16 @@ HIGH_IMPACT_KW = ["전쟁","제재","금리","관세","봉쇄","폭락","급등"
 def impact_score(t):
     return sum(1 for kw in HIGH_IMPACT_KW if kw in t)
 
-all_flat = [it for sl in section_news.values() for it in sl] + intl_news
-all_flat.sort(key=lambda x: impact_score(x.get("ko_title", x.get("title",""))), reverse=True)
-chain_seed = all_flat[0] if all_flat else None
+# 오전=국내→KR / 오후=해외→US
+if is_morning:
+    chain_pool = [it for sl in section_news.values() for it in sl]
+    chain_mkt = "KR"
+else:
+    chain_pool = list(intl_news) if intl_news else [it for sl in section_news.values() for it in sl]
+    chain_mkt = "US"
+chain_pool.sort(key=lambda x: impact_score(x.get("ko_title", x.get("title",""))), reverse=True)
+chain_seeds = chain_pool[:3]  # 임팩트 상위 3개 뉴스
 
-chain_html = "\n"
 arr = "&#8595;"
 chain_cfg = {
     "chain_main":    {"lb":"var(--red)",  "ncs":["n1","n2","n3"], "bc":"var(--red)"},
@@ -881,29 +885,30 @@ def _make_one_chain(news_title, label, tag1, tag2, tag3, mkt):
         max_tokens=450
     )
 
+chain_html = "\n"
 if chain_seeds:
-    for seed_idx, chain_seed in enumerate(chain_seeds):
-        seed_title = chain_seed.get("ko_title", chain_seed["title"])
-        seed_src   = chain_seed["source"]
-        seed_url   = chain_seed["url"]
-        seed_sc    = chain_seed["src_class"]
-        seed_pub   = chain_seed["pubtime"]
+    for seed_idx, seed in enumerate(chain_seeds):
+        s_title = seed.get("ko_title", seed["title"])
+        s_src   = seed["source"]
+        s_url   = seed["url"]
+        s_sc    = seed["src_class"]
+        s_pub   = seed["pubtime"]
 
-        try: t_str = datetime.fromisoformat(seed_pub).astimezone(KST).strftime("%H:%M")
+        try: t_str = datetime.fromisoformat(s_pub).astimezone(KST).strftime("%H:%M")
         except: t_str = ""
         tlbl = f'{"오전" if is_morning else "오후"} {t_str}' if t_str else ("오전" if is_morning else "오후")
 
         chain_html += (
             f'\n<div class="chain-header-card" style="margin-top:{"0" if seed_idx==0 else "20px"}">\n'
             f'  <div class="chain-time-badge">{tlbl} 핵심 뉴스 {seed_idx+1}</div>\n'
-            f'  <div class="chain-seed-title"><a href="{seed_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">{seed_title}</a></div>\n'
-            f'  <div class="chain-seed-meta"><span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span></div>\n'
+            f'  <div class="chain-seed-title"><a href="{s_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">{s_title}</a></div>\n'
+            f'  <div class="chain-seed-meta"><span class="src {s_sc}" style="font-size:9px">{esc(s_src)}</span></div>\n'
             f'</div>\n'
         )
 
-        cd_main = _make_one_chain(seed_title, "수혜 체인",   "직접 영향","산업 파급","수혜 종목", chain_mkt)
-        cd_rev  = _make_one_chain(seed_title, "역발상 체인", "통념",     "역발상",   "역발상 수혜", chain_mkt)
-        cd_risk = _make_one_chain(seed_title, "리스크 체인", "리스크",   "피해 산업","회피 전략", chain_mkt)
+        cd_main = _make_one_chain(s_title, "수혜 체인",   "직접 영향","산업 파급","수혜 종목", chain_mkt)
+        cd_rev  = _make_one_chain(s_title, "역발상 체인", "통념",     "역발상",   "역발상 수혜", chain_mkt)
+        cd_risk = _make_one_chain(s_title, "리스크 체인", "리스크",   "피해 산업","회피 전략", chain_mkt)
 
         for cd in [d for d in [cd_main, cd_rev, cd_risk] if d]:
             lbl  = esc(cd.get("label",""))
@@ -916,12 +921,12 @@ if chain_seeds:
             _lb = cfg["lb"]; _bc = cfg["bc"]
 
             inner = '  <div class="chain-steps">\n'
-            for si, sd in enumerate(stps[:3]):
+            for si2, sd in enumerate(stps[:3]):
                 tag=esc(sd.get("tag","")); txt=esc(sd.get("text","")); sub=esc(sd.get("sub",""))
-                nc=cfg["ncs"][si] if si<len(cfg["ncs"]) else "n4"
+                nc=cfg["ncs"][si2] if si2<len(cfg["ncs"]) else "n4"
                 sub_h=f'<span class="chain-step-sub">{sub}</span>' if sub else ""
-                if si>0: inner+=f'    <div class="chain-arrow-sm">{arr}</div>\n'
-                inner+=(f'    <div class="chain-step"><div class="chain-step-num {nc}">{si+1}</div>'
+                if si2>0: inner+=f'    <div class="chain-arrow-sm">{arr}</div>\n'
+                inner+=(f'    <div class="chain-step"><div class="chain-step-num {nc}">{si2+1}</div>'
                         f'<div class="chain-step-body"><span class="chain-step-tag">{tag}</span> '
                         f'<span class="chain-step-text">{txt}</span>{sub_h}</div></div>\n')
             inner+='  </div>\n'
@@ -954,11 +959,11 @@ if chain_seeds:
                 f'{inner}{stock_html}</div>\n</div>\n'
             )
 
-        print(f"  ✅ 뉴스{seed_idx+1}: {seed_title[:25]}... 완료")
+        print(f"  ✅ 뉴스{seed_idx+1}: {s_title[:25]}... 완료")
 
     chain_html += '<div class="chain-disclaimer">&#9888;&#65039; AI 분석 참고 정보 — 투자는 전문가 상담 후 본인 판단으로</div>\n'
 else:
-    chain_html = '<div class="chain-intro"><div class="chain-intro-title">&#128279; 파급 체인</div><div class="chain-intro-sub">뉴스 수집 후 채워집니다</div></div>\n' 
+    chain_html = '<div class="chain-intro"><div class="chain-intro-title">&#128279; 파급 체인</div><div class="chain-intro-sub">뉴스 수집 후 채워집니다</div></div>\n'
 
 
 # ════════════════════════════════════════════════════════════
@@ -1005,11 +1010,8 @@ def _sort_time(x):
     except: return datetime.min.replace(tzinfo=KST)
 feed_items.sort(key=_sort_time, reverse=True)
 
-FEED_BAD = ["사용할 수 없는 피드","피드를 불러올 수 없","Feed not available"]
 feed_rows = ""
 for fi in feed_items:
-    if any(b in fi["title"] for b in FEED_BAD): continue
-    if len(fi["title"].strip()) < 5: continue
     try:
         dt = datetime.fromisoformat(fi["time"]).astimezone(KST)
         t_str = dt.strftime("%H:%M")
@@ -1066,7 +1068,12 @@ def make_news_card(item, card_color, hist_key):
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1121,6 +1128,7 @@ for section in NEWS_SECTIONS:
     headline_html += f"""
     <div class="card {cc}" onclick="toggleCard(this)">
       <div class="ct">
+        <span class="hl-sec-tag" style="background:{color}">{section}</span>
         <span class="src {sc}">{src}</span>
         <span class="ctime" data-pubtime="{pub}">🕒 --</span>
         <span class="expand-hint">▾</span>
@@ -1129,7 +1137,12 @@ for section in NEWS_SECTIONS:
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hk}',event)">📂 {hist_label}</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>"""
@@ -1163,7 +1176,12 @@ def make_intl_card(item):
         {orig_html}
         {bullets_html}
         <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1232,6 +1250,10 @@ def build_right(data, hl_list):
         </div>'''
 
     return f"""
+    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
+      <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치<span class="sbox-arr">▾</span></div>
+      <div class="sbox-body"><div class="mini-stats">{stats}</div></div>
+    </div>
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
       <div class="pt-list">{pts_html}</div>
