@@ -410,7 +410,7 @@ def fetch_rss(source, src_class, url, max_items=15, today_only=True):
 
         items = []
         today_date  = now_kst.date()
-        cutoff_date = today_date - timedelta(days=1)
+        cutoff_date = today_date - timedelta(days=2)
 
         rss_items = soup.find_all("item") or soup.find_all("entry")
 
@@ -509,10 +509,17 @@ def get_column_summary(title):
         "① 핵심 주장 (한 문장, 40자이내)\n"
         "② 주요 근거나 사례 (1~2문장, 80자이내)\n"
         "③ 이 칼럼이 던지는 질문 (~지 않을까? 형태, 40자이내)\n"
-        "규칙: ①②③ 번호로 시작, 한국어, 전체 300~400자",
+        "\n"
+        "절대 규칙: 마크다운(#, **, --, ---, *, []) 사용 금지. 순수 텍스트만. ①②③ 번호로만 구분. 한국어. 전체 300~400자.",
         max_tokens=500
     )
     if not text: return "요약 준비 중..."
+    # 마크다운 잔재 후처리
+    text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
+    text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)
+    text = re.sub(r'^---+\s*$', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^\*\s+', '', text, flags=re.MULTILINE)
+    text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
 
 def translate_and_summarize(title, source):
@@ -799,7 +806,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"title":"네번째 핵심 질문 20자이내"}}
   ],
   "주요이슈": ["22자이내 이슈1","22자이내 이슈2","22자이내 이슈3"],
-  "칼럼논점": "오늘 칼럼들의 핵심 논점을 3~4문장 200자이내로 서술. 쟁점과 시사점 포함",
+  "칼럼논점": "오늘 칼럼들의 핵심 논점 한 문장 40자이내",
   "오늘의용어": [
     {{"word":"오늘 뉴스에 등장한 어려운 경제·금융 용어","en":"영어명(있으면)","desc":"일반인도 이해할 쉬운 설명 50자이내"}},
     {{"word":"두번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}},
@@ -831,9 +838,23 @@ HIGH_IMPACT_KW = ["전쟁","제재","금리","관세","봉쇄","폭락","급등"
 def impact_score(t):
     return sum(1 for kw in HIGH_IMPACT_KW if kw in t)
 
-all_flat = [it for sl in section_news.values() for it in sl] + intl_news
-all_flat.sort(key=lambda x: impact_score(x.get("ko_title", x.get("title",""))), reverse=True)
-chain_seed = all_flat[0] if all_flat else None
+# 오전: 한국 뉴스 우선 / 오후: 해외·미국 뉴스 우선
+if is_morning:
+    # 오전 — 국내 뉴스 중 임팩트 1위
+    domestic_flat = [it for sl in section_news.values() for it in sl]
+    domestic_flat.sort(key=lambda x: impact_score(x.get("title","")), reverse=True)
+    chain_seed = domestic_flat[0] if domestic_flat else None
+    chain_market_hint = "KR"   # 한국 주식 추천
+else:
+    # 오후 — 해외 뉴스 우선, 없으면 국내
+    intl_flat = list(intl_news)
+    intl_flat.sort(key=lambda x: impact_score(x.get("ko_title", x.get("title",""))), reverse=True)
+    chain_seed = intl_flat[0] if intl_flat else None
+    if not chain_seed:
+        domestic_flat = [it for sl in section_news.values() for it in sl]
+        domestic_flat.sort(key=lambda x: impact_score(x.get("title","")), reverse=True)
+        chain_seed = domestic_flat[0] if domestic_flat else None
+    chain_market_hint = "US"   # 미국 주식 추천
 
 chain_html = "\n"
 if chain_seed:
@@ -900,13 +921,9 @@ if chain_seed:
             stps = cd.get("steps",[])
             stk = cd.get("stock",{})
 
-            _lb = cfg["lb"]; _bc = cfg["bc"]
             chain_html += (
-                f'\n<div class="sec sec-collapsed" onclick="toggleSection(this)">'
-                f'<span class="sec-tag" style="background:{_lb}">{lbl}</span>'
-                f'<div class="sec-line"></div><span class="sec-toggle">▾</span></div>\n'
-                f'<div class="sec-body collapsed">\n'
-                f'<div class="chain-block" style="border-left-color:{_bc}">\n'
+                f'\n<div class="chain-block" style="border-left-color:{cfg["bc"]}">\n'
+                f'  <div class="chain-block-label" style="background:{cfg["lb"]}">{lbl}</div>\n'
                 f'  <div class="chain-steps">\n'
             )
             for si, sd in enumerate(stps[:3]):
@@ -928,11 +945,9 @@ if chain_seed:
             if stk and stk.get("name"):
                 nm = esc(stk["name"]); mk = stk.get("market","KR")
                 logic = esc(stk.get("logic","")); up = esc(stk.get("upside",""))
-                try:    prob = min(max(int(stk.get("probability",0)),0),100)
-                except: prob = 0
-                if prob < 85:
-                    continue
-                pc = "var(--green)"
+                try:    prob = min(max(int(stk.get("probability",65)),0),100)
+                except: prob = 65
+                pc = "var(--green)" if prob>=65 else ("var(--gold)" if prob>=50 else "var(--red)")
                 up_h = f'<div class="chain-upside-text">&#9650; {up}</div>' if up else ""
                 chain_html += (
                     f'  <div class="chain-stock-row">\n'
@@ -950,7 +965,7 @@ if chain_seed:
                     f'</div></div></div>\n'
                     f'  </div>\n'
                 )
-            chain_html += '</div>\n</div>\n</div>\n'
+            chain_html += '</div>\n'
 
         chain_html += '<div class="chain-disclaimer">&#9888;&#65039; AI 분석 참고 정보 — 투자는 전문가 상담 후 본인 판단으로</div>\n'
         print(f"  ✅ 파급 체인 3종: {seed_title[:30]}...")
@@ -1063,7 +1078,12 @@ def make_news_card(item, card_color, hist_key):
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1118,6 +1138,7 @@ for section in NEWS_SECTIONS:
     headline_html += f"""
     <div class="card {cc}" onclick="toggleCard(this)">
       <div class="ct">
+        <span class="hl-sec-tag" style="background:{color}">{section}</span>
         <span class="src {sc}">{src}</span>
         <span class="ctime" data-pubtime="{pub}">🕒 --</span>
         <span class="expand-hint">▾</span>
@@ -1126,7 +1147,12 @@ for section in NEWS_SECTIONS:
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hk}',event)">📂 {hist_label}</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>"""
@@ -1160,7 +1186,12 @@ def make_intl_card(item):
         {orig_html}
         {bullets_html}
         <div class="card-btns">
+          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+        </div>
+        <div class="case-panel">
+          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
+          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1229,10 +1260,6 @@ def build_right(data, hl_list):
         </div>'''
 
     return f"""
-    <div class="sbox sbox-toggle" onclick="toggleSbox(this, event)">
-      <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치<span class="sbox-arr">▾</span></div>
-      <div class="sbox-body"><div class="mini-stats">{stats}</div></div>
-    </div>
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
       <div class="pt-list">{pts_html}</div>
@@ -1245,29 +1272,29 @@ def build_right(data, hl_list):
 
 right_html = build_right(sidebar_data, hl_items)
 
-# 파급체인 전용 사이드바: 핵심수치만 펼쳐서
-_nums = sidebar_data.get("핵심수치", [])
+# 파급체인 전용 사이드바: 핵심수치만, 항상 펼침
+_nums  = sidebar_data.get("핵심수치", [])
 _stats = ""
 for n in _nums[:6]:
-    clr  = "r" if n.get("up", True) else "b"
+    clr   = "r" if n.get("up", True) else "b"
     _val  = str(n.get("value", n.get("수치", "--")))
     _lbl  = str(n.get("label", n.get("항목", "")))
     _desc = str(n.get("desc",  n.get("설명", "")))
-    _stats += f'<div class="mstat"><div class="mnum {clr}">{esc(_val)}</div><div class="mlbl">{esc(_lbl)}<br><small style="font-size:9px">{esc(_desc)}</small></div></div>'
+    _stats += (
+        f'<div class="mstat">'
+        f'<div class="mnum {clr}">{esc(_val)}</div>'
+        f'<div class="mlbl">{esc(_lbl)}<br>'
+        f'<small style="font-size:9px">{esc(_desc)}</small></div>'
+        f'</div>'
+    )
 chain_right_html = f"""
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--red)"></span>오늘의 핵심 수치</div>
-      <div class="sbox-body"><div class="mini-stats">{_stats}</div></div>
+      <div class="sbox-body"><div class="mini-stats">{_stats if _stats else '<div style="color:var(--ink3);font-size:12px;padding:4px">업데이트 준비 중</div>'}</div></div>
     </div>
 """
 
 논점 = esc(sidebar_data.get("칼럼논점", ""))
-mobile_논점_html = f"""
-    <div class="sbox mobile-only-sbox">
-      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
-      <div class="issue-list"><div class="issue-item" style="line-height:1.6">{논점}</div></div>
-    </div>
-"""
 col_right_html = f"""
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
@@ -1375,11 +1402,13 @@ def replace_block(html, s, e, content):
 
 html = replace_block(html, '<!-- AUTO_FEED_START -->', '<!-- AUTO_FEED_END -->', feed_html)
 html = replace_block(html, '<!-- AUTO_CHAIN_RIGHT_START -->', '<!-- AUTO_CHAIN_RIGHT_END -->', chain_right_html)
+# 모바일: 파급체인 본문 위 핵심수치
+chain_mobile_stats_html = f'<div class="chain-mobile-stats">{chain_right_html}</div>'
+html = replace_block(html, '<!-- AUTO_CHAIN_MOBILE_STATS_START -->', '<!-- AUTO_CHAIN_MOBILE_STATS_END -->', chain_mobile_stats_html)
 html = replace_block(html, '<!-- AUTO_CHAIN_START -->', '<!-- AUTO_CHAIN_END -->', chain_html)
 html = replace_block(html, '<!-- AUTO_HEADLINE_START -->', '<!-- AUTO_HEADLINE_END -->', headline_html)
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
 html = replace_block(html, '<!-- AUTO_INTL_START -->',      '<!-- AUTO_INTL_END -->',      intl_html)
-html = replace_block(html, '<!-- AUTO_MOBILE_COLUMN_논점_START -->', '<!-- AUTO_MOBILE_COLUMN_논점_END -->', mobile_논점_html)
 html = replace_block(html, '<!-- AUTO_COLUMN_START -->',    '<!-- AUTO_COLUMN_END -->',    col_html)
 html = replace_block(html, '<!-- AUTO_RIGHT_START -->',     '<!-- AUTO_RIGHT_END -->',     right_html)
 html = replace_block(html, '<!-- AUTO_COL_RIGHT_START -->', '<!-- AUTO_COL_RIGHT_END -->', col_right_html)
