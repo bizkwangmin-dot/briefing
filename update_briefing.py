@@ -490,19 +490,17 @@ def fetch_rss(source, src_class, url, max_items=15, today_only=True):
 
 # ── Claude 요약 함수 ─────────────────────────────────────────
 def get_summary_3(title):
-    for _ in range(2):
-        text = claude(
-            f"뉴스 제목: '{title}'\n"
-            "핵심 내용을 반드시 3줄로 요약해줘.\n"
-            "규칙: 각 줄 앞에 어떤 기호도 없이 내용만, 한 줄 40자 이내, 수치·사실 중심, 한국어, 딱 3줄만 출력",
-            max_tokens=150
-        )
-        if not text: continue
-        lines = [l.strip().lstrip('·-•*①②③1234567890.) ').strip()
-                 for l in text.split('\n') if l.strip()]
-        result = [l for l in lines if len(l) > 4][:3]
-        if len(result) >= 2: return result
-    return ["제목 참고", title[:30], "원문 확인"]
+    text = claude(
+        f"뉴스 제목: '{title}'\n"
+        "핵심 내용을 반드시 3줄로 요약해줘.\n"
+        "규칙: 각 줄 앞에 어떤 기호도 없이 내용만, 한 줄 40자 이내, 수치·사실 중심, 한국어, 딱 3줄만 출력",
+        max_tokens=150
+    )
+    if not text: return None
+    lines = [l.strip().lstrip('·-•*①②③1234567890.) ').strip()
+             for l in text.split('\n') if l.strip()]
+    result = [l for l in lines if len(l) > 4][:3]
+    return result if len(result) >= 2 else None
 
 def get_column_summary(title):
     text = claude(
@@ -511,15 +509,13 @@ def get_column_summary(title):
         "① 핵심 주장 (한 문장, 40자이내)\n"
         "② 주요 근거나 사례 (1~2문장, 80자이내)\n"
         "③ 이 칼럼이 던지는 질문 (~지 않을까? 형태, 40자이내)\n"
-        "절대 규칙: #, **, --, ---, * 등 마크다운 기호 사용 금지. 순수 텍스트만. 한국어. 전체 300~400자.",
+        "규칙: ①②③ 번호로 시작, 한국어, 전체 300~400자",
         max_tokens=500
     )
     if not text: return "요약 준비 중..."
-    # 마크다운 후처리
     text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
     text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)
     text = re.sub(r'^---+\s*$', '', text, flags=re.MULTILINE)
-    text = re.sub(r'^\*\s+', '', text, flags=re.MULTILINE)
     text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
 
@@ -594,29 +590,60 @@ def collect_one(src_name, src_cls, url_list):
                 return item
     return None
 
-for section in NEWS_SECTIONS:
-    print(f"  [{section}]")
-    sec_urls = SECTION_RSS.get(section, {})
+# ── 1단계: 신문사별로 기사 수집 (섹션 구분 없이) ──────────────
+print("  [1단계] 신문사별 기사 수집...")
+raw_pool = []  # 전체 수집 풀
+seen_pool = set()
 
-    for src_name in ALL_SOURCE_NAMES:
-        src_cls = RSS_FALLBACKS[src_name][0]
-        fb_urls = RSS_FALLBACKS[src_name][1]
+for src_name in ALL_SOURCE_NAMES:
+    src_cls = RSS_FALLBACKS[src_name][0]
+    fb_urls = RSS_FALLBACKS[src_name][1]
+    # 섹션별 URL 모두 합치기
+    all_urls = list(dict.fromkeys(
+        [u for sec_u in SECTION_RSS.values() for u in sec_u.get(src_name, [])] + fb_urls
+    ))
+    item = collect_one(src_name, src_cls, all_urls)
+    if item:
+        k = dedup_key(item["title"])
+        if k not in seen_pool:
+            seen_pool.add(k)
+            raw_pool.append(item)
+            print(f"    ✅ [{src_name}] {item['title'][:35]}...")
+    else:
+        print(f"    ⚠️  [{src_name}] 수집 실패")
 
-        # 섹션 전용 URL + 폴백 URL 합치기 (중복 제거)
-        url_list = list(dict.fromkeys(
-            sec_urls.get(src_name, []) + fb_urls
-        ))
+# ── 2단계: Claude AI로 섹션 분류 ────────────────────────────
+print("  [2단계] AI 섹션 분류...")
+SECTION_PROMPT_MAP = {
+    "경제 · 금융": "금리·환율·주가·부동산·세금·은행·예금·대출·물가·GDP·무역수지·재정",
+    "기 업":       "기업실적·M&A·신제품·채용·CEO·공장·반도체·자동차·IT·스타트업·상장",
+    "정책 · 사회": "정부정책·법안·선거·정치·복지·교육·의료·범죄·사고·노동·환경·외교",
+    "국 제":       "미국·중국·일본·유럽·전쟁·외교·국제기구·글로벌이슈·해외경제",
+}
 
-        item = collect_one(src_name, src_cls, url_list)
-        if item:
-            print(f"    ✅ [{src_name}] {item['title'][:40]}...")
-            item["bullets"] = get_summary_3(item["title"])
-            time.sleep(0.25)
-            section_news[section].append(item)
-            all_titles.append(item["title"])
-            update_latest(item["pubtime"])
-        else:
-            print(f"    ⚠️  [{src_name}] 수집 실패")
+def ai_classify_section(title):
+    """Claude가 기사 제목을 보고 섹션 분류"""
+    resp = claude(
+        f"뉴스 제목: '{title}'\n"
+        "아래 4개 섹션 중 가장 적합한 섹션 1개를 정확히 그대로 출력. 다른 텍스트 없이:\n"
+        "경제 · 금융\n기 업\n정책 · 사회\n국 제",
+        max_tokens=20
+    )
+    if not resp: return "경제 · 금융"
+    resp = resp.strip()
+    for sec in NEWS_SECTIONS:
+        if sec.replace(" ", "") in resp.replace(" ", ""):
+            return sec
+    return "경제 · 금융"
+
+for item in raw_pool:
+    section = ai_classify_section(item["title"])
+    item["bullets"] = get_summary_3(item["title"])
+    section_news[section].append(item)
+    all_titles.append(item["title"])
+    update_latest(item["pubtime"])
+    print(f"    → [{section}] {item['source']}: {item['title'][:30]}...")
+    time.sleep(0.2)
 
 for section in NEWS_SECTIONS:
     srcs = ", ".join(dict.fromkeys(i["source"] for i in section_news[section]))
@@ -807,7 +834,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"title":"네번째 핵심 질문 20자이내"}}
   ],
   "주요이슈": ["22자이내 이슈1","22자이내 이슈2","22자이내 이슈3"],
-  "칼럼논점": "오늘 칼럼들을 관통하는 시대적 맥락과 핵심 쟁점을 서술. 독자가 어떤 관점으로 읽으면 좋을지, 칼럼들의 공통 흐름, 지금 이 시점에 왜 중요한지 포함. 4~6문장 300자이내. 마크다운(#,**,---) 절대 금지.",
+  "칼럼논점": "오늘 칼럼들을 관통하는 시대적 맥락과 핵심 쟁점. 독자가 어떤 관점으로 읽으면 좋을지, 공통 흐름, 지금 이 시점에 왜 중요한지 포함. 4~6문장 300자이내. 마크다운 절대 금지.",
   "오늘의용어": [
     {{"word":"오늘 뉴스에 등장한 어려운 경제·금융 용어","en":"영어명(있으면)","desc":"일반인도 이해할 쉬운 설명 50자이내"}},
     {{"word":"두번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}},
@@ -815,7 +842,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"word":"네번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}}
   ]
 }}
-중요: 오늘의 용어는 오늘 뉴스에 실제 등장한 단어, 중학생도 이해하게 쉽게.""", max_tokens=800)
+중요: 오늘의 용어는 오늘 뉴스에 실제 등장한 단어, 중학생도 이해하게 쉽게.""", max_tokens=1200)
 
 if not sidebar_data:
     sidebar_data = {
@@ -829,7 +856,7 @@ else:
     print("  ✅ 사이드바 생성 완료")
 
 # ════════════════════════════════════════════════════════════
-# 파급체인 전용 사이드바 (핵심수치만, 항상 펼침)
+# 파급체인 전용 사이드바 (핵심수치만)
 # ════════════════════════════════════════════════════════════
 _nums  = sidebar_data.get("핵심수치", [])
 _stats = ""
@@ -857,7 +884,6 @@ HIGH_IMPACT_KW = ["전쟁","제재","금리","관세","봉쇄","폭락","급등"
 def impact_score(t):
     return sum(1 for kw in HIGH_IMPACT_KW if kw in t)
 
-# 오전=국내 뉴스→KR주식 / 오후=해외 뉴스→US주식
 if is_morning:
     chain_pool = [it for sl in section_news.values() for it in sl]
     chain_market_hint = "KR"
@@ -927,51 +953,36 @@ if chain_seed:
         for ck in ["chain_main","chain_reverse","chain_risk"]:
             cd   = chain_data.get(ck, {})
             if not cd: continue
-            cfg  = chain_cfg[ck]
-            lbl  = esc(cd.get("label", ""))
-            stps = cd.get("steps", [])
-            stk  = cd.get("stock", {})
+            cfg  = chain_cfg[ck]; lbl = esc(cd.get("label",""))
+            stps = cd.get("steps",[]); stk = cd.get("stock",{})
             _lb  = cfg["lb"]; _bc = cfg["bc"]
 
             inner = '  <div class="chain-steps">\n'
             for si, sd in enumerate(stps[:3]):
-                tag   = esc(sd.get("tag",""))
-                txt   = esc(sd.get("text",""))
-                sub   = esc(sd.get("sub",""))
-                nc    = cfg["ncs"][si] if si < len(cfg["ncs"]) else "n4"
+                tag = esc(sd.get("tag","")); txt = esc(sd.get("text","")); sub = esc(sd.get("sub",""))
+                nc  = cfg["ncs"][si] if si < len(cfg["ncs"]) else "n4"
                 sub_h = f'<span class="chain-step-sub">{sub}</span>' if sub else ""
-                if si > 0:
-                    inner += f'    <div class="chain-arrow-sm">{arr}</div>\n'
-                inner += (
-                    f'    <div class="chain-step">'
-                    f'<div class="chain-step-num {nc}">{si+1}</div>'
-                    f'<div class="chain-step-body">'
-                    f'<span class="chain-step-tag">{tag}</span> '
-                    f'<span class="chain-step-text">{txt}</span>{sub_h}'
-                    f'</div></div>\n'
-                )
+                if si > 0: inner += f'    <div class="chain-arrow-sm">{arr}</div>\n'
+                inner += (f'    <div class="chain-step"><div class="chain-step-num {nc}">{si+1}</div>'
+                          f'<div class="chain-step-body"><span class="chain-step-tag">{tag}</span> '
+                          f'<span class="chain-step-text">{txt}</span>{sub_h}</div></div>\n')
             inner += '  </div>\n'
 
             stock_html = ""
             if stk and stk.get("name"):
-                nm  = esc(stk["name"])
-                mk  = stk.get("market", chain_market_hint)
-                logic = esc(stk.get("logic",""))
-                up  = esc(stk.get("upside",""))
+                nm = esc(stk["name"]); mk = stk.get("market", chain_market_hint)
+                logic = esc(stk.get("logic","")); up = esc(stk.get("upside",""))
                 try:    prob = min(max(int(stk.get("probability",0)),0),100)
                 except: prob = 0
-                if prob >= 85:  # 85% 이상만 표시
+                if prob >= 85:
                     up_h = f'<div class="chain-upside-text">&#9650; {up}</div>' if up else ""
                     stock_html = (
-                        f'  <div class="chain-stock-row">'
-                        f'<div class="chain-stock-card">'
-                        f'<div class="chain-stock-left">'
-                        f'<span class="chain-stock-name">{nm}</span>'
-                        f'<span class="chain-stock-market {mk.lower()}">{mk}</span>'
-                        f'</div><div class="chain-stock-right">'
-                        f'<div class="chain-logic-text">&#128270; {logic}</div>{up_h}'
-                        f'<div class="chain-prob-row">'
-                        f'<div class="chain-prob-bar-wrap"><div class="chain-prob-bar" style="width:{prob}%;background:var(--green)"></div></div>'
+                        f'  <div class="chain-stock-row"><div class="chain-stock-card">'
+                        f'<div class="chain-stock-left"><span class="chain-stock-name">{nm}</span>'
+                        f'<span class="chain-stock-market {mk.lower()}">{mk}</span></div>'
+                        f'<div class="chain-stock-right"><div class="chain-logic-text">&#128270; {logic}</div>{up_h}'
+                        f'<div class="chain-prob-row"><div class="chain-prob-bar-wrap">'
+                        f'<div class="chain-prob-bar" style="width:{prob}%;background:var(--green)"></div></div>'
                         f'<span class="chain-prob-pct" style="color:var(--green)">{prob}%</span>'
                         f'</div></div></div></div>\n'
                     )
@@ -979,11 +990,10 @@ if chain_seed:
             chain_html += (
                 f'\n<div class="sec sec-collapsed" onclick="toggleSection(this)">'
                 f'<span class="sec-tag" style="background:{_lb}">{lbl}</span>'
-                f'<div class="sec-line"></div><span class="sec-toggle">▾</span>'
-                f'</div>\n<div class="sec-body collapsed">\n'
+                f'<div class="sec-line"></div><span class="sec-toggle">▾</span></div>\n'
+                f'<div class="sec-body collapsed">\n'
                 f'<div class="chain-block" style="border-left-color:{_bc};background:var(--tagbg);border-radius:8px;padding:12px 14px;margin:4px 0">\n'
-                f'{inner}{stock_html}'
-                f'</div>\n</div>\n'
+                f'{inner}{stock_html}</div>\n</div>\n'
             )
 
         chain_html += '<div class="chain-disclaimer">&#9888;&#65039; AI 분석 참고 정보 — 투자는 전문가 상담 후 본인 판단으로</div>\n'
@@ -1039,11 +1049,10 @@ def _sort_time(x):
     except: return datetime.min.replace(tzinfo=KST)
 feed_items.sort(key=_sort_time, reverse=True)
 
-FEED_BAD_KW = ["사용할 수 없는 피드", "피드를 불러올 수 없", "Feed not available",
-               "잘못된 피드", "Error fetching"]
+FEED_BAD = ["사용할 수 없는 피드","피드를 불러올 수 없","Feed not available","잘못된 피드"]
 feed_rows = ""
 for fi in feed_items:
-    if any(kw in fi["title"] for kw in FEED_BAD_KW): continue
+    if any(b in fi["title"] for b in FEED_BAD): continue
     if len(fi["title"].strip()) < 5: continue
     try:
         dt = datetime.fromisoformat(fi["time"]).astimezone(KST)
@@ -1101,12 +1110,7 @@ def make_news_card(item, card_color, hist_key):
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
-          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1161,7 +1165,6 @@ for section in NEWS_SECTIONS:
     headline_html += f"""
     <div class="card {cc}" onclick="toggleCard(this)">
       <div class="ct">
-        <span class="hl-sec-tag" style="background:{color}">{section}</span>
         <span class="src {sc}">{src}</span>
         <span class="ctime" data-pubtime="{pub}">🕒 --</span>
         <span class="expand-hint">▾</span>
@@ -1170,12 +1173,7 @@ for section in NEWS_SECTIONS:
       <div class="card-expand">
         {bullets_html}
         <div class="card-btns">
-          <button class="cbtn case-btn" onclick="toggleCase(this,'{hk}',event)">📂 {hist_label}</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>"""
@@ -1209,12 +1207,7 @@ def make_intl_card(item):
         {orig_html}
         {bullets_html}
         <div class="card-btns">
-          <button class="cbtn case-btn" onclick="toggleCase(this,'{hist_key}',event)">📂 과거 사례</button>
           <a class="cbtn read-btn" href="{url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
-        </div>
-        <div class="case-panel">
-          <div class="case-panel-hd"><span>📂 과거 사례 — {hist_label}</span><span class="case-panel-close" onclick="closeCase(this,event)">✕</span></div>
-          <div class="case-panel-body"></div>
         </div>
       </div>
     </div>'''
@@ -1242,7 +1235,8 @@ for i, item in enumerate(columns):
         date_str = now_ymd
     summary   = esc(item.get("summary", "요약 준비 중..."))
     orig_html = f'<div class="ch-orig">{esc(item["orig_title"])}</div>' if is_intl and item.get("orig_title") else ''
-    country_badge = f'<span class="country-badge" data-c="{country}">{country}</span>' if is_intl and country else ''
+    _CC = {"미국":"#1a3050","일본":"#7a1f1f","영국":"#1a4a2e","홍콩":"#4a3070","중국":"#7a3000","유럽":"#1a4a2e","해외":"#555"}
+    country_badge = (f'<span class="src" style="background:{_CC.get(country,chr(34)+"#555"+chr(34))};color:#fff;font-size:8px;padding:2px 6px">{country}</span>' if country else '')
     col_html += f'''
     <div class="col-card {cc}">
       <div class="col-top">
@@ -1296,11 +1290,10 @@ def build_right(data, hl_list):
 right_html = build_right(sidebar_data, hl_items)
 
 논점 = esc(sidebar_data.get("칼럼논점", ""))
-mobile_col_논점_html = f"""<div class="mobile-col-논점 sbox">
-    <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
-    <div class="issue-list"><div class="issue-item" style="line-height:1.7">{논점}</div></div>
-</div>
-"""
+mobile_col_논점_html = (f'<div class="mobile-col-논점 sbox">\n'
+    f'<div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>\n'
+    f'<div class="issue-list"><div class="issue-item" style="line-height:1.7">{논점}</div></div>\n'
+    f'</div>\n')
 col_right_html = f"""
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
@@ -1431,10 +1424,6 @@ if '<!-- AUTO_ARCHIVE_START -->' in html and '<!-- AUTO_ARCHIVE_END -->' in html
         inner = re.sub(r'^<div class="arch-list">\s*', '', existing, count=1)
         inner = re.sub(r'\s*</div>\s*$', '', inner)
         new_arch = f'<div class="arch-list">\n{archive_entry}\n{inner}\n</div>'
-        # 14회(7일×2) 초과 제거
-        entries = re.findall(r'<div>\s*<div class="arch-row".*?</div>\s*</div>', new_arch, re.DOTALL)
-        if len(entries) > 14:
-            new_arch = f'<div class="arch-list">\n{chr(10).join(entries[:14])}\n</div>'
         html = replace_block(html, '<!-- AUTO_ARCHIVE_START -->', '<!-- AUTO_ARCHIVE_END -->', new_arch)
         print("  ✅ 아카이브 항목 추가")
     else:
