@@ -410,7 +410,7 @@ def fetch_rss(source, src_class, url, max_items=15, today_only=True):
 
         items = []
         today_date  = now_kst.date()
-        cutoff_date = today_date - timedelta(days=2)
+        cutoff_date = today_date - timedelta(days=1)  # 1일치만 수집
 
         rss_items = soup.find_all("item") or soup.find_all("entry")
 
@@ -818,7 +818,7 @@ sidebar_data = claude_json(f"""오늘({today_str}) 뉴스 제목들:
     {{"title":"네번째 핵심 질문 20자이내"}}
   ],
   "주요이슈": ["22자이내 이슈1","22자이내 이슈2","22자이내 이슈3"],
-  "칼럼논점": "오늘 칼럼들의 핵심 논점 한 문장 40자이내",
+  "칼럼논점": "오늘 칼럼들의 핵심 논점을 3~5문장으로 서술. 각 문장 40자이내, 전체 200자이내. 독자가 칼럼을 읽지 않아도 핵심 주장을 이해할 수 있게.",
   "오늘의용어": [
     {{"word":"오늘 뉴스에 등장한 어려운 경제·금융 용어","en":"영어명(있으면)","desc":"일반인도 이해할 쉬운 설명 50자이내"}},
     {{"word":"두번째 용어","en":"영어명","desc":"쉬운 설명 50자이내"}},
