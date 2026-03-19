@@ -892,14 +892,16 @@ if chain_seed:
         chain_id = f"chain_{seed_idx if 'seed_idx' in dir() else 0}"
         chain_html += (
             f'\n<div class="chain-news-wrap">\n'
-            f'<div class="chain-header-card" onclick="toggleChainBody(this)">\n'
+            f'<div class="chain-header-card">\n'
             f'  <div class="chain-time-badge">{tlbl} 핵심 뉴스</div>\n'
-            f'  <div class="chain-seed-title">{esc(seed_title)}</div>\n'
+            f'  <div class="chain-seed-title"><a href="{seed_url}" target="_blank" rel="noopener" class="chain-seed-link">{esc(seed_title)}</a></div>\n'
             f'  <div class="chain-seed-meta">'
             f'<span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span>'
-            f'<span class="chain-toggle-hint">▾ 파급 체인 보기</span></div>\n'
+            f'<button class="chain-toggle-btn" onclick="toggleChainBody(this)">'
+            f'<span class="chain-btn-arrow">▾</span> 파급 체인 보기</button>'
             f'</div>\n'
-            f'<div class="chain-body">\n'
+            f'</div>\n'
+            f'<div class="chain-body" style="display:none">\n'
         )
 
         for ck in ["chain_main","chain_reverse","chain_risk"]:
