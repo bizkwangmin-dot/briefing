@@ -32,7 +32,7 @@ def claude(prompt, max_tokens=400):
             "model": "claude-haiku-4-5",
             "max_tokens": max_tokens,
             "messages": [{"role": "user", "content": prompt}]
-        }, timeout=30)
+        }, timeout=60)
         if r.status_code == 200:
             return r.json()["content"][0]["text"].strip()
         print(f"  ⚠️  Claude {r.status_code}: {r.text[:100]}")
@@ -1139,7 +1139,7 @@ def build_insight(all_news_titles, all_intl_titles, sidebar_data):
 def render_insight(data):
     """골드만삭스 스타일 인사이트 HTML"""
     if not data:
-        return '<div style="padding:40px;text-align:center;color:var(--ink3)">다음 업데이트에서 인사이트가 제공됩니다.</div>'
+        return None  # None 반환 → replace_block 건너뜀 → 이전 내용 보존
 
     exec_sum    = esc(data.get("executive_summary",""))
     mkt_ctx     = esc(data.get("market_context",""))
@@ -1322,7 +1322,7 @@ if not insight_data:
 else:
     print(f"  ✅ 인사이트 생성: {insight_data.get('executive_summary','')[:30]}")
 
-insight_html = render_insight(insight_data)
+insight_html = render_insight(insight_data) or ''
 print(f"  ✅ 인사이트 HTML {len(insight_html)}자")
 
 
@@ -1655,7 +1655,11 @@ def replace_block(html, s, e, content):
     return html
 
 html = replace_block(html, '<!-- AUTO_FEED_START -->', '<!-- AUTO_FEED_END -->', feed_html)
-html = replace_block(html, '<!-- AUTO_INSIGHT_START -->', '<!-- AUTO_INSIGHT_END -->', insight_html)
+if insight_html and len(insight_html.strip()) > 100:
+    html = replace_block(html, '<!-- AUTO_INSIGHT_START -->', '<!-- AUTO_INSIGHT_END -->', insight_html)
+    print('  ✅ 인사이트 HTML 주입 완료')
+else:
+    print('  ⚠️ 인사이트 생성 실패 — 이전 내용 유지')
 html = replace_block(html, '<!-- AUTO_CHAIN_START -->', '<!-- AUTO_CHAIN_END -->', chain_html)
 html = replace_block(html, '<!-- AUTO_HEADLINE_START -->', '<!-- AUTO_HEADLINE_END -->', headline_html)
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
