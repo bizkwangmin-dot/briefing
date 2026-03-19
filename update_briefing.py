@@ -1055,6 +1055,232 @@ print(f"  ✅ 피드 {len(feed_items)}건 생성")
 # ════════════════════════════════════════════════════════════
 print("\n🔨 [4/4] HTML 빌드...")
 
+
+
+# ════════════════════════════════════════════════════════════
+# STEP 4c: 인사이트 생성 (골드만삭스식 종합 분석)
+# ════════════════════════════════════════════════════════════
+print("\n🔍 [4c] 인사이트 생성...")
+
+def build_insight(all_news_titles, all_intl_titles, sidebar_data):
+    """오늘 수집된 모든 뉴스를 종합해서 고급 분석 생성"""
+
+    titles_kr  = "\n".join(f"- {t}" for t in all_news_titles[:20])
+    titles_intl= "\n".join(f"- {t}" for t in all_intl_titles[:8])
+    today_iso  = now_kst.strftime("%Y년 %-m월 %-d일")
+    is_am      = now_kst.hour < 12
+
+    data = claude_json(
+        f"오늘({today_iso}) 수집된 뉴스:\n"
+        f"[국내]\n{titles_kr}\n\n"
+        f"[해외]\n{titles_intl}\n\n"
+        "이 뉴스들을 종합해 골드만삭스 모닝 브리핑 스타일의 분석을 JSON으로만 출력.\n"
+        "마크다운 기호(**,#,-,* 등) 절대 금지. 순수 텍스트만.\n"
+        "{\n"
+        "  \"theme\": \"오늘 뉴스 전체를 관통하는 핵심 테마 한 문장 (30자이내)\",\n"
+        "  \"theme_detail\": \"테마 상세 설명: 무엇이 왜 일어나고 있는지 2~3문장. 수치 포함 필수\",\n"
+        "  \"causal_chain\": [\n"
+        "    {\"step\":1, \"label\":\"촉발 원인\", \"text\":\"20자이내\", \"num\":\"관련 수치 (예: +23%)\"},\n"
+        "    {\"step\":2, \"label\":\"1차 파급\", \"text\":\"20자이내\", \"num\":\"수치\"},\n"
+        "    {\"step\":3, \"label\":\"2차 파급\", \"text\":\"20자이내\", \"num\":\"수치\"},\n"
+        "    {\"step\":4, \"label\":\"시장 반응\", \"text\":\"20자이내\", \"num\":\"수치\"},\n"
+        "    {\"step\":5, \"label\":\"최종 영향\", \"text\":\"20자이내\", \"num\":\"수치\"}\n"
+        "  ],\n"
+        "  \"scenarios\": [\n"
+        "    {\"grade\":\"A\", \"prob\":45, \"title\":\"기본 시나리오 15자이내\",\n"
+        "     \"chain\":\"전개 흐름 30자\", \"signal\":\"이 시나리오가 오는 신호 20자\",\n"
+        "     \"market\":\"시장 반응 20자\"},\n"
+        "    {\"grade\":\"B\", \"prob\":35, \"title\":\"대안 시나리오 15자이내\",\n"
+        "     \"chain\":\"전개 흐름 30자\", \"signal\":\"신호 20자\", \"market\":\"시장 반응 20자\"},\n"
+        "    {\"grade\":\"C\", \"prob\":20, \"title\":\"리스크 시나리오 15자이내\",\n"
+        "     \"chain\":\"전개 흐름 30자\", \"signal\":\"신호 20자\", \"market\":\"시장 반응 20자\"}\n"
+        "  ],\n"
+        "  \"perspectives\": [\n"
+        "    {\"role\":\"투자자\", \"icon\":\"📈\", \"insight\":\"투자자가 지금 봐야 할 핵심 30자\"},\n"
+        "    {\"role\":\"기업·경영자\", \"icon\":\"🏭\", \"insight\":\"기업이 대응해야 할 것 30자\"},\n"
+        "    {\"role\":\"직장인·생활자\", \"icon\":\"👤\", \"insight\":\"실생활 영향 30자\"},\n"
+        "    {\"role\":\"역발상\", \"icon\":\"🔄\", \"insight\":\"모두가 놓치는 반대 시각 30자\"}\n"
+        "  ],\n"
+        "  \"stocks\": [\n"
+        "    {\"name\":\"종목명\", \"ticker\":\"티커\", \"market\":\"KR또는US또는JP\",\n"
+        "     \"scenario\":\"A\", \"reason\":\"수혜 근거 35자\",\n"
+        "     \"timing\":\"매수 타이밍 신호 25자\", \"prob\":88},\n"
+        "    {\"name\":\"종목명2\", \"ticker\":\"티커\", \"market\":\"KR\",\n"
+        "     \"scenario\":\"B\", \"reason\":\"근거\", \"timing\":\"신호\", \"prob\":85}\n"
+        "  ],\n"
+        "  \"watch_next\": \"다음에 주목할 변수 한 문장 40자이내\"\n"
+        "}\n"
+        "stocks는 prob 80 이상만 포함. 한국·미국·일본 혼합 추천.\n"
+        "수치는 실제 기사에 언급된 것 우선, 없으면 역사적 평균치 사용.",
+        max_tokens=1400
+    )
+    return data
+
+intl_titles = [it.get("ko_title", it.get("title","")) for it in intl_news]
+insight_data = build_insight(all_titles, intl_titles, sidebar_data)
+
+if not insight_data:
+    insight_data = {
+        "theme": "분석 준비 중",
+        "theme_detail": "다음 업데이트에서 인사이트가 제공됩니다.",
+        "causal_chain": [],
+        "scenarios": [],
+        "perspectives": [],
+        "stocks": [],
+        "watch_next": ""
+    }
+    print("  ⚠️ 인사이트 기본값 사용")
+else:
+    print(f"  ✅ 인사이트 생성: {insight_data.get('theme','')[:30]}")
+
+def render_insight(data):
+    """인사이트 HTML 생성"""
+    theme       = esc(data.get("theme",""))
+    theme_detail= esc(data.get("theme_detail",""))
+    causal      = data.get("causal_chain",[])
+    scenarios   = data.get("scenarios",[])
+    perspectives= data.get("perspectives",[])
+    stocks      = data.get("stocks",[])
+    watch_next  = esc(data.get("watch_next",""))
+    tlbl = "오전" if is_morning else "오후"
+
+    # ── 헤드라인 테마
+    html_out = (
+        f'<div class="insight-wrap">\n'
+        f'<div class="insight-theme">\n'
+        f'  <div class="insight-theme-date">{now_kst.strftime("%Y.%-m.%-d")} ({weekday_ko}) · {tlbl} 브리핑</div>\n'
+        f'  <div class="insight-theme-title">{theme}</div>\n'
+        f'  <div class="insight-theme-sub">{theme_detail}</div>\n'
+        f'</div>\n'
+    )
+
+    # ── 인과관계 체인
+    if causal:
+        html_out += (
+            '<div class="insight-section">\n'
+            '<div class="insight-section-hd">'
+            '<span class="insight-section-icon">⛓</span>'
+            '<span class="insight-section-title">인과관계 체인</span>'
+            '</div>\n'
+            '<div class="insight-section-body">'
+            '<div class="causal-chain">\n'
+        )
+        for i, s in enumerate(causal[:5]):
+            num_badge = f'<span class="causal-num-badge">{esc(str(s.get("num","")))}</span>' if s.get("num") else ""
+            arrow = '<div class="causal-arrow">↓</div>' if i < len(causal)-1 else ""
+            html_out += (
+                f'<div class="causal-step">'
+                f'<div class="causal-num">{s.get("step","")}</div>'
+                f'<div class="causal-content">'
+                f'<div class="causal-label">{esc(s.get("label",""))}</div>'
+                f'<div class="causal-text">{esc(s.get("text",""))}{num_badge}</div>'
+                f'</div></div>{arrow}\n'
+            )
+        html_out += '</div></div></div>\n'
+
+    # ── 시나리오 트리
+    if scenarios:
+        html_out += (
+            '<div class="insight-section">\n'
+            '<div class="insight-section-hd">'
+            '<span class="insight-section-icon">🔀</span>'
+            '<span class="insight-section-title">시나리오 트리</span>'
+            '</div>\n'
+            '<div class="insight-section-body">'
+            '<div class="scenario-grid">\n'
+        )
+        for s in scenarios[:3]:
+            g = s.get("grade","A").lower()
+            html_out += (
+                f'<div class="scenario-item">'
+                f'<div class="scenario-hd">'
+                f'<span class="scenario-label {g}">{s.get("grade","")}</span>'
+                f'<span class="scenario-title">{esc(s.get("title",""))}</span>'
+                f'<span class="scenario-prob">{s.get("prob",0)}%</span>'
+                f'</div>'
+                f'<div class="scenario-body">'
+                f'<div class="scenario-row">흐름: <span>{esc(s.get("chain",""))}</span></div>'
+                f'<div class="scenario-row">시장: <span>{esc(s.get("market",""))}</span></div>'
+                f'<span class="scenario-signal">{esc(s.get("signal",""))}</span>'
+                f'</div></div>\n'
+            )
+        html_out += '</div></div></div>\n'
+
+    # ── 관점별 인사이트
+    if perspectives:
+        html_out += (
+            '<div class="insight-section">\n'
+            '<div class="insight-section-hd">'
+            '<span class="insight-section-icon">🔭</span>'
+            '<span class="insight-section-title">관점별 인사이트</span>'
+            '</div>\n'
+            '<div class="insight-section-body">'
+            '<div class="perspective-grid">\n'
+        )
+        for p in perspectives[:4]:
+            html_out += (
+                f'<div class="perspective-card">'
+                f'<div class="perspective-icon">{p.get("icon","")}</div>'
+                f'<div class="perspective-role">{esc(p.get("role",""))}</div>'
+                f'<div class="perspective-text">{esc(p.get("insight",""))}</div>'
+                f'</div>\n'
+            )
+        html_out += '</div></div></div>\n'
+
+    # ── 추천 종목
+    valid_stocks = [s for s in stocks if s.get("prob",0) >= 80]
+    if valid_stocks:
+        html_out += (
+            '<div class="insight-section">\n'
+            '<div class="insight-section-hd">'
+            '<span class="insight-section-icon">📊</span>'
+            '<span class="insight-section-title">시나리오별 주목 종목 (확률 80% 이상)</span>'
+            '</div>\n'
+            '<div class="insight-section-body">'
+            '<div class="stock-grid">\n'
+        )
+        for s in valid_stocks[:6]:
+            prob = min(max(int(s.get("prob",80)),0),100)
+            mkt  = s.get("market","KR").lower()
+            bar_color = "#1a4a2e" if prob>=85 else "#7a5800"
+            html_out += (
+                f'<div class="insight-stock">'
+                f'<div class="istock-left">'
+                f'<span class="istock-name">{esc(s.get("name",""))}</span>'
+                f'<span class="istock-market {mkt}">{s.get("market","KR")}</span>'
+                f'</div>'
+                f'<div class="istock-right">'
+                f'<div class="istock-scenario">시나리오 {s.get("scenario","A")} 수혜</div>'
+                f'<div class="istock-reason">{esc(s.get("reason",""))}</div>'
+                f'<div class="istock-reason" style="color:var(--accent)">▲ {esc(s.get("timing",""))}</div>'
+                f'<div class="istock-prob-row">'
+                f'<div class="istock-prob-bar-wrap">'
+                f'<div class="istock-prob-bar" style="width:{prob}%;background:{bar_color}"></div>'
+                f'</div>'
+                f'<span class="istock-prob-pct" style="color:{bar_color}">{prob}%</span>'
+                f'</div></div></div>\n'
+            )
+        html_out += '</div></div></div>\n'
+
+    # ── 다음 주목 변수
+    if watch_next:
+        html_out += (
+            f'<div class="insight-section">'
+            f'<div class="insight-section-hd">'
+            f'<span class="insight-section-icon">🎯</span>'
+            f'<span class="insight-section-title">다음 주목할 변수</span>'
+            f'</div>'
+            f'<div class="insight-section-body" style="font-size:12.5px;color:var(--ink);line-height:1.65">'
+            f'{watch_next}</div></div>\n'
+        )
+
+    html_out += '<div class="insight-disclaimer">⚠ AI 분석 참고 정보 — 투자는 전문가 상담 후 본인 판단으로</div>\n'
+    html_out += '</div>\n'
+    return html_out
+
+insight_html = render_insight(insight_data)
+print(f"  ✅ 인사이트 HTML {len(insight_html)}자 생성")
+
 def make_news_card(item, card_color, hist_key):
     title      = esc(item["title"])
     url        = item["url"]
@@ -1384,6 +1610,7 @@ def replace_block(html, s, e, content):
     return html
 
 html = replace_block(html, '<!-- AUTO_FEED_START -->', '<!-- AUTO_FEED_END -->', feed_html)
+html = replace_block(html, '<!-- AUTO_INSIGHT_START -->', '<!-- AUTO_INSIGHT_END -->', insight_html)
 html = replace_block(html, '<!-- AUTO_CHAIN_START -->', '<!-- AUTO_CHAIN_END -->', chain_html)
 html = replace_block(html, '<!-- AUTO_HEADLINE_START -->', '<!-- AUTO_HEADLINE_END -->', headline_html)
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
