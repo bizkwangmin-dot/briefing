@@ -899,7 +899,7 @@ if chain_seed:
             f'<span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span>'
             f'<span class="chain-toggle-hint">▾ 파급 체인 보기</span></div>\n'
             f'</div>\n'
-            f'<div class="chain-body collapsed">\n'
+            f'<div class="chain-body">\n'
         )
 
         for ck in ["chain_main","chain_reverse","chain_risk"]:
