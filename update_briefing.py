@@ -249,20 +249,22 @@ INTL_COLUMN_SOURCES = [
 ]
 
 # ── 신문사→국가 매핑 ─────────────────────────────────────────
+# 국가명 → (표시명, src CSS 클래스)
+# 색상: 미국=navy(파랑), 영국=red(진빨), 일본=gold(황금), 중국/홍콩=dark(진회), 프랑스=green(초록)
 INTL_COUNTRY = {
-    "블룸버그":       "미국",
-    "파이낸셜타임스": "영국",
-    "월스트리트저널": "미국",
-    "뉴욕타임스":     "미국",
-    "가디언":         "영국",
-    "BBC비즈니스":    "영국",
-    "로이터":         "영국",
-    "재팬타임스":     "일본",
-    "닛케이아시아":   "일본",
-    "SCMP":           "홍콩",
-    "신화통신":       "중국",
-    "르몽드":         "프랑스",
-    "니혼게이자이신문": "일본",
+    "블룸버그":       ("미국", "us"),
+    "파이낸셜타임스": ("영국", "uk"),
+    "월스트리트저널": ("미국", "us"),
+    "뉴욕타임스":     ("미국", "us"),
+    "가디언":         ("영국", "uk"),
+    "BBC비즈니스":    ("영국", "uk"),
+    "로이터":         ("영국", "uk"),
+    "재팬타임스":     ("일본", "jp"),
+    "닛케이아시아":   ("일본", "jp"),
+    "SCMP":           ("홍콩", "cn"),
+    "신화통신":       ("중국", "cn"),
+    "르몽드":         ("프랑스", "fr"),
+    "니혼게이자이신문": ("일본", "jp"),
 }
 
 # ── 헤드라인 소스 (사이드바용) ────────────────────────────────
@@ -887,13 +889,19 @@ if chain_seed:
         except: t_str = ""
         tlbl = f'{"오전" if is_morning else "오후"} {t_str}' if t_str else ("오전" if is_morning else "오후")
 
+        chain_id = f"chain_{seed_idx if 'seed_idx' in dir() else 0}"
         chain_html += (
-            f'\n<div class="chain-header-card">\n'
+            f'\n<div class="chain-news-wrap">\n'
+            f'<div class="chain-header-card">\n'
             f'  <div class="chain-time-badge">{tlbl} 핵심 뉴스</div>\n'
-            f'  <div class="chain-seed-title"><a href="{seed_url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">{esc(seed_title)}</a></div>\n'
-            f'  <div class="chain-seed-meta"><span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span>'
-            f'{(" &nbsp;·&nbsp; " + esc(summary)) if summary else ""}</div>\n'
+            f'  <div class="chain-seed-title"><a href="{seed_url}" target="_blank" rel="noopener" class="chain-seed-link">{esc(seed_title)}</a></div>\n'
+            f'  <div class="chain-seed-meta">'
+            f'<span class="src {seed_sc}" style="font-size:9px">{esc(seed_src)}</span>'
+            f'<button class="chain-toggle-btn" onclick="toggleChainBody(this)">'
+            f'<span class="chain-btn-arrow">▾</span> 파급 체인 보기</button>'
             f'</div>\n'
+            f'</div>\n'
+            f'<div class="chain-body" style="display:none">\n'
         )
 
         for ck in ["chain_main","chain_reverse","chain_risk"]:
@@ -955,7 +963,7 @@ if chain_seed:
                 )
             chain_html += '</div>\n'
 
-        chain_html += '<div class="chain-disclaimer">&#9888;&#65039; AI 분석 참고 정보 — 투자는 전문가 상담 후 본인 판단으로</div>\n'
+        chain_html += '<div class="chain-disclaimer">&#9888;&#65039; AI 분석 참고 정보 — 투자는 전문가 상담 후 본인 판단으로</div>\n</div>\n</div>\n'
         print(f"  ✅ 파급 체인 3종: {seed_title[:30]}...")
     else:
         chain_html = '<div class="chain-intro"><div class="chain-intro-title">파급 체인</div><div class="chain-intro-sub">분석 생성 실패</div></div>\n'
@@ -1148,7 +1156,8 @@ def make_intl_card(item):
     bullets    = item.get("bullets") or []
     hist_key   = item.get("hist_key", "iran_war")
     hist_label = HIST_LABELS.get(hist_key, hist_key)
-    country    = item.get("country_name", "해외")
+    _ctry = INTL_COUNTRY.get(src, ("해외", "intl"))
+    country, country_cls = (_ctry if isinstance(_ctry, tuple) else (_ctry, "intl"))
 
     if bullets:
         li_html = "".join(f"<li>{esc(b)}</li>" for b in bullets[:3])
@@ -1160,7 +1169,7 @@ def make_intl_card(item):
 
     return f'''
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">{src}</span><span class="country-badge" data-c="{country}">{country}</span><span class="ctime" data-pubtime="{pub}">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ct"><span class="src intl">{src}</span><span class="src {country_cls}">{country}</span><span class="ctime" data-pubtime="{pub}">🕒 --</span><span class="expand-hint">▾</span></div>
       <div class="ch">{ko_title}</div>
       <div class="card-expand">
         {orig_html}
@@ -1194,7 +1203,12 @@ for i, item in enumerate(columns):
         date_str = now_ymd
     summary   = esc(item.get("summary", "요약 준비 중..."))
     orig_html = f'<div class="ch-orig">{esc(item["orig_title"])}</div>' if is_intl and item.get("orig_title") else ''
-    country_badge = f'<span class="country-badge" data-c="{country}">{country}</span>' if is_intl and country else ''
+    if is_intl and country:
+        _cd = INTL_COUNTRY.get(src, (country, "intl"))
+        _cn, _cc = (_cd if isinstance(_cd, tuple) else (_cd, "intl"))
+        country_badge = f'<span class="src {_cc}">{_cn}</span>'
+    else:
+        country_badge = ''
     col_html += f'''
     <div class="col-card {cc}">
       <div class="col-top">
