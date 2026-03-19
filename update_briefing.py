@@ -1371,7 +1371,6 @@ def replace_block(html, s, e, content):
 
 html = replace_block(html, '<!-- AUTO_FEED_START -->', '<!-- AUTO_FEED_END -->', feed_html)
 html = replace_block(html, '<!-- AUTO_CHAIN_START -->', '<!-- AUTO_CHAIN_END -->', chain_html)
-html = replace_block(html, '<!-- AUTO_CHAIN_RIGHT_START -->', '<!-- AUTO_CHAIN_RIGHT_END -->', chain_right_html)
 html = replace_block(html, '<!-- AUTO_HEADLINE_START -->', '<!-- AUTO_HEADLINE_END -->', headline_html)
 html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END -->',      news_html)
 html = replace_block(html, '<!-- AUTO_INTL_START -->',      '<!-- AUTO_INTL_END -->',      intl_html)
