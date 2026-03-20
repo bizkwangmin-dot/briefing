@@ -1369,10 +1369,10 @@ news_html += "\n"
 # ── 주요 뉴스 섹션: 각 섹션 첫 번째 기사 1개씩 묶기 ─────────
 headline_html = "\n"
 headline_html += (
-    '\n    <div class="sec sec-collapsed" onclick="toggleSection(this)">'
+    '\n    <div class="sec" onclick="toggleSection(this)">'
     '<span class="sec-tag" style="background:var(--accent)">주 요 뉴 스</span>'
     '<div class="sec-line"></div><span class="sec-toggle">▾</span></div>\n'
-    '    <div class="sec-body collapsed">\n'
+    '    <div class="sec-body">\n'
 )
 _hl_used = set()
 def _pick_hl(items):
