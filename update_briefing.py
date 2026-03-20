@@ -1130,7 +1130,7 @@ def build_insight(all_news_titles, all_intl_titles, sidebar_data):
         "stocks는 prob 80이상만. 삼성전자·현대차·NVDA·TSLA 같은 대형 메가캡 제외.\n"
         "한국·미국·일본 혼합. 섹터뷰는 반드시 4개(비중확대/중립/비중축소 혼합).\n"
         "수치는 기사에 언급된 것 우선, 없으면 역사적 평균치나 업계 통계 활용.",
-        max_tokens=2000
+        max_tokens=4096
     )
     return data
 
