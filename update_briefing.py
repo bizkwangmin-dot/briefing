@@ -1555,22 +1555,30 @@ chain_right_html = f"""
 """
 
 논점 = esc(sidebar_data.get("칼럼논점", ""))
-col_right_html = f"""
-    <div class="sbox">
-      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
-      <div class="issue-list"><div class="issue-item" style="line-height:1.6">{논점}</div></div>
-    </div>
-{term_html_part.replace('class="sbox sbox-toggle sbox-term"', 'class="sbox sbox-term"').replace('onclick="toggleSbox(this, event)"', '').replace('<span class="sbox-arr">▾</span>', '').replace('class="sbox-body"', 'class="sbox-body" style="display:block"')}
-"""
 
-# 칼럼탭 모바일용: 논점 + 용어(접힘)
-col_mobile_html = f"""
-    <div class="sbox">
-      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
-      <div class="issue-list"><div class="issue-item" style="line-height:1.6">{논점}</div></div>
-    </div>
-{term_html_part}
-"""
+# PC 사이드바용 용어 블록 (펼침)
+_term_pc = term_html_part
+_term_pc = _term_pc.replace('class="sbox sbox-toggle sbox-term"', 'class="sbox sbox-term"')
+_term_pc = _term_pc.replace(' onclick="toggleSbox(this, event)"', '')
+_term_pc = _term_pc.replace('<span class="sbox-arr">▾</span>', '')
+_term_pc = _term_pc.replace('class="sbox-body"', 'class="sbox-body" style="display:block"')
+
+col_right_html = (
+    '\n    <div class="sbox">\n'
+    '      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>\n'
+    f'      <div class="issue-list"><div class="issue-item" style="line-height:1.6">{논점}</div></div>\n'
+    '    </div>\n'
+    + _term_pc
+)
+
+# 칼럼탭 모바일: 논점만 (용어는 AUTO_COL_논점 마커 밖에서 별도 처리)
+col_mobile_html = (
+    '\n    <div class="sbox">\n'
+    '      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>\n'
+    f'      <div class="issue-list"><div class="issue-item" style="line-height:1.6">{논점}</div></div>\n'
+    '    </div>\n'
+    + term_html_part
+)
 
 def build_col_archive(prev_columns_by_date):
     if not prev_columns_by_date:
