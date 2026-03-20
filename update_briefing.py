@@ -86,37 +86,35 @@ SECTION_RSS = {
     "경제 · 금융": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-                     "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko"],
+        "중앙일보": ["https://koreajoongangdaily.joins.com/rss/section/business", "https://koreajoongangdaily.joins.com/rss/news"],
         "동아일보": ["https://rss.donga.com/economy.xml",
                      "https://rss.donga.com/total.xml"],
         "한국경제": ["https://www.hankyung.com/feed/economy"],
         "매일경제": ["https://www.mk.co.kr/rss/30000001/"],
         "한겨레":   ["https://www.hani.co.kr/rss/economy/",
                      "https://www.hani.co.kr/rss/economy/finance/"],
-        "경향신문": ["https://www.www.khan.co.kr/rss/rssdata/kh_economy.xml"],
+        "경향신문": ["https://www.khan.co.kr/rss/rssdata/kh_economy.xml"],
         "연합뉴스": ["https://www.yna.co.kr/rss/economy.xml"],
+        "서울경제": ["https://www.sedaily.com/RSS/rss_economy.xml", "https://www.sedaily.com/RSS/rss_total.xml"],
     },
     "기 업": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-                     "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko"],
+        "중앙일보": ["https://koreajoongangdaily.joins.com/rss/section/business", "https://koreajoongangdaily.joins.com/rss/news"],
         "동아일보": ["https://rss.donga.com/economy.xml",
                      "https://rss.donga.com/total.xml"],
         "한국경제": ["https://www.hankyung.com/feed/economy"],
         "매일경제": ["https://www.mk.co.kr/rss/30200030/",
                      "https://www.mk.co.kr/rss/30000001/"],
         "한겨레":   ["https://www.hani.co.kr/rss/economy/"],
-        "경향신문": ["https://www.www.khan.co.kr/rss/rssdata/kh_economy.xml"],
+        "경향신문": ["https://www.khan.co.kr/rss/rssdata/kh_economy.xml"],
         "연합뉴스": ["https://www.yna.co.kr/rss/economy.xml"],
     },
     "정책 · 사회": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/politics/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/category/national/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-                     "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko"],
+        "중앙일보": ["https://koreajoongangdaily.joins.com/rss/section/business", "https://koreajoongangdaily.joins.com/rss/news"],
         "동아일보": ["https://rss.donga.com/politics.xml",
                      "https://rss.donga.com/national.xml",
                      "https://rss.donga.com/total.xml"],
@@ -126,14 +124,13 @@ SECTION_RSS = {
                      "https://www.mk.co.kr/rss/30000001/"],
         "한겨레":   ["https://www.hani.co.kr/rss/politics/",
                      "https://www.hani.co.kr/rss/society/"],
-        "경향신문": ["https://www.www.khan.co.kr/rss/rssdata/kh_politics.xml"],
+        "경향신문": ["https://www.khan.co.kr/rss/rssdata/kh_politics.xml"],
         "연합뉴스": ["https://www.yna.co.kr/rss/politics.xml"],
     },
     "국 제": {
         "조선일보": ["https://www.chosun.com/arc/outboundfeeds/rss/category/international/?outputType=xml",
                      "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-        "중앙일보": ["https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-                     "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko"],
+        "중앙일보": ["https://koreajoongangdaily.joins.com/rss/section/business", "https://koreajoongangdaily.joins.com/rss/news"],
         "동아일보": ["https://rss.donga.com/international.xml",
                      "https://rss.donga.com/total.xml"],
         "한국경제": ["https://www.hankyung.com/feed/international",
@@ -141,7 +138,7 @@ SECTION_RSS = {
         "매일경제": ["https://www.mk.co.kr/rss/30300001/",
                      "https://www.mk.co.kr/rss/30000001/"],
         "한겨레":   ["https://www.hani.co.kr/rss/international/"],
-        "경향신문": ["https://www.www.khan.co.kr/rss/rssdata/kh_world.xml"],
+        "경향신문": ["https://www.khan.co.kr/rss/rssdata/kh_world.xml"],
         "연합뉴스": ["https://www.yna.co.kr/rss/international.xml"],
     },
 }
@@ -153,8 +150,8 @@ RSS_FALLBACKS = {
         "https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
     ]),
     "중앙일보": ("c", [
-        "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-        "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
+        "https://koreajoongangdaily.joins.com/rss/news",
+        "https://koreajoongangdaily.joins.com/rss/section/business",
     ]),
     "동아일보": ("c", [
         "https://rss.donga.com/total.xml",
@@ -173,15 +170,19 @@ RSS_FALLBACKS = {
         "https://www.hani.co.kr/rss/",
     ]),
     "경향신문": ("p", [
-        "https://www.www.khan.co.kr/rss/rssdata/kh_economy.xml",
-        "https://www.www.khan.co.kr/rss/rssdata/total_news.xml",
+        "https://www.khan.co.kr/rss/rssdata/kh_economy.xml",
+        "https://www.khan.co.kr/rss/rssdata/total_news.xml",
+    ]),
+    "서울경제": ("e", [
+        "https://www.sedaily.com/RSS/rss_economy.xml",
+        "https://www.sedaily.com/RSS/rss_total.xml",
     ]),
     "연합뉴스": ("w", [
         "https://www.yna.co.kr/rss/economy.xml",
         "https://www.yna.co.kr/rss/news.xml",
     ]),
 }
-ALL_SOURCE_NAMES = ["조선일보","중앙일보","동아일보","한국경제","매일경제","한겨레","경향신문","연합뉴스"]
+ALL_SOURCE_NAMES = ["조선일보","중앙일보","동아일보","한국경제","매일경제","한겨레","경향신문","연합뉴스","서울경제"]
 NEWS_SECTIONS    = ["경제 · 금융", "기 업", "정책 · 사회", "국 제"]
 
 # ── 칼럼 전용 RSS (opinion만, 전체RSS 폴백 금지) ───────────────
@@ -190,8 +191,8 @@ COLUMN_SOURCES_DEF = [
         "https://www.chosun.com/arc/outboundfeeds/rss/category/opinion/?outputType=xml",
     ]),
     ("중앙일보", "c", [
-        "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
-        "https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko",
+        "https://koreajoongangdaily.joins.com/rss/news",
+        "https://koreajoongangdaily.joins.com/rss/news",
     ]),
     ("동아일보", "c", [
         "https://rss.donga.com/opinion.xml",
@@ -206,7 +207,7 @@ COLUMN_SOURCES_DEF = [
         "https://www.hani.co.kr/rss/opinion/",
     ]),
     ("경향신문", "p", [
-        "https://www.www.khan.co.kr/rss/rssdata/kh_opinion.xml",
+        "https://www.khan.co.kr/rss/rssdata/kh_opinion.xml",
     ]),
     # 연합뉴스 제외 (칼럼/사설 없는 통신사)
 ]
@@ -220,6 +221,9 @@ INTL_SOURCES = [
     ("가디언",       "intl",  "https://www.theguardian.com/world/rss"),
     ("BBC비즈니스",  "intl",  "https://feeds.bbci.co.uk/news/business/rss.xml"),
     ("로이터",       "intl",  "https://feeds.reuters.com/reuters/businessNews"),
+    ("AP통신",       "intl",  "https://feeds.apnews.com/rss/apf-topnews"),
+    ("알자지라",     "intl",  "https://www.aljazeera.com/xml/rss/all.xml"),
+    ("IMF블로그",    "intl",  "https://www.imf.org/en/News/rss?language=eng"),
 ]
 
 INTL_REGION_SOURCES = {
@@ -264,18 +268,21 @@ INTL_COUNTRY = {
     "SCMP":           ("홍콩", "cn"),
     "신화통신":       ("중국", "cn"),
     "르몽드":         ("프랑스", "fr"),
+    "AP통신":         ("미국", "us"),
+    "알자지라":       ("카타르", "intl"),
+    "IMF블로그":      ("국제기구", "intl"),
     "니혼게이자이신문": ("일본", "jp"),
 }
 
 # ── 헤드라인 소스 (사이드바용) ────────────────────────────────
 HEADLINE_SOURCES = [
     ("조선","c","https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"),
-    ("중앙","c","https://news.google.com/rss/search?q=site:joongang.co.kr&hl=ko&gl=KR&ceid=KR:ko"),
+    ("중앙","c","https://koreajoongangdaily.joins.com/rss/news"),
     ("동아","c","https://rss.donga.com/total.xml"),
     ("매경","e","https://www.mk.co.kr/rss/30000001/"),
     ("한경","e","https://www.hankyung.com/feed/economy"),
     ("한겨레","p","https://www.hani.co.kr/rss/"),
-    ("경향","p","https://www.www.khan.co.kr/rss/rssdata/kh_politics.xml"),
+    ("경향","p","https://www.khan.co.kr/rss/rssdata/kh_politics.xml"),
     ("연합","w","https://www.yna.co.kr/rss/economy.xml"),
 ]
 
@@ -607,8 +614,15 @@ for section in NEWS_SECTIONS:
 
         item = collect_one(src_name, src_cls, url_list)
         if item:
+            # 중앙일보(Korea JoongAng Daily): 영문 기사 → 번역 후 요약
+            if src_name == "중앙일보" and any(c.isascii() and c.isalpha() for c in item["title"][:10]):
+                print(f"    🌐 [{src_name}] 번역: {item['title'][:40]}...")
+                ko_title, bullets = translate_and_summarize(item["title"], "Korea JoongAng Daily")
+                item["title"]   = ko_title or item["title"]
+                item["bullets"] = bullets
+            else:
+                item["bullets"] = get_summary_3(item["title"])
             print(f"    ✅ [{src_name}] {item['title'][:40]}...")
-            item["bullets"] = get_summary_3(item["title"])
             time.sleep(0.25)
             section_news[section].append(item)
             all_titles.append(item["title"])
