@@ -1519,16 +1519,21 @@ def build_right(data, hl_list):
           <div class="term-desc">{esc(t["desc"])}</div>
         </div>'''
 
-    return (
+    _fallback = '<div class="term-item"><div class="term-desc">업데이트 준비 중</div></div>'
+    _terms = term_html if term_html else _fallback
+    pts_part = (
         f'\n    <div class="sbox">\n'
         f'      <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>\n'
         f'      <div class="pt-list">{pts_html}</div>\n'
-        f'    </div>\n',
-        f'\n    <div class="sbox sbox-toggle sbox-term" onclick="toggleSbox(this, event)">\n'
-        f'      <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>오늘의 용어<span class="sbox-arr">▾</span></div>\n'
-        f'      <div class="sbox-body"><div class="term-list">{term_html if term_html else \'<div class="term-item"><div class="term-desc">업데이트 준비 중</div></div>\'}</div></div>\n'
         f'    </div>\n'
     )
+    term_part = (
+        f'\n    <div class="sbox sbox-toggle sbox-term" onclick="toggleSbox(this, event)">\n'
+        f'      <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>오늘의 용어<span class="sbox-arr">▾</span></div>\n'
+        f'      <div class="sbox-body"><div class="term-list">{_terms}</div></div>\n'
+        f'    </div>\n'
+    )
+    return (pts_part, term_part)
 
 pts_html_part, term_html_part = build_right(sidebar_data, hl_items)
 right_html = pts_html_part + term_html_part  # PC 사이드바용 (기존과 동일)
