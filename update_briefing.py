@@ -1536,7 +1536,7 @@ def build_right(data, hl_list):
     return (pts_part, term_part)
 
 pts_html_part, term_html_part = build_right(sidebar_data, hl_items)
-right_html = pts_html_part + term_html_part  # PC 사이드바용 (기존과 동일)
+right_html = pts_html_part  # 뉴스탭 사이드바: 관전포인트만 (용어 제거)
 
 # 파급체인 사이드바: 핵심수치만 (관전포인트·용어 없음)
 nums = sidebar_data.get("핵심수치", [])
@@ -1560,6 +1560,16 @@ col_right_html = f"""
       <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
       <div class="issue-list"><div class="issue-item" style="line-height:1.6">{논점}</div></div>
     </div>
+{term_html_part.replace('class="sbox sbox-toggle sbox-term"', 'class="sbox sbox-term"').replace('onclick="toggleSbox(this, event)"', '').replace('<span class="sbox-arr">▾</span>', '').replace('class="sbox-body"', 'class="sbox-body" style="display:block"')}
+"""
+
+# 칼럼탭 모바일용: 논점 + 용어(접힘)
+col_mobile_html = f"""
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
+      <div class="issue-list"><div class="issue-item" style="line-height:1.6">{논점}</div></div>
+    </div>
+{term_html_part}
 """
 
 def build_col_archive(prev_columns_by_date):
@@ -1676,7 +1686,7 @@ html = replace_block(html, '<!-- AUTO_RIGHT_START -->',     '<!-- AUTO_RIGHT_END
 html = replace_block(html, '<!-- AUTO_RIGHT_MOBILE_TOP_START -->', '<!-- AUTO_RIGHT_MOBILE_TOP_END -->', pts_html_part)
 html = replace_block(html, '<!-- AUTO_RIGHT_MOBILE_BOTTOM_START -->', '<!-- AUTO_RIGHT_MOBILE_BOTTOM_END -->', term_html_part)
 html = replace_block(html, '<!-- AUTO_COL_RIGHT_START -->', '<!-- AUTO_COL_RIGHT_END -->', col_right_html)
-html = replace_block(html, '<!-- AUTO_COL_논점_START -->', '<!-- AUTO_COL_논점_END -->', col_right_html)
+html = replace_block(html, '<!-- AUTO_COL_논점_START -->', '<!-- AUTO_COL_논점_END -->', col_mobile_html)
 
 if '<!-- AUTO_COL_ARCHIVE_START -->' in html:
     col_archive_html = build_col_archive({})
