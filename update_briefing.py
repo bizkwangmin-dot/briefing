@@ -1519,18 +1519,19 @@ def build_right(data, hl_list):
           <div class="term-desc">{esc(t["desc"])}</div>
         </div>'''
 
-    return f"""
-    <div class="sbox">
-      <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
-      <div class="pt-list">{pts_html}</div>
-    </div>
-    <div class="sbox sbox-toggle sbox-term" onclick="toggleSbox(this, event)">
-      <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>오늘의 용어<span class="sbox-arr">▾</span></div>
-      <div class="sbox-body"><div class="term-list">{term_html if term_html else '<div class="term-item"><div class="term-desc">업데이트 준비 중</div></div>'}</div></div>
-    </div>
-"""
+    return (
+        f'\n    <div class="sbox">\n'
+        f'      <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>\n'
+        f'      <div class="pt-list">{pts_html}</div>\n'
+        f'    </div>\n',
+        f'\n    <div class="sbox sbox-toggle sbox-term" onclick="toggleSbox(this, event)">\n'
+        f'      <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>오늘의 용어<span class="sbox-arr">▾</span></div>\n'
+        f'      <div class="sbox-body"><div class="term-list">{term_html if term_html else \'<div class="term-item"><div class="term-desc">업데이트 준비 중</div></div>\'}</div></div>\n'
+        f'    </div>\n'
+    )
 
-right_html = build_right(sidebar_data, hl_items)
+pts_html_part, term_html_part = build_right(sidebar_data, hl_items)
+right_html = pts_html_part + term_html_part  # PC 사이드바용 (기존과 동일)
 
 # 파급체인 사이드바: 핵심수치만 (관전포인트·용어 없음)
 nums = sidebar_data.get("핵심수치", [])
@@ -1667,7 +1668,8 @@ html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END 
 html = replace_block(html, '<!-- AUTO_INTL_START -->',      '<!-- AUTO_INTL_END -->',      intl_html)
 html = replace_block(html, '<!-- AUTO_COLUMN_START -->',    '<!-- AUTO_COLUMN_END -->',    col_html)
 html = replace_block(html, '<!-- AUTO_RIGHT_START -->',     '<!-- AUTO_RIGHT_END -->',     right_html)
-html = replace_block(html, '<!-- AUTO_RIGHT_MOBILE_START -->', '<!-- AUTO_RIGHT_MOBILE_END -->', right_html)
+html = replace_block(html, '<!-- AUTO_RIGHT_MOBILE_TOP_START -->', '<!-- AUTO_RIGHT_MOBILE_TOP_END -->', pts_html_part)
+html = replace_block(html, '<!-- AUTO_RIGHT_MOBILE_BOTTOM_START -->', '<!-- AUTO_RIGHT_MOBILE_BOTTOM_END -->', term_html_part)
 html = replace_block(html, '<!-- AUTO_COL_RIGHT_START -->', '<!-- AUTO_COL_RIGHT_END -->', col_right_html)
 html = replace_block(html, '<!-- AUTO_COL_논점_START -->', '<!-- AUTO_COL_논점_END -->', col_right_html)
 
