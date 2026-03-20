@@ -1109,15 +1109,13 @@ def build_insight(all_news_titles, all_intl_titles, sidebar_data):
         "     \"market_impact\":\"영향 25자\",\"trigger\":\"신호 20자\"}\n"
         "  ],\n"
         "  \"sector_view\": [\n"
-        "    {\"sector\":\"섹터명\",\"stance\":\"OVERWEIGHT또는NEUTRAL또는UNDERWEIGHT\",\"reason\":\"25자\"},\n"
-        "    {\"sector\":\"섹터명\",\"stance\":\"OVERWEIGHT\",\"reason\":\"25자\"},\n"
-        "    {\"sector\":\"섹터명\",\"stance\":\"UNDERWEIGHT\",\"reason\":\"25자\"},\n"
-        "    {\"sector\":\"섹터명\",\"stance\":\"NEUTRAL\",\"reason\":\"25자\"}\n"
+        "    {\"sector\":\"섹터명\",\"stance\":\"비중확대또는중립또는비중축소\",\"reason\":\"25자\"},\n"
+        "    {\"sector\":\"섹터명\",\"stance\":\"비중확대\",\"reason\":\"25자\"},\n"
+        "    {\"sector\":\"섹터명\",\"stance\":\"비중축소\",\"reason\":\"25자\"},\n"
+        "    {\"sector\":\"섹터명\",\"stance\":\"중립\",\"reason\":\"25자\"}\n"
         "  ],\n"
         "  \"perspectives\": [\n"
         "    {\"lens\":\"투자자\",\"key_question\":\"지금 가장 중요한 질문 20자\",\"answer\":\"한 줄 답변 30자\"},\n"
-        "    {\"lens\":\"경영자\",\"key_question\":\"20자\",\"answer\":\"30자\"},\n"
-        "    {\"lens\":\"생활자\",\"key_question\":\"20자\",\"answer\":\"30자\"},\n"
         "    {\"lens\":\"역발상\",\"key_question\":\"시장이 놓치는 것 20자\",\"answer\":\"반대 시각 30자\"}\n"
         "  ],\n"
         "  \"stocks\": [\n"
@@ -1130,9 +1128,9 @@ def build_insight(all_news_titles, all_intl_titles, sidebar_data):
         "  \"watch_next\":\"다음 48시간 안에 주목할 이벤트/지표 40자\"\n"
         "}\n"
         "stocks는 prob 80이상만. 삼성전자·현대차·NVDA·TSLA 같은 대형 메가캡 제외.\n"
-        "한국·미국·일본 혼합. 섹터뷰는 반드시 4개.\n"
+        "한국·미국·일본 혼합. 섹터뷰는 반드시 4개(비중확대/중립/비중축소 혼합).\n"
         "수치는 기사에 언급된 것 우선, 없으면 역사적 평균치나 업계 통계 활용.",
-        max_tokens=1600
+        max_tokens=2000
     )
     return data
 
@@ -1218,13 +1216,13 @@ def render_insight(data):
 
     # ── 섹터 뷰 (오버/언더웨이트)
     if sector_view:
-        stance_color = {"OVERWEIGHT":"var(--green)","NEUTRAL":"var(--gold)","UNDERWEIGHT":"var(--red)"}
-        stance_label = {"OVERWEIGHT":"▲ 비중확대","NEUTRAL":"● 중립","UNDERWEIGHT":"▼ 비중축소"}
+        stance_color = {"비중확대":"var(--green)","중립":"var(--gold)","비중축소":"var(--red)"}
+        stance_label = {"비중확대":"▲ 비중확대","중립":"● 중립","비중축소":"▼ 비중축소"}
         h += (
             '<div class="insight-block">'
             '<div class="insight-block-hd"><span class="insight-block-dot" style="background:var(--accent)"></span>'
             '<span class="insight-block-title">섹터 뷰</span>'
-            '<span class="insight-block-sub">골드만삭스 OW/N/UW 방식</span></div>'
+            '<span class="insight-block-sub">증권사 리포트 스타일</span></div>'
             '<div class="insight-block-body"><div class="sv-grid">\n'
         )
         for sv in sector_view[:6]:
@@ -1242,15 +1240,15 @@ def render_insight(data):
 
     # ── 관점별 Q&A
     if perspectives:
-        lens_icons = {"투자자":"📈","경영자":"🏭","생활자":"👤","역발상":"🔄"}
+        lens_icons = {"투자자":"📈","역발상":"🔄"}
         h += (
             '<div class="insight-block">'
             '<div class="insight-block-hd"><span class="insight-block-dot" style="background:var(--dark)"></span>'
             '<span class="insight-block-title">다중 관점 분석</span>'
-            '<span class="insight-block-sub">브리지워터 멀티렌즈 방식</span></div>'
+            '<span class="insight-block-sub">투자자 · 역발상 관점</span></div>'
             '<div class="insight-block-body"><div class="ip-grid">\n'
         )
-        for p in perspectives[:4]:
+        for p in perspectives[:2]:
             icon = lens_icons.get(p.get("lens",""), "🔭")
             h += (
                 f'<div class="ip-card">'
