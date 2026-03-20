@@ -1654,7 +1654,8 @@ def replace_block(html, s, e, content):
     print(f"  ⚠️  마커 없음: {s[:40]}")
     return html
 
-html = replace_block(html, '<!-- AUTO_FEED_START -->', '<!-- AUTO_FEED_END -->', feed_html)
+# panel-feed 탭 제거됨 — 피드 주입 불필요
+# html = replace_block(html, '<!-- AUTO_FEED_START -->', '<!-- AUTO_FEED_END -->', feed_html)
 if insight_html and len(insight_html.strip()) > 100:
     html = replace_block(html, '<!-- AUTO_INSIGHT_START -->', '<!-- AUTO_INSIGHT_END -->', insight_html)
     print('  ✅ 인사이트 HTML 주입 완료')
@@ -1666,6 +1667,7 @@ html = replace_block(html, '<!-- AUTO_NEWS_START -->',      '<!-- AUTO_NEWS_END 
 html = replace_block(html, '<!-- AUTO_INTL_START -->',      '<!-- AUTO_INTL_END -->',      intl_html)
 html = replace_block(html, '<!-- AUTO_COLUMN_START -->',    '<!-- AUTO_COLUMN_END -->',    col_html)
 html = replace_block(html, '<!-- AUTO_RIGHT_START -->',     '<!-- AUTO_RIGHT_END -->',     right_html)
+html = replace_block(html, '<!-- AUTO_RIGHT_MOBILE_START -->', '<!-- AUTO_RIGHT_MOBILE_END -->', right_html)
 html = replace_block(html, '<!-- AUTO_COL_RIGHT_START -->', '<!-- AUTO_COL_RIGHT_END -->', col_right_html)
 html = replace_block(html, '<!-- AUTO_COL_논점_START -->', '<!-- AUTO_COL_논점_END -->', col_right_html)
 
