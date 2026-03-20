@@ -1692,7 +1692,6 @@ html = replace_block(html, '<!-- AUTO_INTL_START -->',      '<!-- AUTO_INTL_END 
 html = replace_block(html, '<!-- AUTO_COLUMN_START -->',    '<!-- AUTO_COLUMN_END -->',    col_html)
 html = replace_block(html, '<!-- AUTO_RIGHT_START -->',     '<!-- AUTO_RIGHT_END -->',     right_html)
 html = replace_block(html, '<!-- AUTO_RIGHT_MOBILE_TOP_START -->', '<!-- AUTO_RIGHT_MOBILE_TOP_END -->', pts_html_part)
-html = replace_block(html, '<!-- AUTO_RIGHT_MOBILE_BOTTOM_START -->', '<!-- AUTO_RIGHT_MOBILE_BOTTOM_END -->', term_html_part)
 html = replace_block(html, '<!-- AUTO_COL_RIGHT_START -->', '<!-- AUTO_COL_RIGHT_END -->', col_right_html)
 html = replace_block(html, '<!-- AUTO_COL_논점_START -->', '<!-- AUTO_COL_논점_END -->', col_mobile_html)
 
