@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="last-updated" content="2026-03-20T10:22:00+09:00">
+  <meta name="last-updated" content="2026-03-20T08:48:42+09:00">
   <title>세줄뉴스 — 오늘의 핵심을 3줄로</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -413,6 +413,7 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
 @media(max-width:699px){
   .col-mobile-issue{display:block;margin-bottom:8px}
   .news-mobile-side{display:block;margin-bottom:8px}
+  #panel-news .right{display:none !important}
 }
 
 /* ── 국가 src 클래스 (해외뉴스 국가 배지) ── */
@@ -740,7 +741,7 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
       <div class="logo">세줄<b>뉴스</b></div>
       <div class="hdr-meta">
         <span class="hdr-date" id="hdate"></span>
-        <span class="hdr-update" id="hdr-update">기사 기준 오전 10:22</span>
+        <span class="hdr-update" id="hdr-update">기사 기준 오전 8:48</span>
       </div>
     </div>
     <!-- 2행(모바일) / 1행 이어서(PC): 탭 + 간소화 -->
@@ -762,47 +763,25 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
   <div class="left">
 <div class="news-mobile-side">
 <!-- AUTO_RIGHT_MOBILE_START -->
-
-    <div class="sbox">
-      <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
-      <div class="pt-list"><div class="pt-item"><span class="pt-num">①</span><span class="pt-title">중동전쟁, 우리 경제까지 흔드나?</span></div><div class="pt-item"><span class="pt-num">②</span><span class="pt-title">영국 철강관세 50%, 韓기업 피해?</span></div><div class="pt-item"><span class="pt-num">③</span><span class="pt-title">카카오뱅크 또 장애, 신뢰 회복되나?</span></div><div class="pt-item"><span class="pt-num">④</span><span class="pt-title">정치권 갈등, 민심 이반 심화되나?</span></div></div>
-    </div>
-    <div class="sbox sbox-toggle sbox-term" onclick="toggleSbox(this, event)">
-      <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>오늘의 용어<span class="sbox-arr">▾</span></div>
-      <div class="sbox-body"><div class="term-list"><div class="term-item">
-          <div class="term-word">호르무즈 봉쇄 <span class="term-en">Strait of Hormuz blockade</span></div>
-          <div class="term-desc">중동 페르시아만 입구 봉쇄로 석유 공급 차단 위기 상황</div>
-        </div><div class="term-item">
-          <div class="term-word">환율 <span class="term-en">Exchange rate</span></div>
-          <div class="term-desc">한국 원화와 미국 달러 같은 다른 나라 화폐를 바꾸는 비율</div>
-        </div><div class="term-item">
-          <div class="term-word">이중쇼크 <span class="term-en">Double shock</span></div>
-          <div class="term-desc">유가 상승과 환율 상승 같은 나쁜 경제 뉴스가 동시 발생</div>
-        </div><div class="term-item">
-          <div class="term-word">보호무역 <span class="term-en">Protectionism</span></div>
-          <div class="term-desc">자국 산업 보호를 위해 외국 상품에 높은 관세 부과하는 정책</div>
-        </div></div></div>
-    </div>
-
 <!-- AUTO_RIGHT_MOBILE_END -->
 </div>
 <!-- AUTO_HEADLINE_START -->
 
 
-    <div class="sec sec-collapsed" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--accent)">주 요 뉴 스</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
-    <div class="sec-body collapsed">
+    <div class="sec" onclick="toggleSection(this)"><span class="sec-tag" style="background:var(--accent)">주 요 뉴 스</span><div class="sec-line"></div><span class="sec-toggle">▾</span></div>
+    <div class="sec-body">
 
     <div class="card red" onclick="toggleCard(this)">
       <div class="ct">
         <span class="src c">조선일보</span>
-        <span class="ctime" data-pubtime="2026-03-19T22:46:23+09:00">🕒 --</span>
+        <span class="ctime" data-pubtime="2026-03-20T08:23:09+09:00">🕒 --</span>
         <span class="expand-hint">▾</span>
       </div>
-      <div class="ch">英 철강 관세 50% 추진…“韓 철강 수출 위축 우려”</div>
+      <div class="ch">부동산 PF 부실 정리 저축은행, 3년 만에 흑자 전환...연체율 6%대</div>
       <div class="card-expand">
-        <ul class="cpts"><li>영국이 철강 제품에 50% 관세를 추진하고 있다.</li><li>한국 철강 업계가 영국 수출 감소를 우려하고 있는 상황이다.</li><li>보호주의 정책으로 인한 한국 철강산업의 경쟁력 약화가 예상된다.</li></ul>
+        <ul class="cpts"><li>부동산 PF 부실을 정리한 저축은행이 3년 만에 흑자로 돌아섰다.</li><li>연체율이 6%대 수준으로 개선되어 경영 정상화가 진행 중이다.</li><li>금융 건전성 회복으로 시장 신뢰도 점진적으로 회복되고 있다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.chosun.com/economy/industry-company/2026/03/19/ZUT6XABJXFB4JJBAJE7U6VYKS4/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.chosun.com/economy/economy_general/2026/03/20/SLGL73Q25NBZBJILKYRP6GCWKM/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
@@ -814,7 +793,7 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
       </div>
       <div class="ch">중동 에너지전쟁에 국제유가 급등...韓 환율 동반 상승하며 '이중쇼크' - 중앙일보</div>
       <div class="card-expand">
-        <ul class="cpts"><li>중동 에너지전쟁으로 국제유가가 급등하고 있다.</li><li>유가 상승에 따라 원화 약세로 환율도 함께 오르고 있다.</li><li>유가 상승과 환율 상승이 동시에 일어나 한국 경제에 이중 충격을 주고 있다.</li></ul>
+        <ul class="cpts"><li>중동 에너지 전쟁으로 국제유가가 급등하고 있습니다.</li><li>유가 상승에 따라 환율도 함께 올라가는 이중 타격이 발생했습니다.</li><li>한국 경제에 유가 인상과 환율 상승의 이중 충격이 미치고 있습니다.</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://news.google.com/rss/articles/CBMiVkFVX3lxTE1NRFJHcVZsUHVXdHhKcWZnc0o1ZVlmc3NUalNDWC1tS3JIaEF5LVo2dnJUSmRFYm02T0pLZkhKV3dQVmgwdXVqWk5VS0EtUUMzaXoyMkZ3?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
@@ -823,28 +802,28 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
     <div class="card gold" onclick="toggleCard(this)">
       <div class="ct">
         <span class="src c">동아일보</span>
-        <span class="ctime" data-pubtime="2026-03-20T10:20:59+09:00">🕒 --</span>
+        <span class="ctime" data-pubtime="2026-03-20T08:01:00+09:00">🕒 --</span>
         <span class="expand-hint">▾</span>
       </div>
-      <div class="ch">한병도 “국힘 ‘환율안정 3법’도 반대…민생 골든타임 탕진”</div>
+      <div class="ch">김정은, 기갑부대 등 참관…“전쟁 준비 완성”</div>
       <div class="card-expand">
-        <ul class="cpts"><li>한병도 국민의힘 의원이 당의 환율안정 3법안에 반대 입장을 표했다.</li><li>그는 이 법안들이 민생 문제 해결의 골든타임을 낭비한다고 비판했다.</li><li>환율 안정을 위한 정부 정책에 당 내 이견이 존재하는 상황이다.</li></ul>
+        <ul class="cpts"><li>김정은이 기갑부대 등을 참관하며 군사력을 점검했다.</li><li>북한은 전쟁 준비가 완성되었다고 주장했다.</li><li>군사 시설 시찰을 통해 전투 태세를 강조하는 모습을 보였다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.donga.com/news/Politics/article/all/20260320/133569577/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.donga.com/news/Politics/article/all/20260320/133568836/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
       <div class="ct">
         <span class="src e">한국경제</span>
-        <span class="ctime" data-pubtime="2026-03-20T08:32:29+09:00">🕒 --</span>
+        <span class="ctime" data-pubtime="2026-03-20T07:55:41+09:00">🕒 --</span>
         <span class="expand-hint">▾</span>
       </div>
-      <div class="ch">AI기술 LLM에서 제조업으로…베이조스, 초대형 펀드 추진</div>
+      <div class="ch">日, 대미투자 2차 프로젝트는 SMR·가스발전…&quot;109조 규모&quot;</div>
       <div class="card-expand">
-        <ul class="cpts"><li>베이조스가 AI 기술을 제조업 분야로 확대하는 초대형 펀드를 추진하고 있다.</li><li>LLM 등 AI 기술의 활용 범위를 확대하여 제조업 혁신을 목표로 하고 있다.</li><li>이는 AI 기술을 실제 산업 현장에 적용하는 전략적 투자 움직임으로 평가된다.</li></ul>
+        <ul class="cpts"><li>일본이 미국에 109조 규모의 2차 대미투자 프로젝트를 추진한다.</li><li>소형원전(SMR)과 가스발전 사업에 중점 투자하기로 결정했다.</li><li>에너지 안보와 경제 협력 강화를 위한 전략적 투자이다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603204140i" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/article/2026032040097" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>    </div>
@@ -857,12 +836,12 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
     <div class="sec-body collapsed">
 
     <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-19T22:46:23+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">英 철강 관세 50% 추진…“韓 철강 수출 위축 우려”</div>
+      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-20T08:23:09+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">부동산 PF 부실 정리 저축은행, 3년 만에 흑자 전환...연체율 6%대</div>
       <div class="card-expand">
-        <ul class="cpts"><li>영국이 철강 제품에 50% 관세를 추진하고 있다.</li><li>한국 철강 업계가 영국 수출 감소를 우려하고 있는 상황이다.</li><li>보호주의 정책으로 인한 한국 철강산업의 경쟁력 약화가 예상된다.</li></ul>
+        <ul class="cpts"><li>부동산 PF 부실을 정리한 저축은행이 3년 만에 흑자로 돌아섰다.</li><li>연체율이 6%대 수준으로 개선되어 경영 정상화가 진행 중이다.</li><li>금융 건전성 회복으로 시장 신뢰도 점진적으로 회복되고 있다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.chosun.com/economy/industry-company/2026/03/19/ZUT6XABJXFB4JJBAJE7U6VYKS4/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.chosun.com/economy/economy_general/2026/03/20/SLGL73Q25NBZBJILKYRP6GCWKM/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
@@ -870,44 +849,44 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
       <div class="ct"><span class="src c">중앙일보</span><span class="ctime" data-pubtime="2026-03-19T05:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
       <div class="ch">봉지가 없어 라면 못 만든다, 호르무즈 봉쇄 길어지면 닥칠 일 - 중앙일보</div>
       <div class="card-expand">
-        <ul class="cpts"><li>호르무즈 해협 봉쇄로 라면 봉지 수입이 어려워질 수 있다.</li><li>라면 봉지는 대부분 중동에서 수입되는 플라스틱 원료로 제조된다.</li><li>봉쇄 장기화 시 라면 생산 중단 사태가 발생할 우려가 있다.</li></ul>
+        <ul class="cpts"><li>호르무즈 해협 봉쇄가 길어지면 라면 제조에 필요한 봉지 수급이 어려워질 수 있다.</li><li>봉지의 주원료인 플라스틱 원자재를 중동에서 수입하는데 해협 차단으로 공급망이 끊긴다.</li><li>라면 생산 중단 사태로 확대될 경우 국내 식품업계 전반에 악영향을 미칠 전망이다.</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://news.google.com/rss/articles/CBMiVkFVX3lxTE9pYkVWcmRkZW4tZjNBMUNyeEozNjk4MjB5QUozd3VCOVd1ZUhsR21HckJzN0dCOHpZOXBTLU5XQnpFZU5pT3M1TDMxNFZ3TlE0Q1FxZnB3?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-20T10:12:55+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">카카오뱅크, ‘앱 먹통’ 복구하다 또 오류…“원인 뒤늦게 파악”</div>
+      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-20T05:15:53+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">트위터 진심인 이억원 금융위원장…李대통령 리트윗 효과 ‘톡톡’</div>
       <div class="card-expand">
-        <ul class="cpts"><li>카카오뱅크 앱이 먹통이 되는 장애가 발생했다.</li><li>장애 복구 후에도 추가 오류가 발생하며 문제가 지속되었다.</li><li>카카오뱅크는 원인을 파악하는데 상당한 시간이 소요되었다.</li></ul>
+        <ul class="cpts"><li>이억원 금융위원장이 트위터 활동을 활발히 하고 있다.</li><li>이준석 대통령이 리트윗하면서 금융위원장의 메시지 전파 효과가 커졌다.</li><li>트위터를 통한 소통으로 금융 정책의 대국민 설득력이 높아지고 있다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.donga.com/news/Economy/article/all/20260320/133569502/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.donga.com/news/Economy/article/all/20260320/133568642/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-20T10:07:20+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">파리바게뜨, 'K파바'로 K팝팬 눈길 사로잡는다</div>
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-20T07:30:04+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">억대 포르쉐 전기차 척척 뽑더니…한국이 '전세계 판매량 2위'</div>
       <div class="card-expand">
-        <ul class="cpts"><li>파리바게뜨가 'K파바'라는 신상품을 출시했다.</li><li>K팝 팬들을 타겟으로 한 마케팅 전략이다.</li><li>브랜드 이미지 강화와 젊은 고객층 확보를 노린다.</li></ul>
+        <ul class="cpts"><li>한국이 포르쉐 전기차 전 세계 판매량에서 2위를 기록했다.</li><li>억대 가격대의 고급 전기차임에도 불구하고 판매가 급증했다.</li><li>한국 시장의 프리미엄 전기차 수요가 강력한 것으로 나타났다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603204558i" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603192965g" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-20T10:21:24+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">“기존에 없던 의료용 모니터 선보인다”…LG전자, ‘KIMES 2026’ 참여</div>
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-20T08:44:58+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">“방탄소년단 공연, 휘발유 투척할 것”…경찰, 50대 남성 긴급체포</div>
       <div class="card-expand">
-        <ul class="cpts"><li>LG전자가 의료기기 전시회 KIMES 2026에 참여하여 기존에 없던 의료용 모니터를 선보인다.</li><li>의료용 모니터는 진단 및 치료 효율성을 높이기 위해 개발된 신제품이다.</li><li>이번 전시를 통해 의료 산업의 디지털 혁신을 주도할 계획이다.</li></ul>
+        <ul class="cpts"><li>방탄소년단 공연장에서 휘발유를 투척하겠다고 협박한 50대 남성이 경찰에 체포되었다.</li><li>해당 남성은 온라인상에서 공연 중단을 요구하는 협박 메시지를 남긴 것으로 파악되었다.</li><li>경찰은 현장 보안을 강화하고 공연 안전을 위해 필요한 조치를 취할 예정이다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/business/11993369" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/society/11993227" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-20T10:22:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-20T08:48:42+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
       <div class="ch">[전문가 리포트 관련 반론보도] &lt;‘토허구역 해제’ 오세훈의 조급증이 1년간 남긴 청구서&gt; 관련</div>
       <div class="card-expand">
         <ul class="cpts"><li>요약 로딩 중...</li></ul>
@@ -917,12 +896,12 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
       </div>
     </div>
     <div class="card red" onclick="toggleCard(this)">
-      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-20T10:14:06+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">이촌동 강변강서아파트 공공재건축 정비계획안 재공람</div>
+      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-20T08:34:16+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">한투증권 &quot;삼천당제약, 경구 인슐린 임상 성공 시 게임 체인저&quot;</div>
       <div class="card-expand">
-        <ul class="cpts"><li>이촌동 강변강서아파트의 공공재건축 정비계획안이 재공람에 들어간다.</li><li>재건축 사업을 통해 노후 아파트 단지가 현대화될 예정이다.</li><li>주민들이 정비계획안을 검토하고 의견을 제시할 수 있는 기회가 제공된다.</li></ul>
+        <ul class="cpts"><li>한투증권이 삼천당제약의 경구 인슐린을 게임 체인저로 평가했다.</li><li>경구 인슐린이 임상에 성공하면 당뇨병 치료 방식을 혁신할 수 있다.</li><li>현재 주사제 중심의 인슐린 시장에 큰 변화를 가져올 것으로 기대된다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260320058400004" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260320027100008" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>    </div>
@@ -931,12 +910,12 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
     <div class="sec-body collapsed">
 
     <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-20T10:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">정부, 5개월 연속 ‘경기 회복’ 진단...중동전쟁발 물가상승·경기 하방 위험은 우려</div>
+      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-20T08:29:53+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">하나證 “SK, 자회사 가치 상승·자사주 소각 효과 기대…목표가 40만원”</div>
       <div class="card-expand">
-        <ul class="cpts"><li>정부가 5개월 연속으로 경기 회복 진단을 내렸다.</li><li>중동전쟁으로 인한 물가상승이 주요 우려 요인이다.</li><li>경기 하방 위험에 대한 경계가 필요한 상황이다.</li></ul>
+        <ul class="cpts"><li>하나증권이 SK 목표가를 40만원으로 설정했다.</li><li>자회사 가치 상승과 자사주 소각이 긍정적 요인으로 작용할 것으로 예상된다.</li><li>이는 SK의 주가 상승 가능성을 반영한 평가이다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.chosun.com/economy/economy_general/2026/03/20/3I3UTUDZSRCFLLUDXTH6ZZEPAQ/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.chosun.com/economy/stock-finance/2026/03/20/HE4TENBVMEZWEZTGGFTDCNRVMY/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
@@ -944,29 +923,29 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
       <div class="ct"><span class="src c">중앙일보</span><span class="ctime" data-pubtime="2026-03-19T17:46:42+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
       <div class="ch">중동 에너지전쟁에 국제유가 급등...韓 환율 동반 상승하며 '이중쇼크' - 중앙일보</div>
       <div class="card-expand">
-        <ul class="cpts"><li>중동 에너지전쟁으로 국제유가가 급등하고 있다.</li><li>유가 상승에 따라 원화 약세로 환율도 함께 오르고 있다.</li><li>유가 상승과 환율 상승이 동시에 일어나 한국 경제에 이중 충격을 주고 있다.</li></ul>
+        <ul class="cpts"><li>중동 에너지 전쟁으로 국제유가가 급등하고 있습니다.</li><li>유가 상승에 따라 환율도 함께 올라가는 이중 타격이 발생했습니다.</li><li>한국 경제에 유가 인상과 환율 상승의 이중 충격이 미치고 있습니다.</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://news.google.com/rss/articles/CBMiVkFVX3lxTE1NRFJHcVZsUHVXdHhKcWZnc0o1ZVlmc3NUalNDWC1tS3JIaEF5LVo2dnJUSmRFYm02T0pLZkhKV3dQVmgwdXVqWk5VS0EtUUMzaXoyMkZ3?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-20T10:07:13+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">2월 수출, 전년대비 28.7% 늘어…향후 변수는 역시 “중동 상황”</div>
+      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-20T04:30:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">불량 검사에 생성형 AI 도입하니, ‘가짜 불량’ 판정률 10%→0%</div>
       <div class="card-expand">
-        <ul class="cpts"><li>월 수출이 전년 동월 대비 28.7% 증가했다.</li><li>수출 증가의 주요 동력은 반도체와 자동차 등이다.</li><li>중동 정정 불안정이 향후 수출 전망의 주요 변수로 지목되고 있다.</li></ul>
+        <ul class="cpts"><li>생성형 AI를 불량 검사에 도입했다.</li><li>가짜 불량 판정률이 10%에서 0%로 개선되었다.</li><li>AI 활용으로 검사 정확도와 효율성이 향상되었다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.donga.com/news/Economy/article/all/20260320/133569465/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.donga.com/news/Economy/article/all/20260320/133567594/2" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-20T09:39:13+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">신세계免, LG전자와 AI 물류 시스템 구축…면세품 인도 서비스 고도화</div>
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-20T07:23:18+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">'수백억 연봉' 대기업 회장님, 건강보험료 얼마 내나?</div>
       <div class="card-expand">
-        <ul class="cpts"><li>신세계면세점이 LG전자와 함께 AI 기반 물류 시스템을 구축하기로 했다.</li><li>이 시스템은 면세품 배송 및 인도 서비스의 효율성을 높일 것으로 예상된다.</li><li>고객 경험 향상과 운영 비용 절감을 동시에 달성하는 것이 목표다.</li></ul>
+        <ul class="cpts"><li>죄송하지만 뉴스 본문이 제공되지 않아 정확한 수치와 사실을 파악할 수 없습니다.</li><li>뉴스 전체 내용을 공유해 주시면 규칙에 맞춰 3줄로 요약해 드리겠습니다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603204388g" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/article/2026032039317" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
@@ -974,29 +953,29 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
       <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-20T06:04:10+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
       <div class="ch">“러에서 전투경험 쌓은 북한, 중대한 위협”…美정보국 경고</div>
       <div class="card-expand">
-        <ul class="cpts"><li>미국 정보국이 러시아에서 전투 경험을 쌓은 북한군을 중대한 위협으로 경고했다.</li><li>북한군이 우크라이나 전장에서 얻은 실전 경험을 활용할 수 있다는 우려다.</li><li>이는 한반도 안보 상황을 더욱 악화시킬 가능성이 있다고 평가된다.</li></ul>
+        <ul class="cpts"><li>미국 정보국이 러시아에서 전투 경험을 쌓은 북한이 중대한 위협이라고 경고했다.</li><li>북한군이 우크라이나 전장에서 얻은 실전 경험이 한반도 안보에 악영향을 미칠 수 있다.</li><li>북한의 군사력 강화로 한미일 연대 강화 필요성이 대두되고 있다.</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://www.mk.co.kr/news/politics/11993133" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-20T10:22:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">종전 기대에 환율 1480원대로 하락…유가 상승세도 다소 꺾여</div>
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-20T08:48:42+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">막혀 가는 산업 동맥…호르무즈 3주 봉쇄 땐 생산비 5.4% 급등</div>
       <div class="card-expand">
-        <ul class="cpts"><li>종전 기대감으로 환율이 1480원대로 하락했다.</li><li>유가 상승세가 다소 꺾이는 추세를 보였다.</li><li>달러 약세와 유가 하락으로 외환시장이 변동했다.</li></ul>
+        <ul class="cpts"><li>호르무즈 해협이 3주간 봉쇄되면 글로벌 생산비용이 5.4% 급증할 것으로 예상된다.</li><li>호르무즈 해협은 하루 2천만 배럴의 석유가 통과하는 전 세계 석유 공급의 21%를 담당한다.</li><li>해협 봉쇄 시 해운비 급등과 유가 상승으로 산업 전반에 연쇄적 타격이</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/economy/finance/1250265.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/economy/economy_general/1250186.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card navy" onclick="toggleCard(this)">
-      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-20T10:15:21+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">경기도, 고양은평선 등 3기 신도시 광역철도 내년 착공</div>
+      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-20T08:33:50+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">부산시의회 예결특위, 추가경정예산안 심사…민생지원 초점</div>
       <div class="card-expand">
-        <ul class="cpts"><li>경기도가 고양은평선 등 3기 신도시 광역철도를 내년에 착공한다.</li><li>이 사업은 3기 신도시의 교통 연결성을 높이기 위한 주요 인프라 구축이다.</li><li>광역철도 개통으로 수도권 교통 체계가 대폭 개선될 것으로 기대된다.</li></ul>
+        <ul class="cpts"><li>부산시의회 예산결산특별위원회가 추가경정예산안을 심사하고 있다.</li><li>추가경정예산의 주요 초점은 시민들의 민생지원에 맞춰져 있다.</li><li>예결특위는 예산 편성의 효율성과 적절성을 검토하고 있다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260320058500060" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260320029400051" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>    </div>
@@ -1005,12 +984,12 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
     <div class="sec-body collapsed">
 
     <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-20T10:14:52+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">오세훈 “先혁신 後선거, 혁신 선대위 반드시 필요”</div>
+      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-20T00:51:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">與, 상임위 독식하나 “위원장 배분 재검토… 국회법 개정할 수도”</div>
       <div class="card-expand">
-        <ul class="cpts"><li>오세훈 국민의힘 대선 후보가 선거 전 혁신을 우선하겠다는 입장을 밝혔다.</li><li>혁신 선대위 구성이 반드시 필요하다고 강조했다.</li><li>선거보다 혁신을 먼저 추진하는 전략을 제시했다.</li></ul>
+        <ul class="cpts"><li>여당이 상임위 위원장을 대부분 차지하려는 움직임을 보이고 있다.</li><li>야당은 위원장 배분 재검토와 국회법 개정을 주장하고 있다.</li><li>현재 상임위 위원장 배분을 둘러싼 여야 간 갈등이 심화되고 있다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.chosun.com/politics/assembly/2026/03/20/YVWCGRXSEZBHDPGRENPRZVJOAA/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.chosun.com/politics/assembly/2026/03/20/64PSBB7Y2RD6DCARQYUX6L7M5E/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
@@ -1018,59 +997,59 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
       <div class="ct"><span class="src c">중앙일보</span><span class="ctime" data-pubtime="2026-03-19T00:20:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
       <div class="ch">[진중권 칼럼] 김어준을 청산할 수 있을까 - 중앙일보</div>
       <div class="card-expand">
-        <ul class="cpts"><li>죄송하지만 해당 기사의 전체 내용을 확인할 수 없어 정확한 요약을 드리기 어렵습니다.</li><li>기사 본문을 함께 제공해주시면 3줄 요약을 도와드리겠습니다.</li></ul>
+        <ul class="cpts"><li>요약 로딩 중...</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFBUR1o2VTRJdkxKZlR4cWFCVzZOMXZ3dHJXbHF5YkU1ZnZQenNtcGJPdDc0ankwRF9fVTM3NXg2Q3dJMUNNU3Y5aE13b0E5VUtCMXFXZHh3?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-20T10:20:59+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">한병도 “국힘 ‘환율안정 3법’도 반대…민생 골든타임 탕진”</div>
+      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-20T08:01:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">김정은, 기갑부대 등 참관…“전쟁 준비 완성”</div>
       <div class="card-expand">
-        <ul class="cpts"><li>한병도 국민의힘 의원이 당의 환율안정 3법안에 반대 입장을 표했다.</li><li>그는 이 법안들이 민생 문제 해결의 골든타임을 낭비한다고 비판했다.</li><li>환율 안정을 위한 정부 정책에 당 내 이견이 존재하는 상황이다.</li></ul>
+        <ul class="cpts"><li>김정은이 기갑부대 등을 참관하며 군사력을 점검했다.</li><li>북한은 전쟁 준비가 완성되었다고 주장했다.</li><li>군사 시설 시찰을 통해 전투 태세를 강조하는 모습을 보였다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.donga.com/news/Politics/article/all/20260320/133569577/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.donga.com/news/Politics/article/all/20260320/133568836/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-20T10:10:05+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">[속보] 李대통령 국정 지지율 67%…민주 46%·국힘 20% [갤럽]</div>
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-19T17:51:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">靑, 李 대통령 '조폭 연루설' 보도 언론에 추후보도 요청</div>
       <div class="card-expand">
-        <ul class="cpts"><li>이준석 대통령의 국정 지지율이 67%로 조사되었다.</li><li>민주당 지지율은 46%, 국민의힘 지지율은 20%이다.</li><li>갤럽이 실시한 여론조사 결과이다.</li></ul>
+        <ul class="cpts"><li>청와대가 이준석 대통령의 조폭 연루설 관련 보도에 대해 언론사들에게 추후 보도 자제를 요청했다.</li><li>청와대는 해당 보도가 근거 없는 내용이라며 정정보도와 사과를 촉구하고 있다.</li><li>이는 대통령실의 명예 훼손에 대한 적극적인 대응 조치로 평가되고 있다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.hankyung.com/article/2026032045967" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603193432i" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-20T10:22:17+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">“졸지에 살인 조폭으로 몰아…사 과받고 싶다”이재명 대통령 ‘그것이 알고 싶다’ 직격</div>
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-20T08:41:47+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">“1인당 10만원, 4인 가족이면 40만원”…주민등록만 있으면 지원금 준다는 ‘이 지역’</div>
       <div class="card-expand">
-        <ul class="cpts"><li>이재명 대통령이 과거 살인 혐의로 몰린 사건에 대해 사과를 요구했다.</li><li>그것이 알고 싶다 프로그램에 직접 출연해 억울함을 호소했다.</li><li>조폭 관련 혐의로 인한 피해에 대한 명예회복을 원하고 있다.</li></ul>
+        <ul class="cpts"><li>특정 지역에서 주민등록이 있으면 1인당 10만원의 지원금을 지급하고 있다.</li><li>인 가족 기준으로 최대 40만원까지 받을 수 있는 지원 정책이다.</li><li>별도의 자격 심사 없이 주민등록만으로 지원 대상을 결정한다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/society/11993370" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/economy/11993226" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-20T10:22:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">이 대통령 “조폭연루설 조작 폭로 국힘과 ‘그알’, 반성·사과 필요”</div>
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-20T08:48:42+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">강제동원 ‘3자 변제’ 속도전 뒤에 ‘윤석열 입김’ 있었다</div>
       <div class="card-expand">
-        <ul class="cpts"><li>전 대통령이 조폭연루설이 조작되었다고 주장했다.</li><li>국힘과 그알이 관련되어 있다고 지적했다.</li><li>두 측에 반성과 사과를 촉구했다.</li></ul>
+        <ul class="cpts"><li>강제동원 배상 문제 해결을 위해 제3자 변제 방안이 추진되고 있다.</li><li>윤석열 대통령이 이 문제 해결에 직접 영향력을 행사한 것으로 알려졌다.</li><li>정부가 빠른 속도로 배상 절차를 진행하려는 의도가 드러났다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/politics/bluehouse/1250267.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/politics/politics_general/1250210.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card gold" onclick="toggleCard(this)">
-      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-20T10:14:53+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">[팩트체크] 속초 대관람차 해체?…끊이지 않는 랜드마크 논란(종합)</div>
+      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-20T08:35:02+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">[인사] 외교부</div>
       <div class="card-expand">
-        <ul class="cpts"><li>요약 로딩 중...</li></ul>
+        <ul class="cpts"><li>죄송하지만, 제목만으로는 구체적인 인사 내용을 파악하기 어렵습니다.</li><li>뉴스의 본문 내용을 함께 제공해주시면, 3줄 요약을 작성하겠습니다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260319086751518" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260320029300504" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>    </div>
@@ -1079,72 +1058,72 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
     <div class="sec-body collapsed">
 
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-20T10:12:27+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">“비싸도 산다”… 이란發 유가 쇼크에 아시아서 전기차 수요 폭발</div>
+      <div class="ct"><span class="src c">조선일보</span><span class="ctime" data-pubtime="2026-03-20T01:49:40+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">다카이치 “돕고 싶어 왔다”... 트럼프 “일본은 나토와 달라”</div>
       <div class="card-expand">
-        <ul class="cpts"><li>이란 사태로 국제유가가 급등하면서 아시아 지역에서 전기차 수요가 급증하고 있다.</li><li>소비자들이 휘발유 가격 상승에 대비해 비싼 전기차도 구매하려는 추세를 보이고 있다.</li><li>유가 불안정이 내연기관차 대신 전기차로의 수요 전환을 가속화하고 있는 상황이다.</li></ul>
+        <ul class="cpts"><li>일본 방위상 다카이치가 미국을 방문해 우크라이나 지원에 협력하겠다고 표현했다.</li><li>트럼프 전 대통령은 일본이 나토와는 다른 입장이라고 언급했다.</li><li>일미 간 방위 협력과 우크라이나 지원 방식에 대한 입장 차이가 드러났다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.chosun.com/international/international_general/2026/03/20/HAZDOOJYMYZDAMLCMRTGIYLFGM/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.chosun.com/international/international_general/2026/03/20/7UB5TJTHUNCCJOULSKZYW5AAIY/" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">중앙일보</span><span class="ctime" data-pubtime="2026-03-20T05:00:03+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">BTS 7인 얼굴 분석해보니…&quot;왕제비상&quot; 인상학자 놀란 멤버 - 중앙일보</div>
+      <div class="ct"><span class="src c">중앙일보</span><span class="ctime" data-pubtime="2026-03-19T05:00:03+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">&quot;임계 4년만 하면 수익률 60%&quot; 이 나이면 연금 계속 부어라 - 중앙일보</div>
       <div class="card-expand">
-        <ul class="cpts"><li>죄송하지만 해당 뉴스의 전체 내용을 확인할 수 없어 정확한 요약이 어렵습니다.</li><li>기사 본문을 제공해주시면 3줄 요약을 도와드리겠습니다.</li></ul>
+        <ul class="cpts"><li>임계 4년만 지나면 연금 수익률이 60%에 도달할 수 있다는 주장이 제기되었다.</li><li>특정 연령대의 경우 계속해서 연금에 자금을 투입하는 것이 유리하다고 분석된다.</li><li>장기 투자 전략으로 수익성 향상이 가능하다는 내용의 기사이다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFBSTzQwVkk1QVFYYmREOVZvclk4OVZlR29rOW1TUzRxNTd4NVJKZDVEUlNSU0xjc2FUYmg0Nk5KOUdLZ1YwR255cFUzQW9GQ2p6cnFTTUNn?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFBMOHZmbk9IeV81NERwV1VxYVBWS1JoTkZJWS1nXzM5TGJJbVM5RDkxUzYwdnJPNmxzSzBDVVBfRTl2NGhaS3NaZ3JZclNmN1RqVU1XZFdR?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-20T10:13:41+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">이란 의회, 호르무즈 통행료 부과 검토…“안전 제공 명목”</div>
+      <div class="ct"><span class="src c">동아일보</span><span class="ctime" data-pubtime="2026-03-20T08:00:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">24년차 FBI 요원이 밝힌 ‘안 들키는 법’…“항상 비만을 유지하라”</div>
       <div class="card-expand">
-        <ul class="cpts"><li>이란 의회가 호르무즈 해협 통행료 부과를 검토 중이다.</li><li>안전 제공 명목으로 통행 선박에 요금을 징수할 계획이다.</li><li>국제 해상 운송에 영향을 미칠 수 있는 조치다.</li></ul>
+        <ul class="cpts"><li>년차 FBI 요원이 범죄자가 적발되지 않는 방법을 공개했다.</li><li>요원은 항상 비만을 유지하는 것이 신원 위장의 핵심이라고 설명했다.</li><li>체형 변화를 통해 경찰의 신원 확인을 피할 수 있다는 조언이다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.donga.com/news/Inter/article/all/20260320/133569516/1" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.donga.com/news/Inter/article/all/20260319/133565531/3" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-20T08:32:29+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">AI기술 LLM에서 제조업으로…베이조스, 초대형 펀드 추진</div>
+      <div class="ct"><span class="src e">한국경제</span><span class="ctime" data-pubtime="2026-03-20T07:55:41+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">日, 대미투자 2차 프로젝트는 SMR·가스발전…&quot;109조 규모&quot;</div>
       <div class="card-expand">
-        <ul class="cpts"><li>베이조스가 AI 기술을 제조업 분야로 확대하는 초대형 펀드를 추진하고 있다.</li><li>LLM 등 AI 기술의 활용 범위를 확대하여 제조업 혁신을 목표로 하고 있다.</li><li>이는 AI 기술을 실제 산업 현장에 적용하는 전략적 투자 움직임으로 평가된다.</li></ul>
+        <ul class="cpts"><li>일본이 미국에 109조 규모의 2차 대미투자 프로젝트를 추진한다.</li><li>소형원전(SMR)과 가스발전 사업에 중점 투자하기로 결정했다.</li><li>에너지 안보와 경제 협력 강화를 위한 전략적 투자이다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.hankyung.com/article/202603204140i" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.hankyung.com/article/2026032040097" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-20T10:20:43+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">“이런 방법이 있네”…도미노피자 1만원대에 먹는 ‘꿀팁’</div>
+      <div class="ct"><span class="src e">매일경제</span><span class="ctime" data-pubtime="2026-03-20T08:36:46+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">“얼굴에 멍들고 잔뜩 부었다”…부상 소식 전한 김지민, 무슨 일이</div>
       <div class="card-expand">
-        <ul class="cpts"><li>도미노피자를 저렴하게 구매할 수 있는 방법이 소개되었다.</li><li>만원대의 저가 가격대에 피자를 먹을 수 있는 꿀팁이 공유되었다.</li><li>소비자들이 활용할 수 있는 이 방법은 큰 관심을 받고 있다.</li></ul>
+        <ul class="cpts"><li>요약 로딩 중...</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/business/11993366" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.mk.co.kr/news/culture/11993222" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-20T10:22:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">다카이치 “트럼프에게 김정은 직접 만나고 싶다는 뜻 전달”</div>
+      <div class="ct"><span class="src p">한겨레</span><span class="ctime" data-pubtime="2026-03-20T08:48:42+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">다키이치 일 총리 “트럼프 대통령에 김정은 위원장 직접 만나고 싶다는 뜻 전달”</div>
       <div class="card-expand">
-        <ul class="cpts"><li>다카이치 일본 정치인이 트럼프에게 김정은의 면담 의사를 전달했다.</li><li>북한 지도자 김정은이 미국 대통령 트럼프와 직접 만나기를 원하고 있다.</li><li>일본을 통해 북미 간 대화 채널 형성의 중재 역할이 추진되고 있다.</li></ul>
+        <ul class="cpts"><li>다키이치 일 총리가 트럼프 대통령을 만나 김정은 위원장과의 직접 만남을 원한다는 뜻을 전달했다.</li><li>일본 총리는 북한 지도자와의 대화가 필요하다고 강조했다.</li><li>이는 한반도 정세 개선을 위한 외교적 노력의 일환으로 해석된다.</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://www.hani.co.kr/arti/international/international_general/1250251.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-20T10:18:36+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">日, 유명인 사칭 SNS 광고 뿌리뽑는다…광고주 신원확인 의무화</div>
+      <div class="ct"><span class="src w">연합뉴스</span><span class="ctime" data-pubtime="2026-03-20T08:24:14+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">카타르 LNG 비상에…미국산 가스로 대체 수요 '풍선 효과'</div>
       <div class="card-expand">
-        <ul class="cpts"><li>일본이 유명인 사칭 SNS 광고를 근절하기 위해 광고주 신원확인을 의무화한다.</li><li>가짜 유명인 광고로 인한 사기 피해가 증가하자 규제에 나선 것이다.</li><li>신원확인 의무화로 부정 광고 적발과 피해 예방 효과를 기대하고 있다.</li></ul>
+        <ul class="cpts"><li>카타르 LNG 공급 차질로 인한 글로벌 가스 수급 불균형이 심화되고 있다.</li><li>미국산 LNG가 카타르 물량 감소분을 대체하면서 수요처가 다원화되고 있다.</li><li>풍선 효과로 인해 국제 가스 가격 변동성이 확대될 것으로 예상된다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260320056800009" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.yna.co.kr/view/AKR20260320026700009" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>    </div>
@@ -1158,55 +1137,55 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
     <div class="sec-body collapsed">
 
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">닛케이아시아</span><span class="src jp">일본</span><span class="ctime" data-pubtime="2026-03-20T10:22:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">호주-뉴질랜드 동맹, 일본 함정 수주 가능성 높여</div>
+      <div class="ct"><span class="src intl">닛케이아시아</span><span class="src jp">일본</span><span class="ctime" data-pubtime="2026-03-20T08:48:42+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">일본·미국, 원전·가스발전에 최대 730억달러 2차 투자 추진</div>
       <div class="card-expand">
-        <div class="ch-orig">Australia-New Zealand alliance hints at fresh warship win for Japan</div>
-        <ul class="cpts"><li>호주와 뉴질랜드가 함정 도입 협력을 추진하며 일본의 전함 수출 기회 확대</li><li>인도-태평양 지역 해양 안보 강화 움직임 속 일본 방위산업 경쟁력 부각</li><li>한국을 포함한 역내 국가들의 방위산업 영향력 경쟁 심화 우려</li></ul>
+        <div class="ch-orig">Japan, US unveil up to $73bn 2nd round investment in reactors, gas power</div>
+        <ul class="cpts"><li>일본과 미국이 원자력과 가스발전소에 730억달러 규모의</li><li>2차 공동투자를 발표했으며, 에너지 안보 강화가 목표다.</li><li>한반도 에너지 정책에도 영향을 미칠 수 있는 움직임이다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://asia.nikkei.com/business/aerospace-defense-industries/australia-new-zealand-alliance-hints-at-fresh-warship-win-for-japan" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://asia.nikkei.com/politics/international-relations/japan-us-unveil-up-to-73bn-2nd-round-investment-in-reactors-gas-power" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">SCMP</span><span class="src cn">홍콩</span><span class="ctime" data-pubtime="2026-03-20T10:00:13+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">중국 상용위성의 '문어 촉수'가 저궤도 연료 보급 시험을 통과할까?</div>
+      <div class="ct"><span class="src intl">SCMP</span><span class="src cn">홍콩</span><span class="ctime" data-pubtime="2026-03-20T07:00:09+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">미국-이스라엘의 이란 전쟁, 얼마나 오래갈까? 중국 전문가들의 분석</div>
       <div class="card-expand">
-        <div class="ch-orig">Can China commercial satellite’s ‘octopus tentacle’ pass low-orbit refuel test?</div>
-        <ul class="cpts"><li>중국이 우주에서 위성에 연료를 공급하는 기술 개발에 성공했습니다.</li><li>로봇 팔 같은 장치로 궤도 위에서 위성을 수리하고 연료를 채웁니다.</li><li>이 기술이 성공하면 위성의 수명 연장과 우주산업 발전이 가능합니다.</li></ul>
+        <div class="ch-orig">How long will US-Israel war on Iran last? Chinese analysts offer clues</div>
+        <ul class="cpts"><li>중국 분석가들이 미국-이스라엘의 이란 대응 전쟁 지속 기간을 예측했습니다.</li><li>중동 정세 악화로 글로벌 유가 상승과 경제 불안정이 우려됩니다.</li><li>한반도 주변 강대국 역학 관계에 영향을 미칠 가능성이 있습니다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.scmp.com/news/china/science/article/3347156/can-china-commercial-satellites-octopus-tentacle-pass-low-orbit-refuel-test?utm_source=rss_feed" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.scmp.com/news/china/military/article/3347212/how-long-will-us-israel-war-iran-last-chinese-analysts-offer-clues?utm_source=rss_feed" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
       <div class="ct"><span class="src intl">가디언</span><span class="src uk">영국</span><span class="ctime" data-pubtime="2026-03-20T03:46:36+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">영국의 56% 원조 삭감으로 최빈국들 피해</div>
+      <div class="ch">영국의 56% 원조 삭감으로 세계 최빈국들 피해</div>
       <div class="card-expand">
         <div class="ch-orig">Some of the world’s poorest countries to lose UK aid due to 56% budget cut</div>
-        <ul class="cpts"><li>영국이 개발도상국 원조 예산을 56% 대폭 삭감하기로 결정했다.</li><li>아프리카 등 세계 최빈국들이 교육, 보건 지원 중단의 직격탄을 맞게 된다.</li><li>영국의 재정 긴축으로 국제 개발 협력이 크게 위축될 전망이다.</li></ul>
+        <ul class="cpts"><li>영국이 해외원조 예산을 대폭 삭감하면서 아프리카 등 최빈국들의 개발 사업이 중단될 위기에 처했다.</li><li>교육, 보건, 식량 지원 등 기본 생활 인프라 구축 사업들이 자금 부족으로 차질을 빚게 된다.</li><li>국제 사회의 빈곤 퇴치 노력이 선진국의 재정 긴축으로 인해 역행</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://www.theguardian.com/global-development/2026/mar/19/poorest-countries-lose-uk-aid-56-per-cent-budget-cut" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">블룸버그</span><span class="src us">미국</span><span class="ctime" data-pubtime="2026-03-20T07:24:21+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">유가 하락에 아시아 주식 상승 마감</div>
+      <div class="ct"><span class="src intl">블룸버그</span><span class="src us">미국</span><span class="ctime" data-pubtime="2026-03-19T17:30:03+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">트럼프의 반발에 이스라엘, 이란 에너지시설 공격 중단</div>
       <div class="card-expand">
-        <div class="ch-orig">Asian Stocks Rise in Early Trading as Oil Retreats: Markets Wrap</div>
-        <ul class="cpts"><li>유가 하락으로 아시아 주요 지수들이 상승률을 기록했습니다.</li><li>에너지 비용 부담 감소로 수입국 기업 실적 개선 기대감이 커졌습니다.</li><li>글로벌 경기 둔화 우려 속에서 상대적으로 긍정적인 신호로 평가됩니다.</li></ul>
+        <div class="ch-orig">Israel Will Not Strike Iranian Energy Sites After Trump Rebuke</div>
+        <ul class="cpts"><li>트럼프 대통령이 이스라엘의 이란 에너지시설 공격을 반대하자 이스라엘이 공격 계획을 철회했다.</li><li>미국의 강한 반대 의사가 중동 갈등 확산을 일단 막는 역할을 한 상황이다.</li><li>이는 이란 핵시설 관련 지역 긴장 완화의 신호로 해석되고 있다.</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.bloomberg.com/news/articles/2026-03-19/stock-market-today-dow-s-p-live-updates-" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.bloomberg.com/news/articles/2026-03-19/trump-seeks-end-to-attacks-on-energy-sites-as-gas-fields-burn" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
       <div class="ct"><span class="src intl">파이낸셜타임스</span><span class="src uk">영국</span><span class="ctime" data-pubtime="2026-03-20T08:07:22+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">미국-이스라엘 공격, 이란의 우라늄 농축 능력 파괴했다는 네타냐후</div>
+      <div class="ch">미국-이스라엘 공습, 이란의 우라늄 농축 능력 파괴했다고 네타냐후 주장</div>
       <div class="card-expand">
         <div class="ch-orig">US-Israel strikes have destroyed Iran’s ability to enrich uranium, Netanyahu says</div>
-        <ul class="cpts"><li>네타냐후 이스라엘 총리가 미국과의 공동 공격으로 이란의 핵 프로그램 핵심 시설을 타격했다고 주장했습니다.</li><li>이란의 우라늄 농축 능력이 심각하게 손상되어 핵무기 개발 시간이 지연될 것으로 예상됩니다.</li><li>중동 지역 긴장이 고조되는 가운데 이스</li></ul>
+        <ul class="cpts"><li>이스라엘 총리 네타냐후가 미국과의 공동 공습으로 이란의 핵 개발 능력이 심각하게 훼손됐다고 주장했다.</li><li>이는 이란의 핵 위협을 제거하려는 중동 긴장 고조 속에서 나온 발언으로, 핵협상 붕괴 이후 대이란 강경 정책을 반영한다.</li><li>국</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://www.ft.com/content/096fe3d9-df18-4fcc-8355-01877fc40553" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
@@ -1214,10 +1193,10 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
     </div>
     <div class="card dk" onclick="toggleCard(this)">
       <div class="ct"><span class="src intl">월스트리트저널</span><span class="src us">미국</span><span class="ctime" data-pubtime="2025-01-28T04:23:00+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">팔레스타인인들, 북부 가자로 도보 귀환</div>
+      <div class="ch">팔레스타인인들 북부 가자지구로 도보 귀환</div>
       <div class="card-expand">
         <div class="ch-orig">Palestinians Stream Back to Northern Gaza on Foot</div>
-        <ul class="cpts"><li>가자 북부 봉쇄 완화로 팔레스타인 주민들이 집으로 돌아가고 있습니다.</li><li>전쟁 피난민들이 장거리를 걸어서 남북 지역을 오가며 생활 재건을 시작했습니다.</li><li>인도주의 상황 개선 속 민간인 이동이 증가하는 추세를 보이고 있습니다.</li></ul>
+        <ul class="cpts"><li>가자지구 북부의 전투 완화로 주민들이 대규모로 귀향을 시작했다.</li><li>피난처에서 나와 도보로 고향으로 돌아가는 팔레스타인 주민들의 행렬이 이어지고 있다.</li><li>전쟁으로 파괴된 지역으로의 귀환이 인도적 위기 상황의 심각성을 드러낸다.</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://www.wsj.com/articles/palestinians-flock-back-to-northern-gaza-on-foot-after-hostage-release-breakthrough-3f60e2db" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
@@ -1225,10 +1204,10 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
     </div>
     <div class="card dk" onclick="toggleCard(this)">
       <div class="ct"><span class="src intl">뉴욕타임스</span><span class="src us">미국</span><span class="ctime" data-pubtime="2026-03-20T07:41:10+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">민주당, 쿠슈너의 중동 사업 거래 규명 촉구</div>
+      <div class="ch">민주당, 쿠시너의 중동 사업 거래 규명 요구</div>
       <div class="card-expand">
         <div class="ch-orig">Democrats Demand Answers on Jared Kushner’s Mideast Business Dealings</div>
-        <ul class="cpts"><li>민주당이 트럼프 전 대통령의 사위 쿠슈너의 중동 비즈니스 거래에 대해 설명을 요구했다.</li><li>공직 재직 중 중동 평화 중보자 역할을 한 쿠슈너이 퇴임 후 사업 이해 충돌 의혹이 제기되었다.</li><li>미국 정치권에서 공직자 윤리와 이해 충돌 문제에 대한 논쟁</li></ul>
+        <ul class="cpts"><li>민주당이 전 백악관 고문 쿠시너의 중동 지역 사업</li><li>거래 내용 공개를 강하게 요구하고 있습니다.</li><li>이익 상충 의혹과 투명성 문제가 핵심 쟁점입니다.</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://www.nytimes.com/2026/03/19/business/jared-kushner-mideast-private-equity.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
@@ -1236,23 +1215,23 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
     </div>
     <div class="card dk" onclick="toggleCard(this)">
       <div class="ct"><span class="src intl">가디언</span><span class="src uk">영국</span><span class="ctime" data-pubtime="2026-03-19T19:00:05+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">탄자니아 법원, 10년 이상 사형수 여성의 판결 취소</div>
+      <div class="ch">탄자니아 법원, 사형수 여성의 형량 10년 만에 취소</div>
       <div class="card-expand">
         <div class="ch-orig">Woman has sentence quashed by Tanzania court after over a decade on death row</div>
-        <ul class="cpts"><li>탄자니아 법원이 10년 이상 사형 선고를 받은 여성의 판결을 파기했다.</li><li>재심 결과 원심 판결에 오류가 있었던 것으로 판단되어 석방 절차가 진행된다.</li><li>국제 인권단체들의 오랜 노력과 법적 투쟁이 정의 실현으로 이어진 사례다.</li></ul>
+        <ul class="cpts"><li>탄자니아 법원이 10년 이상 사형 판결을 받은 여성의 유죄판결을 뒤집었다.</li><li>재심을 통해 법적 절차의 오류가 인정되어 석방될 가능성이 높아졌다.</li><li>인권 단체들은 사법 정의 회복의 사례로 평가하고 있다.</li></ul>
         <div class="card-btns">
           <a class="cbtn read-btn" href="https://www.theguardian.com/global-development/2026/mar/19/tanzania-lemi-limbu-freed-woman-learning-disabilities-death-row" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>
     <div class="card dk" onclick="toggleCard(this)">
-      <div class="ct"><span class="src intl">BBC비즈니스</span><span class="src uk">영국</span><span class="ctime" data-pubtime="2026-03-20T09:08:53+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
-      <div class="ch">이란 전쟁의 글로벌 승자와 패자들</div>
+      <div class="ct"><span class="src intl">BBC비즈니스</span><span class="src uk">영국</span><span class="ctime" data-pubtime="2026-03-20T01:21:28+09:00">🕒 --</span><span class="expand-hint">▾</span></div>
+      <div class="ch">이란 전쟁, 영국 경제에 극적 영향 미치는 중</div>
       <div class="card-expand">
-        <div class="ch-orig">The global winners and losers of the war in Iran</div>
-        <ul class="cpts"><li>[기사 내용 확인 필요]</li><li>[기사 내용 확인 필요]</li><li>[기사 내용 확인 필요]</li></ul>
+        <div class="ch-orig">Faisal Islam: Iran war is having a dramatic effect on the UK economy</div>
+        <ul class="cpts"><li>중동 긴장으로 유가 급등, 영국의 인플레이션 압박 심화</li><li>에너지 비용 상승으로 기업과 가계 구매력 악화 우려</li><li>글로벌 경제 불안이 한국 등 수출국에도 연쇄 영향 예상</li></ul>
         <div class="card-btns">
-          <a class="cbtn read-btn" href="https://www.bbc.com/news/articles/c3wlwnn05zqo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
+          <a class="cbtn read-btn" href="https://www.bbc.com/news/articles/c33lnd1gxxro?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 기사 보기</a>
         </div>
       </div>
     </div>    </div>
@@ -1264,22 +1243,22 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
 
     <div class="sbox">
       <div class="sbox-hd"><span class="dot" style="background:var(--gold)"></span>오늘의 관전 포인트</div>
-      <div class="pt-list"><div class="pt-item"><span class="pt-num">①</span><span class="pt-title">중동전쟁, 우리 경제까지 흔드나?</span></div><div class="pt-item"><span class="pt-num">②</span><span class="pt-title">영국 철강관세 50%, 韓기업 피해?</span></div><div class="pt-item"><span class="pt-num">③</span><span class="pt-title">카카오뱅크 또 장애, 신뢰 회복되나?</span></div><div class="pt-item"><span class="pt-num">④</span><span class="pt-title">정치권 갈등, 민심 이반 심화되나?</span></div></div>
+      <div class="pt-list"><div class="pt-item"><span class="pt-num">①</span><span class="pt-title">호르무즈 봉쇄, 얼마나 오래갈까?</span></div><div class="pt-item"><span class="pt-num">②</span><span class="pt-title">한국 전기차, 세계 2위 유지 가능?</span></div><div class="pt-item"><span class="pt-num">③</span><span class="pt-title">경구 인슐린이 정말 혁신일까?</span></div><div class="pt-item"><span class="pt-num">④</span><span class="pt-title">北러 군사협력, 한반도 위험도 상승?</span></div></div>
     </div>
     <div class="sbox sbox-toggle sbox-term" onclick="toggleSbox(this, event)">
       <div class="sbox-hd"><span class="dot" style="background:var(--accent)"></span>오늘의 용어<span class="sbox-arr">▾</span></div>
       <div class="sbox-body"><div class="term-list"><div class="term-item">
-          <div class="term-word">호르무즈 봉쇄 <span class="term-en">Strait of Hormuz blockade</span></div>
-          <div class="term-desc">중동 페르시아만 입구 봉쇄로 석유 공급 차단 위기 상황</div>
+          <div class="term-word">부동산PF <span class="term-en">Project Financing</span></div>
+          <div class="term-desc">부동산 개발사업에 필요한 자금을 금융기관에서 대출해주는 방식</div>
         </div><div class="term-item">
-          <div class="term-word">환율 <span class="term-en">Exchange rate</span></div>
-          <div class="term-desc">한국 원화와 미국 달러 같은 다른 나라 화폐를 바꾸는 비율</div>
+          <div class="term-word">호르무즈해협봉쇄 <span class="term-en">Strait of Hormuz Blockade</span></div>
+          <div class="term-desc">중동과 세계 연결 에너지 통로가 차단되어 유가 급등으로 이어지는 상황</div>
         </div><div class="term-item">
-          <div class="term-word">이중쇼크 <span class="term-en">Double shock</span></div>
-          <div class="term-desc">유가 상승과 환율 상승 같은 나쁜 경제 뉴스가 동시 발생</div>
+          <div class="term-word">경구인슐린 <span class="term-en">Oral Insulin</span></div>
+          <div class="term-desc">주사가 아닌 입으로 먹는 형태의 당뇨병 치료약</div>
         </div><div class="term-item">
-          <div class="term-word">보호무역 <span class="term-en">Protectionism</span></div>
-          <div class="term-desc">자국 산업 보호를 위해 외국 상품에 높은 관세 부과하는 정책</div>
+          <div class="term-word">토지이용규제초과금 <span class="term-en">Land Use Regulation Excess Fee</span></div>
+          <div class="term-desc">개발 제한 구역 해제로 얻는 부동산 이득에 부과하는 세금</div>
         </div></div></div>
     </div>
 
@@ -1289,8 +1268,156 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
 </div>
 
 <!-- ══ 칼럼 패널 ══ -->
+<div class="panel" id="panel-column">
+<div class="layout">
+  <div class="left">
+<div class="col-mobile-issue">
+<!-- AUTO_COL_논점_START -->
 
-<!-- ══ 오늘의 이슈 패널 ══ -->
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
+      <div class="issue-list"><div class="issue-item" style="line-height:1.6">오늘 뉴스의 주요 논점은 세 가지다. 첫째, 중동 지정학적 갈등이 한국 산업과 환율에 직결되는 현실이다. 둘째, 정치권의 국정 운영 방식을 놓고 객관성과 정치화 문제가 대립하고 있다. 셋째, 한국의 산업 기술력, 특히 전기차와 신약 개발이 글로벌 경쟁에서 실질적 성과를 내고 있다는 점이다. 독자들은 이러한 기회와 위협 요소들이 향후 경제와 정치에 어떤 파급력을 미칠지 주시해야 한다.</div></div>
+    </div>
+
+<!-- AUTO_COL_논점_END -->
+</div>
+<!-- AUTO_COLUMN_START -->
+
+    <div class="sec"><span class="sec-tag" style="background:var(--navy)">오늘의 추천 칼럼</span><div class="sec-line"></div></div>
+
+    <div class="col-card navy">
+      <div class="col-top">
+        <span class="col-paper src c">조선일보</span>
+        
+        <span class="col-date">2026.03.19</span>
+      </div>
+      <div class="col-title"><a href="https://www.chosun.com/opinion/chosun_column/2026/03/19/I5ZJ26TSVVD7DLNODC7GPOTUDU/" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">[朝鮮칼럼] 트럼피즘은 왜 실패하고 있는가</a></div>
+      
+      <div class="col-body">트럼피즘 실패의 본질 분석
+① 트럼피즘은 포퓰리즘의 한계를 드러내며 정치적 지속성을 잃고 있다.
+② 트럼프의 재집권 시도가 사법적 제약에 봉착하고, 그의 추종자들도 정책 실현의 어려움을 경험하면서 초기의 열정이 식어가고 있다. 미국 내 민주주의 제도가 개인 중심의 급진적 변화를 구조적으로 저항하는 모습이 드러났다.
+③ 극단적 개인주의와 제도 민주주의의 충돌 속에서, 진정한 정치 변화는 어떻게 가능할까?
+---
+이 칼럼은 단순한 정치 평가를 넘어 제도와 개인의 관계, 포퓰리즘의 한계, 민주주의의 자정 능력에 대한 근본적 질문을 던진다. 독자로 하여금 겉으로는 성공해 보이는 운동이 왜 결국 실패하는지, 그리고 정치 변화의 지속성을 위해 필요한 것이 무엇인지 성찰하도록 유도한다.</div>
+    </div>
+    <div class="col-card red">
+      <div class="col-top">
+        <span class="col-paper src c">중앙일보</span>
+        
+        <span class="col-date">2026.03.19</span>
+      </div>
+      <div class="col-title"><a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFBUR1o2VTRJdkxKZlR4cWFCVzZOMXZ3dHJXbHF5YkU1ZnZQenNtcGJPdDc0ankwRF9fVTM3NXg2Q3dJMUNNU3Y5aE13b0E5VUtCMXFXZHh3?oc=5" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">[진중권 칼럼] 김어준을 청산할 수 있을까 - 중앙일보</a></div>
+      
+      <div class="col-body">진중권 칼럼 요약
+① 김어준 같은 극단주의자의 영향력을 차단하기 위한 사회적 성찰이 필요하다.
+② 진중권은 김어준의 음모론적 주장과 선동이 얼마나 많은 추종자를 확보했는지, 그리고 기존 언론과 정치권이 이에 제대로 대응하지 못했는지 지적한다. 이는 단순한 개인 비판을 넘어 한국 사회의 담론 생태계 전반에 대한 문제 제기다.
+③ 우리는 근거 없는 주장과 영상 콘텐츠의 광범위한 확산을 막을 수 있을까? 민주주의 사회에서 자유로운 표현을 보장하면서도 해로운 영향력을 어떻게 견제할 것인지가 핵심 질문이다.</div>
+    </div>
+    <div class="col-card gold">
+      <div class="col-top">
+        <span class="col-paper src e">한국경제</span>
+        
+        <span class="col-date">2026.03.19</span>
+      </div>
+      <div class="col-title"><a href="https://www.hankyung.com/article/2026031933981" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">[한경에세이] 영어 스트레스, 무기가 되다</a></div>
+      
+      <div class="col-body">'[한경에세이] 영어 스트레스, 무기가 되다' 요약
+① 영어 학습의 부담을 긍정적 동력으로 변환하는 것이 성공의 열쇠다.
+② 많은 사람들이 영어를 습득하기 위해 겪는 스트레스와 좌절감은 흔한 현상이다. 하지만 이러한 압박감을 단순한 고통으로만 받아들이기보다는, 자신을 성장시키는 자극으로 재해석할 때 학습 효과가 극대화된다. 실제로 적절한 수준의 스트레스는 집중력을 높이고 목표 달성을 위한 추진력이 된다.
+③ 우리는 영어라는 산을 오를 때, 힘든 과정 자체를 성공의 증거로 받아들일 준비가 되어 있지 않을까?</div>
+    </div>
+    <div class="col-card dk">
+      <div class="col-top">
+        <span class="col-paper src intl">월스트리트저널</span>
+        <span class="src us">미국</span>
+        <span class="col-date">2025.01.25</span>
+      </div>
+      <div class="col-title"><a href="https://www.wsj.com/articles/wall-street-banks-prepare-to-sell-billions-of-dollars-of-x-loans-c609beb1?mod=pls_whats_news_us_business_f" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">월스트리트 은행들, X 대출금 수십억 달러 매각 준비</a></div>
+      <div class="ch-orig">Wall Street Banks Prepare to Sell Billions of Dollars of X Loans</div>
+      <div class="col-body">미국 주요 은행들이 엘론 머스크의 X 인수 자금 대출을 시장에 매각하려 함.
+은행들이 보유 중인 대출채권을 팔아 자본을 확보하려는 전략.
+이는 X의 높은 부채 구조와 금융 시장 변화를 반영한 움직임.</div>
+    </div>
+    <div class="col-card navy">
+      <div class="col-top">
+        <span class="col-paper src p">한겨레</span>
+        
+        <span class="col-date">2026.03.20</span>
+      </div>
+      <div class="col-title"><a href="https://www.hani.co.kr/arti/opinion/column/1250232.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">‘공소취소 거래설’과 민주당의 언론관 [세상읽기]</a></div>
+      
+      <div class="col-body">칼럼 요약: '공소취소 거래설'과 민주당의 언론관
+① 검찰 수사와 언론 보도를 거래 대상으로 보는 권력의 태도가 문제다.
+② 공소취소 여부를 언론 비판의 보상으로 취급하려는 발상은 사법부를 정치 도구화하는 것이다. 이는 검찰 독립성과 언론 자유를 모두 훼손하는 악순환을 만든다.
+③ 비판적 언론과 공정한 사법이 동시에 존재할 수 없는 사회로 나아가고 있지 않을까?
+---
+읽을거리: 이 칼럼은 공소취소라는 법적 결정이 정치적 거래의 대상이 되어서는 안 된다는 원칙을 상기시킨다. 권력이 언론을 통제하려는 시도와 사법부를 활용하려는 시도가 맞닿아 있다는 지적은 민주주의 기본 가치의 침식을 경고한다.</div>
+    </div>
+    <div class="col-card red">
+      <div class="col-top">
+        <span class="col-paper src intl">뉴욕타임스</span>
+        <span class="src us">미국</span>
+        <span class="col-date">2026.03.20</span>
+      </div>
+      <div class="col-title"><a href="https://www.nytimes.com/2026/03/19/business/jared-kushner-mideast-private-equity.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">민주당, 쿠슈너 중동 사업 거래 규명 촉구</a></div>
+      <div class="ch-orig">Democrats Demand Answers on Jared Kushner’s Mideast Business Dealings</div>
+      <div class="col-body">민주당이 트럼프 전 대통령의 사위 쿠슈너의 중동
+사업 거래에 대해 투명성 공개를 요구하고 있습니다.
+이익 충돌 논란과 정치적 영향력 남용 의혹이 제기됩니다.</div>
+    </div>
+    <div class="col-card gold">
+      <div class="col-top">
+        <span class="col-paper src intl">가디언</span>
+        <span class="src uk">영국</span>
+        <span class="col-date">2026.03.19</span>
+      </div>
+      <div class="col-title"><a href="https://www.theguardian.com/business/2026/mar/19/oil-prices-gas-prices-rise-iran-israel-donald-trump" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">이란-이스라엘 분쟁, 유전 공격으로 유가·가스값 급등</a></div>
+      <div class="ch-orig">Oil and gas prices jump after Iran and Israel attack gasfields</div>
+      <div class="col-body">이란과 이스라엘의 군사 충돌이 중동 유전 시설 타격으로 확대됨
+석유·천연가스 공급 차질 우려로 국제유가와 에너지 가격이 급상승
+한국 등 에너지 수입국의 물가·에너지비 부담 증가 예상</div>
+    </div>
+    <div class="col-card dk">
+      <div class="col-top">
+        <span class="col-paper src intl">BBC비즈니스</span>
+        <span class="src uk">영국</span>
+        <span class="col-date">2026.03.20</span>
+      </div>
+      <div class="col-title"><a href="https://www.bbc.com/news/articles/c33lnd1gxxro?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">이란 전쟁, 영국 경제에 극적 영향 미쳐</a></div>
+      <div class="ch-orig">Faisal Islam: Iran war is having a dramatic effect on the UK economy</div>
+      <div class="col-body">중동 지역 불안정으로 유가 상승, 영국의 생활비 위기 심화
+에너지 가격 인상으로 기업 경영 악화, 인플레이션 압력 증가
+금리 인상 우려로 영국 경제 회복 지연 가능성 대두</div>
+    </div>
+    <div class="col-card navy">
+      <div class="col-top">
+        <span class="col-paper src intl">르몽드</span>
+        <span class="src fr">프랑스</span>
+        <span class="col-date">2026.03.20</span>
+      </div>
+      <div class="col-title"><a href="https://www.lemonde.fr/economie/article/2026/03/19/le-proprietaire-de-l-application-bereal-entre-en-negociations-pour-prendre-le-controle-de-konbini-et-du-gorafi_6672471_3234.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">BeReal 앱 소유자, Konbini·Gorafi 인수협상 추진</a></div>
+      <div class="ch-orig">Le propriétaire de l’application BeReal entre en négociations pour prendre le contrôle de Konbini et du Gorafi</div>
+      <div class="col-body">BeReal 창립자가 프랑스 미디어 매체 인수를 위해 협상 중입니다.
+Konbini와 Gorafi는 프랑스의 인기 있는 뉴스 및 유머 매체입니다.
+기술 기업가의 미디어 산업 진출로 주목받고 있습니다.</div>
+    </div>
+
+<!-- AUTO_COLUMN_END -->
+  </div>
+  <div class="right">
+<!-- AUTO_COL_RIGHT_START -->
+
+    <div class="sbox">
+      <div class="sbox-hd"><span class="dot" style="background:var(--navy)"></span>오늘의 논점</div>
+      <div class="issue-list"><div class="issue-item" style="line-height:1.6">오늘 뉴스의 주요 논점은 세 가지다. 첫째, 중동 지정학적 갈등이 한국 산업과 환율에 직결되는 현실이다. 둘째, 정치권의 국정 운영 방식을 놓고 객관성과 정치화 문제가 대립하고 있다. 셋째, 한국의 산업 기술력, 특히 전기차와 신약 개발이 글로벌 경쟁에서 실질적 성과를 내고 있다는 점이다. 독자들은 이러한 기회와 위협 요소들이 향후 경제와 정치에 어떤 파급력을 미칠지 주시해야 한다.</div></div>
+    </div>
+
+<!-- AUTO_COL_RIGHT_END -->
+  </div>
+</div>
+</div>
+
+
 <!-- ══ 파급 체인 패널 ══ -->
 <div class="panel" id="panel-insight">
 <div class="layout">
@@ -1552,49 +1679,6 @@ body.simple-mode .aprev{color:var(--neu-ink3)}
 <div class="arch-list">
 
   <div>
-    <div class="arch-row" onclick="tog('d20_10')">
-      <div class="aday"><div class="adaynum">20</div><div class="adaysub">오전 3월 · 목</div></div>
-      <div class="acnt">▾ 28건</div>
-    </div>
-    <div class="arch-detail" id="d20_10"><div class="card red" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/economy/industry-company/2026/03/19/ZUT6XABJXFB4JJBAJE7U6VYKS4/" class="ch-link" target="_blank" style="color:inherit">英 철강 관세 50% 추진…“韓 철강 수출 위축 우려”</a></div>
-            </div><div class="card red" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src c" style="margin-left:4px">중앙일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTE9pYkVWcmRkZW4tZjNBMUNyeEozNjk4MjB5QUozd3VCOVd1ZUhsR21HckJzN0dCOHpZOXBTLU5XQnpFZU5pT3M1TDMxNFZ3TlE0Q1FxZnB3?oc=5" class="ch-link" target="_blank" style="color:inherit">봉지가 없어 라면 못 만든다, 호르무즈 봉쇄 길어지면 닥칠 일 - 중앙일보</a></div>
-            </div><div class="card red" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--red);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">경제 · 금융</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Economy/article/all/20260320/133569502/1" class="ch-link" target="_blank" style="color:inherit">카카오뱅크, ‘앱 먹통’ 복구하다 또 오류…“원인 뒤늦게 파악”</a></div>
-            </div><div class="card navy" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/economy/economy_general/2026/03/20/3I3UTUDZSRCFLLUDXTH6ZZEPAQ/" class="ch-link" target="_blank" style="color:inherit">정부, 5개월 연속 ‘경기 회복’ 진단...중동전쟁발 물가상승·경기 하방 위험은 우려</a></div>
-            </div><div class="card navy" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src c" style="margin-left:4px">중앙일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTE1NRFJHcVZsUHVXdHhKcWZnc0o1ZVlmc3NUalNDWC1tS3JIaEF5LVo2dnJUSmRFYm02T0pLZkhKV3dQVmgwdXVqWk5VS0EtUUMzaXoyMkZ3?oc=5" class="ch-link" target="_blank" style="color:inherit">중동 에너지전쟁에 국제유가 급등...韓 환율 동반 상승하며 '이중쇼크' - 중앙일보</a></div>
-            </div><div class="card navy" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--navy);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">기 업</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Economy/article/all/20260320/133569465/1" class="ch-link" target="_blank" style="color:inherit">2월 수출, 전년대비 28.7% 늘어…향후 변수는 역시 “중동 상황”</a></div>
-            </div><div class="card gold" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/politics/assembly/2026/03/20/YVWCGRXSEZBHDPGRENPRZVJOAA/" class="ch-link" target="_blank" style="color:inherit">오세훈 “先혁신 後선거, 혁신 선대위 반드시 필요”</a></div>
-            </div><div class="card gold" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src c" style="margin-left:4px">중앙일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFBUR1o2VTRJdkxKZlR4cWFCVzZOMXZ3dHJXbHF5YkU1ZnZQenNtcGJPdDc0ankwRF9fVTM3NXg2Q3dJMUNNU3Y5aE13b0E5VUtCMXFXZHh3?oc=5" class="ch-link" target="_blank" style="color:inherit">[진중권 칼럼] 김어준을 청산할 수 있을까 - 중앙일보</a></div>
-            </div><div class="card gold" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--gold);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">정책 · 사회</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Politics/article/all/20260320/133569577/1" class="ch-link" target="_blank" style="color:inherit">한병도 “국힘 ‘환율안정 3법’도 반대…민생 골든타임 탕진”</a></div>
-            </div><div class="card dk" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src c" style="margin-left:4px">조선일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.chosun.com/international/international_general/2026/03/20/HAZDOOJYMYZDAMLCMRTGIYLFGM/" class="ch-link" target="_blank" style="color:inherit">“비싸도 산다”… 이란發 유가 쇼크에 아시아서 전기차 수요 폭발</a></div>
-            </div><div class="card dk" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src c" style="margin-left:4px">중앙일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTFBSTzQwVkk1QVFYYmREOVZvclk4OVZlR29rOW1TUzRxNTd4NVJKZDVEUlNSU0xjc2FUYmg0Nk5KOUdLZ1YwR255cFUzQW9GQ2p6cnFTTUNn?oc=5" class="ch-link" target="_blank" style="color:inherit">BTS 7인 얼굴 분석해보니…&quot;왕제비상&quot; 인상학자 놀란 멤버 - 중앙일보</a></div>
-            </div><div class="card dk" style="margin-top:4px">
-              <div class="ct"><span class="src" style="background:var(--dark);font-size:8px;padding:2px 6px;color:#fff;border-radius:2px">국 제</span><span class="src c" style="margin-left:4px">동아일보</span></div>
-              <div class="ch" style="font-size:12.5px"><a href="https://www.donga.com/news/Inter/article/all/20260320/133569516/1" class="ch-link" target="_blank" style="color:inherit">이란 의회, 호르무즈 통행료 부과 검토…“안전 제공 명목”</a></div>
-            </div></div>
-  </div>
-<div>
     <div class="arch-row" onclick="tog('d20_08')">
       <div class="aday"><div class="adaynum">20</div><div class="adaysub">오전 3월 · 목</div></div>
       <div class="acnt">▾ 28건</div>
